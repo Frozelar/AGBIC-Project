@@ -1,7 +1,7 @@
-[insert name here]: A platformer game being made as a hobby.
-Copyright (C) 2015, 2016 Frozelar
+[insert name later]: A platformer game being made as a hobby.  Made for the A Game By Its Cover 2016 game jam.
+Copyright (C) 2016 Frozelar
 Email: frostyfish88@gmail.com
-[insert name here] is licensed under the terms of the GNU General Public License v3.0.  A copy of the license is provided in License.txt.
+[insert name later] is licensed under the terms of the GNU General Public License v3.0.  A copy of the license is provided in License.txt.
 
 Coded (by me) with:
 - C++ (using Microsoft Visual Studio: https://www.visualstudio.com/)
@@ -19,6 +19,13 @@ Other credits:
 - Some of the very early code was derived from examples shown in LazyFoo's SDL tutorials: http://lazyfoo.net/tutorials/SDL/
 - The game uses the font AvariaSans-Regular, which is licensed under the terms of the OFL.  A copy of the OFL is included in OFL.txt.
 - Several SDL DLLs (Windows) or frameworks (Mac OS X) are distributed with the application under the terms of the LGPL.
+
+Special Thanks:
+- Kiwisauce
+     ... for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.
+- Unormal
+     ... for teaching me superior programming practices and giving me a lot of advice.
+
 
 Other info:
 [To be included later]
