@@ -1,45 +1,37 @@
 #include "Include.h"
+#include "Window.h"
+#include "Game.h"
+#include "Graphics.h"
+#include "Player.h"
+
+Window gWindow;
+Game gGame;
+Graphics gGraphics;
 
 int main(int argc, char** argv)
 {
-	std::map<std::string, std::string> smap;
-	std::string sstring = "Damage = 5; Target = Player;";
-	const char* cstring = sstring.c_str();
-	std::stringstream kstring;
-	std::stringstream vstring;
-	kstring.str("");
-	vstring.str("");
-	char korv = 'k';
-	for (int i = 0; i < strlen(cstring); i++)
+	bool quit = false;
+	Game::newEntity({ 100, 600, 32, 32 }, BLOCK, WHITE);
+	Game::newEntity({ 196, 632, 32, 32 }, BLOCK, WHITE);
+	while (!quit)
 	{
-		if (cstring[i] == '=')
+		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
-			korv = 'v';
+			switch (Game::inputEvent.type)
+			{
+			case SDL_QUIT:
+				quit = true;
+				break;
+			case SDL_WINDOWEVENT:
+				Window::handleEvent(&Game::inputEvent);
+				break;
+			default:
+				Game::gPlayer->handleInput(&Game::inputEvent);
+				break;
+			}
 		}
-		else if (cstring[i] == ';')
-		{
-			korv = 'k';
-			smap[kstring.str()] = vstring.str();
-			std::cout << kstring.str() << " " << vstring.str() << std::endl;
-			kstring.str("");
-			vstring.str("");
-		}
-		else if (cstring[i] == ' ')
-			continue;
-		else
-		{
-			if (korv == 'k')
-				kstring << cstring[i];
-			else if (korv == 'v')
-				vstring << cstring[i];
-		}
+		Game::gPlayer->handleMovements();
+		Graphics::renderAll();
 	}
-	std::string test = smap["Damage"];
-	std::cout << test << std::endl;
-	test = smap["Target"];
-	std::cout << test << std::endl;
-
-	std::cout << "hey the game works" << std::endl;
-	SDL_Delay(5000);
 	return 0;
 }
