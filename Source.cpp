@@ -3,18 +3,24 @@
 #include "Game.h"
 #include "Graphics.h"
 #include "Player.h"
+#include "Level.h"
 
 Window gWindow;
 Game gGame;
 Graphics gGraphics;
+Level gLevel;
 
 int main(int argc, char** argv)
 {
 	bool quit = false;
-	Game::newEntity({ 100, 600, 32, 32 }, BLOCK, WHITE);
-	Game::newEntity({ 196, 632, 32, 32 }, BLOCK, WHITE);
+	int curlevel = 0;
+	// Game::newEntity({ 100, 600, 32, 32 }, BLOCK, WHITE);
+	// Game::newEntity({ 196, 632, 32, 32 }, BLOCK, WHITE);
 	while (!quit)
 	{
+		if (Level::getID() == -1)
+			Level::generateLevel(++curlevel);
+		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
 			switch (Game::inputEvent.type)
@@ -31,7 +37,10 @@ int main(int argc, char** argv)
 			}
 		}
 		Game::gPlayer->handleMovements();
+		// Level::moveLevel();
 		Graphics::renderAll();
 	}
+	Level::closeLevel();
+	Game::close();
 	return 0;
 }

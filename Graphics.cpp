@@ -3,7 +3,7 @@
 #include "Window.h"
 #include "Player.h"
 #include "Game.h"
-#include "Entities.h"
+#include "Level.h"
 
 SDL_Rect Graphics::viewport = { 0, 0, 0, 0 };
 std::vector<Texture*> Graphics::blockGFX;
@@ -62,22 +62,45 @@ void Graphics::renderAll()
 	viewport.h = Window::geth();
 	SDL_RenderClear(Window::renderer);
 	SDL_SetRenderDrawColor(Window::renderer, renderColor.r, renderColor.g, renderColor.b, renderColor.a);
-	SDL_RenderSetViewport(Window::renderer, &viewport);
+	// SDL_RenderSetClipRect(Window::renderer, &viewport);
+	// SDL_RenderSetViewport(Window::renderer, &viewport);
 
 	// only render if entity's rect is colliding with viewport rect
-	for (int i = 0; i < Game::staticEntities.size(); i++)
+	for (int i = 0; i < Game::renderedEntities.size(); i++)
 	{
-		if (Game::checkCollision(viewport, Game::staticEntities[i]->rect))
+		if (Game::checkCollision(viewport, Game::renderedEntities[i]->rect))
 		{
-			Game::staticEntities[i]->syncGFX();
-			blockGFX[Game::staticEntities[i]->getSubtype()]->rect = Game::staticEntities[i]->gfxRect;
-			blockGFX[Game::staticEntities[i]->getSubtype()]->txRender();
+			// Game::renderedEntities[i]->syncGFX();
+			// blockGFX[Game::renderedEntities[i]->getSubtype()]->rect = Game::renderedEntities[i]->rect;
+			blockGFX[Game::renderedEntities[i]->getSubtype()]->rect = { Game::renderedEntities[i]->rect.x - viewport.x, Game::renderedEntities[i]->rect.y - viewport.y, Game::renderedEntities[i]->rect.w, Game::renderedEntities[i]->rect.h };
+			blockGFX[Game::renderedEntities[i]->getSubtype()]->txRender();
 		}
 	}
 	// gPlayer.syncGFX();
-	Game::gPlayer->syncGFX();
-	playerGFX->rect = Game::gPlayer->gfxRect;
+	// Game::gPlayer->syncGFX();
+	// playerGFX->rect = Game::gPlayer->rect;
+	playerGFX->rect = { Game::gPlayer->rect.x - viewport.x, Game::gPlayer->rect.y - viewport.y, Game::gPlayer->rect.w, Game::gPlayer->rect.h };
 	playerGFX->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
 
 	SDL_RenderPresent(Window::renderer);
+}
+
+void Graphics::manageCamera()
+{
+	
+	if ((Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 > viewport.w / 2) ||
+		(Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 < viewport.w / 2))
+		viewport.x = Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 - viewport.w / 2;
+	if ((Game::gPlayer->rect.y + Game::gPlayer->rect.h / 2 > viewport.h / 2) ||
+		(Game::gPlayer->rect.y + Game::gPlayer->rect.h / 2 < viewport.h / 2))
+		viewport.y = Game::gPlayer->rect.y + Game::gPlayer->rect.h / 2 - viewport.h / 2;
+
+	if (viewport.x + viewport.w >= Level::getw('p'))
+		viewport.x = Level::getw('p') - viewport.w;
+	if (viewport.y + viewport.h >= Level::geth('p'))
+		viewport.y = Level::geth('p') - viewport.h;
+	if (viewport.x < 0)
+		viewport.x = 0;
+	if (viewport.y < 0)
+		viewport.y = 0;
 }

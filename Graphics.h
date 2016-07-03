@@ -10,6 +10,7 @@ public:
 	static bool init(void);
 	static void close(void);
 	static void renderAll(void);
+	static void manageCamera(void);
 
 	static const int GFX_OFFSET;
 private:

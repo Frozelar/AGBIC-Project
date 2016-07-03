@@ -3,8 +3,11 @@
 #include "Player.h"
 
 SDL_Event Game::inputEvent;
+std::vector<StaticEntity*> Game::allEntities;
 std::vector<StaticEntity*> Game::staticEntities;
 std::vector<PhysicsEntity*> Game::dynamicEntities;
+std::vector<StaticEntity*> Game::renderedEntities;
+std::vector<StaticEntity*> Game::collisionEntities;
 Player* Game::gPlayer = NULL;
 std::vector<std::string> Game::blockTypes = { "White" };
 const int Game::UNIT_W = 32;
@@ -18,6 +21,7 @@ const float Game::JUMP_START = -8;
 const float Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 std::map<std::string, int> Game::Controls;
+std::vector<int> Game::entityOffset = { 1, 1000, 2000, 3000 };	// player, block, enemy, collectible
 
 Game::Game()
 {
@@ -41,22 +45,7 @@ bool Game::init()
 
 void Game::close()
 {
-	for (int i = 0; i < staticEntities.size(); i++)
-	{
-		if (staticEntities[i] != NULL)
-		{
-			delete staticEntities[i];
-			staticEntities[i] = NULL;
-		}
-	}
-	for (int i = 0; i < dynamicEntities.size(); i++)
-	{
-		if (dynamicEntities[i] != NULL)
-		{
-			delete dynamicEntities[i];
-			dynamicEntities[i] = NULL;
-		}
-	}
+	clearEntities();
 	if (gPlayer != NULL)
 	{
 		delete gPlayer;
@@ -64,7 +53,34 @@ void Game::close()
 	}
 }
 
-// PhysicsEntity* = first colliding entity, bool = make entities resolve collision?
+// PhysicsEntity* = first colliding entity, bool = make entities resolve collision?, index = index of entity in collisionEntities[] (if applicable)
+bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
+{
+	bool collided = false;
+	Entity* e2 = NULL;
+	if (e1 != NULL)
+	{
+		for (int i = 0; i < collisionEntities.size(); i++)
+		{
+			if (i < collisionEntities.size() && i != index)
+			{
+				e2 = collisionEntities[i];
+				if (checkCollision(e1->rect, e2->rect))
+				{
+					if (!resolveCollision)
+						return true;
+					else
+						collided = true;
+					e1->collisions[findCollision(e1, e2->rect)] = e2;
+				}
+			}
+		}
+	}
+	return collided;
+}
+
+/*
+// PhysicsEntity* = first colliding entity, bool = make entities resolve collision?, index = index of entity in physicsEntities[] (if applicable)
 bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
 {
 	bool collided = false;
@@ -101,7 +117,9 @@ bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
 	}
 	return collided;
 }
+*/
 
+// Return whether or not the two rectangles are colliding
 bool Game::checkCollision(SDL_Rect r1, SDL_Rect r2)
 {
 	if ((r1.x + r1.w > r2.x && r1.x < r2.x + r2.w) && (r1.y + r1.h > r2.y && r1.y < r2.y + r2.h))
@@ -114,24 +132,24 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 {
 	int dir = -1;
 	SDL_Rect check = e1->rect;
-	if (e1->moveSpeed != 0)
-	{
-		if (e1->moveSpeed > 0)
-			dir = RIGHT;
-		else if (e1->moveSpeed < 0)
-			dir = LEFT;
-		check.x -= e1->moveSpeed;
-		if (checkCollision(check, r2))
-			dir = -1;
-	}
-	check = e1->rect;
-	if (e1->aerialSpeed != 0 && dir == -1)
+	if (e1->aerialSpeed != 0 || e1->moveSpeed != 0)
 	{
 		if (e1->aerialSpeed > 0)
 			dir = DOWN;
 		else if (e1->aerialSpeed < 0)
 			dir = UP;
 		check.y -= e1->aerialSpeed;
+		if (checkCollision(check, r2))
+			dir = -1;
+	}
+	check = e1->rect;
+	if (e1->moveSpeed != 0 && dir == -1)
+	{
+		if (e1->moveSpeed > 0)
+			dir = RIGHT;
+		else if (e1->moveSpeed < 0)
+			dir = LEFT;
+		check.x -= e1->moveSpeed;
 		if (checkCollision(check, r2))
 			dir = -1;
 	}
@@ -145,9 +163,58 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 
 bool Game::newEntity(SDL_Rect box, int type, int subtype)
 {
-	if (type == STATIC_ENTITY || type == BLOCK)
-		staticEntities.push_back(new StaticEntity(box, type, subtype));
-	else if (type == PHYSICS_ENTITY || type == ENEMY)
-		dynamicEntities.push_back(new PhysicsEntity(box, type, subtype));
+	if (/*type == STATIC_ENTITY ||*/ type == BLOCK)
+	{
+		allEntities.push_back(new StaticEntity(box, type, subtype));
+		staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		renderedEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		collisionEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+	}
+	else if (/*type == PHYSICS_ENTITY ||*/ type == ENEMY)
+	{
+		allEntities.push_back(new PhysicsEntity(box, type, subtype));
+		dynamicEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
+		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
+		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
+	}
+	else
+		return false;
 	return true;
+}
+
+void Game::clearEntities(void)
+{
+	for (int i = staticEntities.size() - 1; i >= 0; i--)
+	{
+		if (staticEntities[i] != NULL)
+			staticEntities[i] = NULL;
+		staticEntities.pop_back();
+	}
+	for (int i = dynamicEntities.size() - 1; i >= 0; i--)
+	{
+		if (dynamicEntities[i] != NULL)
+			dynamicEntities[i] = NULL;
+		dynamicEntities.pop_back();
+	}
+	for (int i = renderedEntities.size() - 1; i >= 0; i--)
+	{
+		if (renderedEntities[i] != NULL)
+			renderedEntities[i] = NULL;
+		renderedEntities.pop_back();
+	}
+	for (int i = collisionEntities.size() - 1; i >= 0; i--)
+	{
+		if (collisionEntities[i] != NULL)
+			collisionEntities[i] = NULL;
+		collisionEntities.pop_back();
+	}
+	for (int i = allEntities.size() - 1; i >= 0; i--)
+	{
+		if (allEntities[i] != NULL)
+		{
+			delete allEntities[i];
+			allEntities[i] = NULL;
+		}
+		allEntities.pop_back();
+	}
 }

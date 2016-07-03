@@ -13,10 +13,14 @@ public:
 	static bool checkCollision(SDL_Rect, SDL_Rect);
 	static int findCollision(PhysicsEntity*, SDL_Rect);
 	static bool newEntity(SDL_Rect, int, int);
+	static void clearEntities(void);
 
 	static SDL_Event inputEvent;
+	static std::vector<StaticEntity*> allEntities;
 	static std::vector<StaticEntity*> staticEntities;
 	static std::vector<PhysicsEntity*> dynamicEntities;
+	static std::vector<StaticEntity*> renderedEntities;
+	static std::vector<StaticEntity*> collisionEntities;
 	static Player* gPlayer;
 	static std::vector<std::string> blockTypes;
 	static const int UNIT_W;
@@ -30,5 +34,6 @@ public:
 	static const float MOVE_SPEED;
 	static const float ROTATION_SPEED;
 	static std::map<std::string, int> Controls;
+	static std::vector<int> entityOffset;
 };
 

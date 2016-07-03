@@ -1,8 +1,14 @@
 #pragma once
 #include "Include.h"
 
+/*
 enum EntityType {
-	ENTITY, STATIC_ENTITY, PHYSICS_ENTITY, PLAYER, BLOCK, ENEMY, COLLECTIBLE
+	ENTITY, STATIC_ENTITY, PHYSICS_ENTITY
+};
+*/
+
+enum EntityType {
+	NO_ENTITY, PLAYER, BLOCK, ENEMY, COLLECTIBLE
 };
 
 enum BlockType {
@@ -25,11 +31,10 @@ public:
 	~StaticEntity();
 	
 	// virtual void render(void);
-	virtual void syncGFX(void);
+	// virtual void syncGFX(void);
 	int getType(void);
 	int getSubtype(void);
 
-	SDL_Rect gfxRect;
 private:
 	int entityType;
 	int subtype;
@@ -43,7 +48,7 @@ public:
 
 	virtual void handleMovements(void);
 	virtual void cycleAerials(void);
-	virtual void handleCollisions(void);
+	// virtual void handleCollisions(void);
 
 	float moveSpeed;
 	float aerialSpeed;

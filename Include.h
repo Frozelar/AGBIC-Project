@@ -7,8 +7,9 @@
 #include <map>
 #include <string>
 #include <sstream>
-#include <iterator>
 #include <vector>
+#include <fstream>
+#include <math.h>
 
 class Window;
 class Texture;
