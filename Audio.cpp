@@ -4,7 +4,7 @@ const int Audio::TOTAL_MUSIC = 1;
 const int Audio::TOTAL_SFX = 1;
 std::string Audio::mDir = "Resources/";
 std::string Audio::sDir = "Resources/";
-std::string Audio::mExt = ".wav";
+std::string Audio::mExt = ".ogg";
 std::string Audio::sExt = ".wav";
 std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
