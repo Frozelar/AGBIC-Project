@@ -10,6 +10,8 @@
 #include <vector>
 #include <fstream>
 #include <math.h>
+#include <random>
+#include <time.h>
 
 class Window;
 class Texture;
@@ -19,6 +21,8 @@ class Entity;
 class StaticEntity;
 class PhysicsEntity;
 class Player;
+class Level;
+class Audio;
 
 enum Direction {
 	UP, DOWN, LEFT, RIGHT, TOTAL_DIRECTIONS

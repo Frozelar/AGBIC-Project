@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Graphics.h"
+#include "Audio.h"
 
 std::string Level::lDir = "Resources/";
 std::string Level::lExt = ".map";
@@ -35,7 +36,7 @@ bool Level::generateLevel(int which)
 	SDL_Rect entityRect{ 0, 0, Game::UNIT_W, Game::UNIT_H };
 
 	closeLevel();
-	if (which > 0)
+	if (which >= 0)
 		levelMap.open(lDir + "level" + std::to_string(which) + lExt);
 	levelID = which;
 
@@ -88,6 +89,8 @@ bool Level::generateLevel(int which)
 			}
 		}
 	}
+	Audio::play(musicID, 'm');
+	Graphics::loadBG(bgID);
 
 	levelMap.close();
 	return true;

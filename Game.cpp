@@ -18,7 +18,7 @@ const float Game::GRAVITY_MAX = 8;
 const float Game::JUMP_MAX = -1;
 const float Game::JUMP_MULT = 0.95;
 const float Game::JUMP_START = -8;
-const float Game::MOVE_SPEED = 2;
+const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 std::map<std::string, int> Game::Controls;
 std::vector<int> Game::entityOffset = { 1, 1000, 2000, 3000 };	// player, block, enemy, collectible
@@ -35,6 +35,7 @@ Game::~Game()
 
 bool Game::init()
 {
+	srand(time(NULL));
 	Controls["Move Left"] = SDLK_a;
 	Controls["Move Right"] = SDLK_d;
 	Controls["Jump"] = SDLK_w;

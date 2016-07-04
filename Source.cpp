@@ -4,11 +4,13 @@
 #include "Graphics.h"
 #include "Player.h"
 #include "Level.h"
+#include "Audio.h"
 
 Window gWindow;
 Game gGame;
 Graphics gGraphics;
 Level gLevel;
+Audio gAudio;
 
 int main(int argc, char** argv)
 {
@@ -19,7 +21,7 @@ int main(int argc, char** argv)
 	while (!quit)
 	{
 		if (Level::getID() == -1)
-			Level::generateLevel(++curlevel);
+			Level::generateLevel(curlevel++);
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{

@@ -7,13 +7,17 @@
 
 SDL_Rect Graphics::viewport = { 0, 0, 0, 0 };
 std::vector<Texture*> Graphics::blockGFX;
+std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
+Texture* Graphics::bg;
 Texture* Graphics::playerGFX;
 SDL_Color Graphics::renderColor = { 0, 255, 255, 255 };
 std::string Graphics::rDir = "Resources/";
 std::string Graphics::rExt = ".png";
 std::string Graphics::blockPrefix = "blk";
 std::string Graphics::playerPrefix = "player";
+std::string Graphics::bgPrefix = "bg";
 const int Graphics::GFX_OFFSET = 0;
+const int Graphics::BG_ALPHA_BASE = 255;
 
 Graphics::Graphics()
 {
@@ -65,6 +69,11 @@ void Graphics::renderAll()
 	// SDL_RenderSetClipRect(Window::renderer, &viewport);
 	// SDL_RenderSetViewport(Window::renderer, &viewport);
 
+	manageBG();
+	bg->txRender();
+	for (int i = 0; i < bgObjects.size(); i++)
+		bgObjects[i].first->txRender();
+
 	// only render if entity's rect is colliding with viewport rect
 	for (int i = 0; i < Game::renderedEntities.size(); i++)
 	{
@@ -103,4 +112,86 @@ void Graphics::manageCamera()
 		viewport.x = 0;
 	if (viewport.y < 0)
 		viewport.y = 0;
+}
+
+void Graphics::loadBG(int which)
+{
+	closeBG();
+
+	switch (which)
+	{
+	case MOUNTAINS:
+		bg = new Texture(0, 0, 0, 0);
+		bg->txLoadF(rDir + bgPrefix + std::to_string(which) + rExt);
+		manageBG();
+		break;
+	}
+}
+
+void Graphics::closeBG()
+{
+	if (bg != NULL)
+	{
+		delete bg;
+		bg = NULL;
+	}
+	for (int i = bgObjects.size() - 1; i >= 0; i--)
+	{
+		if (bgObjects[i].first != NULL)
+		{
+			delete bgObjects[i].first;
+			bgObjects[i].first = NULL;
+		}
+		bgObjects.pop_back();
+	}
+}
+
+void Graphics::manageBG()
+{
+	SDL_Rect window{ 0, 0, Window::getw(), Window::geth() };
+	static SDL_Rect vp = viewport;
+	for (int i = 0; i < bgObjects.size(); i++)
+	{
+		if (bgObjects.size() > 2 && !Game::checkCollision(window, bgObjects[i].first->rect))
+		{
+			delete bgObjects[i].first;
+			bgObjects[i].first = NULL;
+			bgObjects.erase(bgObjects.begin() + i);
+			i--;
+		}
+		else
+		{
+			if(viewport.x != vp.x)
+				bgObjects[i].first->rect.x -= bgObjects[i].second * (vp.x - viewport.x < 0 ? 1 : -1);
+		}
+	}
+	if (bgObjects.size() > 0)
+	{
+		if (bgObjects[0].first->rect.x > window.x && vp.x - viewport.x > 0)
+		{
+			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED * 0.5)));
+			bgObjects[0].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
+			bgObjects[0].first->txSetAlpha(BG_ALPHA_BASE / 2);
+			bgObjects[0].first->rect.x = window.x - bgObjects[0].first->rect.w + 1;
+			// bgObjects[0].first->rect.x = bgObjects[1].first->rect.x - bgObjects[0].first->rect.w + bgObjects[0].second;
+		}
+	}
+	for (int i = bgObjects.size();; i++)
+	{
+		if (i > 0)
+			if (bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w > window.x + window.w)
+				break;
+		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED * 0.5)));
+		bgObjects[i].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
+		bgObjects[i].first->txSetAlpha(BG_ALPHA_BASE / (i*2 + 2));
+		if (i > 0)
+		{
+			bgObjects[i].first->rect.x = bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w - 1;
+			if (bgObjects[i].second == bgObjects[i - 1].second)
+				bgObjects[i].second += rand() % 2 + -1;
+			if (bgObjects[i].second == 0)
+				bgObjects[i].second++;
+		}
+	}
+	vp = viewport;
 }

@@ -31,7 +31,7 @@ public:
 	static const float JUMP_MAX;
 	static const float JUMP_MULT;
 	static const float JUMP_START;
-	static const float MOVE_SPEED;
+	static const int MOVE_SPEED;
 	static const float ROTATION_SPEED;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
