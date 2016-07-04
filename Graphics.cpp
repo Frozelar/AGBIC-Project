@@ -172,6 +172,9 @@ void Graphics::manageBG()
 			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED * 0.5)));
 			bgObjects[0].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
 			bgObjects[0].first->txSetAlpha(BG_ALPHA_BASE / 2);
+			bgObjects[0].first->rect.w *= ceil((1 / (rand() % 3 + 1)));
+			// bgObjects[0].first->rect.h *= ceil(((rand() % 3 + 1) / (rand() % 3 + 1)));
+			bgObjects[0].first->rect.y += rand() % (Window::geth() / 4);
 			bgObjects[0].first->rect.x = window.x - bgObjects[0].first->rect.w + 1;
 			// bgObjects[0].first->rect.x = bgObjects[1].first->rect.x - bgObjects[0].first->rect.w + bgObjects[0].second;
 		}
@@ -183,10 +186,14 @@ void Graphics::manageBG()
 				break;
 		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED * 0.5)));
 		bgObjects[i].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
-		bgObjects[i].first->txSetAlpha(BG_ALPHA_BASE / (i*2 + 2));
+		bgObjects[i].first->txSetAlpha(BG_ALPHA_BASE / (rand() % (BG_ALPHA_BASE / 51) + 2));
 		if (i > 0)
 		{
+			bgObjects[i].first->rect.w *= ceil((1 / (rand() % 3 + 1)));
+			// bgObjects[i].first->rect.h *= ceil(((rand() % 3 + 1) / (rand() % 3 + 1)));
+			bgObjects[i].first->rect.y += rand() % (Window::geth() / 4);
 			bgObjects[i].first->rect.x = bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w - 1;
+
 			if (bgObjects[i].second == bgObjects[i - 1].second)
 				bgObjects[i].second += rand() % 2 + -1;
 			if (bgObjects[i].second == 0)
