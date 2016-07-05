@@ -17,6 +17,7 @@ public:
 
 	static bool init(void);
 	static void close(void);
+	static void closeLevelGFX(void);
 	static void renderAll(void);
 	static void manageCamera(void);
 	static void loadBG(int);

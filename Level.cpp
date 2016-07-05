@@ -99,6 +99,7 @@ bool Level::generateLevel(int which)
 void Level::closeLevel(void)
 {
 	Game::clearEntities();
+	Graphics::closeLevelGFX();
 	levelID = -1;
 	musicID = 0;
 	bgID = 0;

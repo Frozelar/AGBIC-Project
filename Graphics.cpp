@@ -46,6 +46,7 @@ bool Graphics::init()
 
 void Graphics::close()
 {
+	closeLevelGFX();
 	if (playerGFX != NULL)
 	{
 		delete playerGFX;
@@ -58,6 +59,33 @@ void Graphics::close()
 			delete blockGFX[i];
 			blockGFX[i] = NULL;
 		}
+	}
+}
+
+void Graphics::closeLevelGFX()
+{
+	if (bg != NULL)
+	{
+		delete bg;
+		bg = NULL;
+	}
+	for (int i = 0; i < bgObjects.size(); i++)
+	{
+		if (bgObjects[i].first != NULL)
+		{
+			delete bgObjects[i].first;
+			bgObjects[i].first = NULL;
+		}
+		bgObjects.pop_back();
+	}
+	for (int i = 0; i < particles.size(); i++)
+	{
+		if (particles[i].first != NULL)
+		{
+			delete particles[i].first;
+			particles[i].first = NULL;
+		}
+		particles.pop_back();
 	}
 }
 
