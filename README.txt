@@ -1,7 +1,7 @@
-[insert name later]: A platformer game being made as a hobby.  Made for the A Game By Its Cover 2016 game jam.
+Ice Age: A platformer game being made as a hobby.  Made for the 'A Game By Its Cover 2016' game jam.
 Copyright (C) 2016 Frozelar
 Email: frostyfish88@gmail.com
-[insert name later] is licensed under the terms of the GNU General Public License v3.0.  A copy of the license is provided in License.txt.
+Ice Age is licensed under the terms of the GNU General Public License v3.0.  A copy of the license is provided in License.txt.
 
 Coded (by me) with:
 - C++ (using Microsoft Visual Studio: https://www.visualstudio.com/)
@@ -14,6 +14,7 @@ Sound effects made (by me) using:
 - BFXR: http://www.bfxr.net/
 
 Music credits:
+- "The Glacier's Peak", a Sonic Advance remix made by jmr on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR02370
 
 Other credits:
 - Some of the very early code was derived from examples shown in LazyFoo's SDL tutorials: http://lazyfoo.net/tutorials/SDL/
@@ -25,7 +26,3 @@ Special Thanks:
      ... for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.
 - Unormal
      ... for teaching me superior programming practices and giving me a lot of advice.
-
-
-Other info:
-[To be included later]
