@@ -8,6 +8,7 @@
 SDL_Rect Graphics::viewport = { 0, 0, 0, 0 };
 std::vector<Texture*> Graphics::blockGFX;
 std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
+std::vector<std::pair<Texture*, int>> Graphics::particles;
 Texture* Graphics::bg;
 Texture* Graphics::playerGFX;
 SDL_Color Graphics::renderColor = { 0, 255, 255, 255 };
@@ -16,8 +17,10 @@ std::string Graphics::rExt = ".png";
 std::string Graphics::blockPrefix = "blk";
 std::string Graphics::playerPrefix = "player";
 std::string Graphics::bgPrefix = "bg";
+std::string Graphics::particlePrefix = "particle";
 const int Graphics::GFX_OFFSET = 0;
 const int Graphics::BG_ALPHA_BASE = 255;
+float Graphics::particleDensity = 2;
 
 Graphics::Graphics()
 {
@@ -60,6 +63,7 @@ void Graphics::close()
 
 void Graphics::renderAll()
 {
+	SDL_Rect part = { 0, 0, 0, 0 };
 	static int plrot = 0;
 	plrot = abs(Game::gPlayer->aerialSpeed != 0 ? plrot + Game::gPlayer->aerialSpeed * Game::ROTATION_SPEED * (Game::gPlayer->aerialSpeed < 0 ? -1 : 1) : 0);
 	viewport.w = Window::getw();
@@ -85,18 +89,33 @@ void Graphics::renderAll()
 			blockGFX[Game::renderedEntities[i]->getSubtype()]->txRender();
 		}
 	}
+
+	// for (int i = 0; i < particles.size(); i++)
+	// 	particles[i].first->txRender();
+	
 	// gPlayer.syncGFX();
 	// Game::gPlayer->syncGFX();
 	// playerGFX->rect = Game::gPlayer->rect;
 	playerGFX->rect = { Game::gPlayer->rect.x - viewport.x, Game::gPlayer->rect.y - viewport.y, Game::gPlayer->rect.w, Game::gPlayer->rect.h };
 	playerGFX->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
 
+	manageParticles(Level::getID());
+	for (int i = 0; i < particles.size(); i++)
+	{
+		if (Game::checkCollision(viewport, particles[i].first->rect))
+		{
+			part = particles[i].first->rect;
+			particles[i].first->rect = { particles[i].first->rect.x - viewport.x, particles[i].first->rect.y - viewport.y, particles[i].first->rect.w, particles[i].first->rect.h };
+			particles[i].first->txRender();
+			particles[i].first->rect = part;
+		}
+	}
+
 	SDL_RenderPresent(Window::renderer);
 }
 
 void Graphics::manageCamera()
 {
-	
 	if ((Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 > viewport.w / 2) ||
 		(Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 < viewport.w / 2))
 		viewport.x = Game::gPlayer->rect.x + Game::gPlayer->rect.w / 2 - viewport.w / 2;
@@ -152,7 +171,7 @@ void Graphics::manageBG()
 	static SDL_Rect vp = viewport;
 	for (int i = 0; i < bgObjects.size(); i++)
 	{
-		if (bgObjects.size() > 2 && !Game::checkCollision(window, bgObjects[i].first->rect))
+		if (/* bgObjects.size() > 2 && */ !Game::checkCollision(window, bgObjects[i].first->rect))
 		{
 			delete bgObjects[i].first;
 			bgObjects[i].first = NULL;
@@ -169,7 +188,7 @@ void Graphics::manageBG()
 	{
 		if (bgObjects[0].first->rect.x > window.x && vp.x - viewport.x > 0)
 		{
-			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED * 0.5)));
+			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED/* * 0.5*/)));
 			bgObjects[0].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
 			bgObjects[0].first->txSetAlpha(BG_ALPHA_BASE / 2);
 			bgObjects[0].first->rect.w *= ceil((1 / (rand() % 3 + 1)));
@@ -184,7 +203,7 @@ void Graphics::manageBG()
 		if (i > 0)
 			if (bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w > window.x + window.w)
 				break;
-		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED * 0.5)));
+		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED/* * 0.5*/)));
 		bgObjects[i].first->txLoadF(rDir + bgPrefix + "Object" + std::to_string(Level::getBGID()) + rExt);
 		bgObjects[i].first->txSetAlpha(BG_ALPHA_BASE / (rand() % (BG_ALPHA_BASE / 51) + 2));
 		if (i > 0)
@@ -192,7 +211,8 @@ void Graphics::manageBG()
 			bgObjects[i].first->rect.w *= ceil((1 / (rand() % 3 + 1)));
 			// bgObjects[i].first->rect.h *= ceil(((rand() % 3 + 1) / (rand() % 3 + 1)));
 			bgObjects[i].first->rect.y += rand() % (Window::geth() / 4);
-			bgObjects[i].first->rect.x = bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w - 1;
+			// bgObjects[i].first->rect.x = bgObjects[i - 1].first->rect.x + bgObjects[i - 1].first->rect.w - 1;
+			bgObjects[i].first->rect.x = Window::getw() - 1;
 
 			if (bgObjects[i].second == bgObjects[i - 1].second)
 				bgObjects[i].second += rand() % 2 + -1;
@@ -201,4 +221,45 @@ void Graphics::manageBG()
 		}
 	}
 	vp = viewport;
+}
+
+void Graphics::manageParticles(int which)
+{
+	// static int counter = 0;
+	switch (which)
+	{
+	case SNOW:
+		float loops = particleDensity;
+		if (loops < 1 && loops > 0)
+			loops = (rand() % abs(static_cast<int>(loops * 100 - 100)) == 1 ? 1 : 0);
+		while (loops-- > 0)
+		{
+			particles.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + 1));
+			particles[particles.size() - 1].first->txLoadF(rDir + particlePrefix + std::to_string(which) + rExt);
+			// particles[particles.size() - 1].first->rect.x = rand() % (viewport.x + viewport.w) + viewport.x;
+			particles[particles.size() - 1].first->rect.x = rand() % (Game::gPlayer->rect.x + viewport.w) + (Game::gPlayer->rect.x - viewport.w);
+			particles[particles.size() - 1].first->rect.w /= (rand() % 9 + 1);
+			if (particles[particles.size() - 1].first->rect.w <= 0)
+				particles[particles.size() - 1].first->rect.w = 1;
+			particles[particles.size() - 1].first->rect.h = particles[particles.size() - 1].first->rect.w;
+			particles[particles.size() - 1].first->rect.y -= particles[particles.size() - 1].first->rect.h;
+		}
+		for (int i = 0; i < particles.size(); i++)
+		{
+			if (particles[i].first->rect.y > Level::geth('p'))
+			{
+				delete particles[i].first;
+				particles[i].first = NULL;
+				particles.erase(particles.begin() + i);
+				i--;
+			}
+			else
+			{
+				if(rand() % 8 == 1)
+					particles[i].first->rect.x += (particles[i].second / 2 * (rand() % 2 == 0 ? -1 : 1));
+				particles[i].first->rect.y += particles[i].second;
+			}
+		}
+		break;
+	}
 }
