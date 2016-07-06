@@ -72,3 +72,81 @@ bool Player::handleInput(SDL_Event* e)
 	}
 	return true;
 }
+
+void Player::handleMovements()
+{
+	if (moveSpeed != 0)
+		rect.x += moveSpeed;
+	if (Game::checkCollision(this))
+	{
+		if (collisions[LEFT] != NULL)
+		{
+			if (collisions[LEFT]->getType() != COLLECTIBLE)
+			{
+				while (Game::checkCollision(rect, collisions[LEFT]->rect))
+					rect.x++;
+			}
+			else
+			{
+				collisions[LEFT]->destroy = true;
+			}
+			collisions[LEFT] = NULL;
+		}
+		if (collisions[RIGHT] != NULL)
+		{
+			if (collisions[RIGHT]->getType() != COLLECTIBLE)
+			{
+				while (Game::checkCollision(rect, collisions[RIGHT]->rect))
+					rect.x--;
+			}
+			else
+			{
+				collisions[RIGHT]->destroy = true;
+			}
+			collisions[RIGHT] = NULL;
+		}
+	}
+	if (aerialSpeed != 0)
+		rect.y += aerialSpeed;
+	cycleAerials();
+	if (collisions[DOWN] != NULL)
+	{
+		rect.y++;
+		if (!Game::checkCollision(rect, collisions[DOWN]->rect))
+			collisions[DOWN] = NULL;
+		rect.y--;
+	}
+	else if (collisions[DOWN] == NULL && aerialSpeed == 0)
+		aerialSpeed = Game::GRAVITY_START;
+	if (Game::checkCollision(this))
+	{
+		if (collisions[UP] != NULL)
+		{
+			if (collisions[UP]->getType() != COLLECTIBLE)
+			{
+				aerialSpeed = 0;
+				while (Game::checkCollision(rect, collisions[UP]->rect))
+					rect.y++;
+			}
+			else
+			{
+				collisions[UP]->destroy = true;
+			}
+			collisions[UP] = NULL;
+		}
+		if (collisions[DOWN] != NULL)
+		{
+			if (collisions[DOWN]->getType() != COLLECTIBLE)
+			{
+				aerialSpeed = 0;
+				while (Game::checkCollision(rect, collisions[DOWN]->rect))
+					rect.y--;
+			}
+			else
+			{
+				collisions[DOWN]->destroy = true;
+			}
+			// collisions[DOWN] = NULL;
+		}
+	}
+}

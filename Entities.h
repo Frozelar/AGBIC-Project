@@ -33,6 +33,10 @@ enum BlockType {
 	WHITE, TOTAL_BLOCK_TYPES
 };
 
+enum CollectibleType {
+	COIN, TOTAL_COLLECTIBLE_TYPES
+};
+
 class Entity
 {
 public:
@@ -52,8 +56,11 @@ public:
 	// virtual void syncGFX(void);
 	int getType(void);
 	int getSubtype(void);
-
-private:
+	virtual void onProcess(void);
+	virtual void onDestroy(void);
+	
+	bool destroy;
+protected:
 	int entityType;
 	int subtype;
 };
@@ -70,5 +77,5 @@ public:
 
 	float moveSpeed;
 	float aerialSpeed;
-	std::vector<Entity*> collisions;
+	std::vector<StaticEntity*> collisions;
 };

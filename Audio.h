@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "Include.h"
 
+enum SFXType {
+	JUMP
+};
+
 class Audio
 {
 public:
@@ -31,9 +35,14 @@ public:
 
 	static const int TOTAL_MUSIC;
 	static const int TOTAL_SFX;
+	static std::vector<std::string> musicIDs;
+	static std::vector<std::string> sfxIDs;
+
 private:
 	static std::string mDir;
 	static std::string sDir;
+	static std::string mPrefix;
+	static std::string sPrefix;
 	static std::string mExt;
 	static std::string sExt;
 	static std::vector<Mix_Chunk*> sfx;

@@ -19,15 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Game.h"
 //#include "Entities.h"
 #include "Player.h"
+#include "Collectible.h"
 
 SDL_Event Game::inputEvent;
+int Game::score = 0;
 std::vector<StaticEntity*> Game::allEntities;
 std::vector<StaticEntity*> Game::staticEntities;
 std::vector<PhysicsEntity*> Game::dynamicEntities;
 std::vector<StaticEntity*> Game::renderedEntities;
 std::vector<StaticEntity*> Game::collisionEntities;
+std::vector<Collectible*> Game::collectibles;
 Player* Game::gPlayer = NULL;
-std::vector<std::string> Game::blockTypes = { "White" };
+std::vector<std::string> Game::blockIDs = { "White" };
+std::vector<std::string> Game::collectibleIDs = { "Coin" };
+std::vector<std::string> Game::particleIDs = { "Snow" };
 const int Game::UNIT_W = 32;
 const int Game::UNIT_H = 32;
 const float Game::GRAVITY_START = 1;
@@ -38,8 +43,10 @@ const float Game::JUMP_MULT = 0.95;
 const float Game::JUMP_START = -8;
 const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
+const int Game::BOB_SPEED = 64;
 std::map<std::string, int> Game::Controls;
 std::vector<int> Game::entityOffset = { 1, 1000, 2000, 3000 };	// player, block, enemy, collectible
+// std::vector<StaticEntity*> Game::destroyBuffer;
 
 Game::Game()
 {
@@ -76,7 +83,7 @@ void Game::close()
 bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
 {
 	bool collided = false;
-	Entity* e2 = NULL;
+	StaticEntity* e2 = NULL;
 	if (e1 != NULL)
 	{
 		for (int i = 0; i < collisionEntities.size(); i++)
@@ -175,7 +182,7 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 	if (dir == -1)
 	{
 		dir = DOWN;
-		std::cout << "COLLISION ERROR: findCollision(). Direction set to DOWN to avoid crashing." << std::endl;
+		// std::cout << "COLLISION ERROR: findCollision(). Direction set to DOWN to avoid crashing." << std::endl;
 	}
 	return dir;
 }
@@ -196,6 +203,14 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 	}
+	else if (type == COLLECTIBLE)
+	{
+		allEntities.push_back(new Collectible(box, subtype));
+		staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		renderedEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		collisionEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		collectibles.push_back(static_cast<Collectible*>(allEntities.back()));
+	}
 	else
 		return false;
 	return true;
@@ -203,37 +218,76 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 
 void Game::clearEntities(void)
 {
+	for (int i = collectibles.size() - 1; i >= 0; i--)
+	{
+		//if (collectibles[i] != NULL)
+		//	collectibles[i] = NULL;
+		collectibles.pop_back();
+	}
 	for (int i = staticEntities.size() - 1; i >= 0; i--)
 	{
-		if (staticEntities[i] != NULL)
-			staticEntities[i] = NULL;
+		//if (staticEntities[i] != NULL)
+		//	staticEntities[i] = NULL;
 		staticEntities.pop_back();
 	}
 	for (int i = dynamicEntities.size() - 1; i >= 0; i--)
 	{
-		if (dynamicEntities[i] != NULL)
-			dynamicEntities[i] = NULL;
+		//if (dynamicEntities[i] != NULL)
+		//	dynamicEntities[i] = NULL;
 		dynamicEntities.pop_back();
 	}
 	for (int i = renderedEntities.size() - 1; i >= 0; i--)
 	{
-		if (renderedEntities[i] != NULL)
-			renderedEntities[i] = NULL;
+		//if (renderedEntities[i] != NULL)
+		//	renderedEntities[i] = NULL;
 		renderedEntities.pop_back();
 	}
 	for (int i = collisionEntities.size() - 1; i >= 0; i--)
 	{
-		if (collisionEntities[i] != NULL)
-			collisionEntities[i] = NULL;
+		//if (collisionEntities[i] != NULL)
+		//	collisionEntities[i] = NULL;
 		collisionEntities.pop_back();
 	}
 	for (int i = allEntities.size() - 1; i >= 0; i--)
 	{
-		if (allEntities[i] != NULL)
-		{
-			delete allEntities[i];
-			allEntities[i] = NULL;
-		}
+		//if (allEntities[i] != NULL)
+		//{
+		//	delete allEntities[i];
+		//	allEntities[i] = NULL;
+		//}
 		allEntities.pop_back();
 	}
 }
+
+void Game::process()
+{
+	for (int i = 0; i < collectibles.size(); i++)
+	{
+		if (collectibles[i]->destroy)
+		{
+			collectibles[i]->onDestroy();
+			delete collectibles[i];
+			collectibles[i] = NULL;
+			collectibles.pop_back();
+		}
+		else
+		{
+			collectibles[i]->onProcess();
+		}
+	}
+}
+
+/*
+void Game::manageBuffers()
+{
+	for (int i = 0; i < destroyBuffer.size(); i++)
+	{
+		if (destroyBuffer[i] != NULL)
+		{
+			delete destroyBuffer[i];
+			destroyBuffer[i] = NULL;
+		}
+		destroyBuffer.pop_back();
+	}
+}
+*/

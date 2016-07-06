@@ -32,15 +32,21 @@ public:
 	static int findCollision(PhysicsEntity*, SDL_Rect);
 	static bool newEntity(SDL_Rect, int, int);
 	static void clearEntities(void);
+	static void process(void);
+	// static void manageBuffers(void);
 
 	static SDL_Event inputEvent;
+	static int score;
 	static std::vector<StaticEntity*> allEntities;
 	static std::vector<StaticEntity*> staticEntities;
 	static std::vector<PhysicsEntity*> dynamicEntities;
 	static std::vector<StaticEntity*> renderedEntities;
 	static std::vector<StaticEntity*> collisionEntities;
+	static std::vector<Collectible*> collectibles;
 	static Player* gPlayer;
-	static std::vector<std::string> blockTypes;
+	static std::vector<std::string> blockIDs;
+	static std::vector<std::string> collectibleIDs;
+	static std::vector<std::string> particleIDs;
 	static const int UNIT_W;
 	static const int UNIT_H;
 	static const float GRAVITY_START;
@@ -51,7 +57,9 @@ public:
 	static const float JUMP_START;
 	static const int MOVE_SPEED;
 	static const float ROTATION_SPEED;
+	static const int BOB_SPEED;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
+	// static std::vector<StaticEntity*> destroyBuffer;
 };
 

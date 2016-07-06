@@ -22,10 +22,14 @@ const int Audio::TOTAL_MUSIC = 1;
 const int Audio::TOTAL_SFX = 1;
 std::string Audio::mDir = "Resources/";
 std::string Audio::sDir = "Resources/";
+std::string Audio::mPrefix = "mus";
+std::string Audio::sPrefix = "sfx";
 std::string Audio::mExt = ".ogg";
 std::string Audio::sExt = ".wav";
 std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
+std::vector<std::string> Audio::musicIDs = { "GlaciersPeak" };
+std::vector<std::string> Audio::sfxIDs = { "Jump" };
 
 Audio::Audio()
 {
@@ -48,12 +52,12 @@ bool Audio::init()
 	}
 	for (int i = 0; i < TOTAL_MUSIC; i++)
 	{
-		ID = mDir + "music" + std::to_string(i) + mExt;
+		ID = mDir + mPrefix + musicIDs[i] + mExt;
 		music.push_back(Mix_LoadMUS(ID.c_str()));
 	}
 	for (int i = 0; i < TOTAL_SFX; i++)
 	{
-		ID = sDir = "sfx" + std::to_string(i) + mExt;
+		ID = sDir + sPrefix + sfxIDs[i] + sExt;
 		sfx.push_back(Mix_LoadWAV(ID.c_str()));
 	}
 	return true;

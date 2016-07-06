@@ -26,7 +26,7 @@ public:
 	Player(SDL_Rect);
 	~Player();
 
-	// void handleMovements(void);
+	void handleMovements(void);
 	// void handleAerials(void);
 	bool handleInput(SDL_Event*);
 };

@@ -39,6 +39,7 @@ class Entity;
 class StaticEntity;
 class PhysicsEntity;
 class Player;
+class Collectible;
 class Level;
 class Audio;
 

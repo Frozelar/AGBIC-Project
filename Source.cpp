@@ -57,6 +57,7 @@ int main(int argc, char** argv)
 			}
 		}
 		Game::gPlayer->handleMovements();
+		Game::process();
 		// Level::moveLevel();
 		Graphics::renderAll();
 	}

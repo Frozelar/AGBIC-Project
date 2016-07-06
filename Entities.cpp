@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Entities.h"
 #include "Graphics.h"
 #include "Game.h"
+#include "Audio.h"
 
 Entity::Entity(SDL_Rect box)
 {
@@ -33,11 +34,13 @@ StaticEntity::StaticEntity(SDL_Rect pbox, int ptype, int psubtype) : Entity(pbox
 {
 	entityType = ptype;
 	subtype = psubtype;
+	destroy = false;
 	// gfxRect = { pbox.x - Graphics::GFX_OFFSET * 2, pbox.y - Graphics::GFX_OFFSET * 2, pbox.w + Graphics::GFX_OFFSET, pbox.h + Graphics::GFX_OFFSET };
 }
 
 StaticEntity::~StaticEntity()
 {
+	onDestroy();
 }
 
 /*
@@ -55,6 +58,14 @@ int StaticEntity::getType()
 int StaticEntity::getSubtype()
 {
 	return subtype;
+}
+
+void StaticEntity::onProcess()
+{
+}
+
+void StaticEntity::onDestroy()
+{
 }
 
 /*
@@ -150,6 +161,8 @@ void PhysicsEntity::handleMovements()
 // Manage aerialSpeed
 void PhysicsEntity::cycleAerials()
 {
+	if (aerialSpeed == Game::JUMP_START)
+		Audio::play(JUMP, 's');
 	if (aerialSpeed < 0)
 	{
 		aerialSpeed *= Game::JUMP_MULT;
