@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Include.h"
 
+// return opposite of given direction
 int invertDir(int dir)
 {
 	switch (dir)

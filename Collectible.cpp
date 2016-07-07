@@ -1,16 +1,19 @@
 #include "Collectible.h"
 #include "Game.h"
 
+// initialize variables
 Collectible::Collectible(SDL_Rect box, int type) : StaticEntity(box, COLLECTIBLE, type)
 {
 	bobSpeed = Game::BOB_SPEED;
 	direction = UP;
 }
 
+// 
 Collectible::~Collectible()
 {
 }
 
+// called once when entity is deleted
 void Collectible::onDestroy()
 {
 	switch (subtype)
@@ -21,6 +24,8 @@ void Collectible::onDestroy()
 	}
 }
 
+// called each frame
+// make collectible bob in air
 void Collectible::onProcess()
 {
 	bobSpeed *= 0.5;

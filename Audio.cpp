@@ -18,29 +18,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Audio.h"
 
+// number of elements
 const int Audio::TOTAL_MUSIC = 1;
 const int Audio::TOTAL_SFX = 1;
+
+// directories
 std::string Audio::mDir = "Resources/";
 std::string Audio::sDir = "Resources/";
+
+// prefixes in file names
 std::string Audio::mPrefix = "mus";
 std::string Audio::sPrefix = "sfx";
+
+// file extensions
 std::string Audio::mExt = ".ogg";
 std::string Audio::sExt = ".wav";
+
+// store music/sfx
 std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
+
+// identifiers (in file names)
 std::vector<std::string> Audio::musicIDs = { "GlaciersPeak" };
 std::vector<std::string> Audio::sfxIDs = { "Jump" };
 
+// call init()
 Audio::Audio()
 {
 	init();
 }
 
+// call close()
 Audio::~Audio()
 {
 	close();
 }
 
+// initialize SDL_Mixer and load music and sfx
 bool Audio::init()
 {
 	std::string ID = "";
@@ -63,6 +77,7 @@ bool Audio::init()
 	return true;
 }
 
+// play specified audio
 // int = audio ID, char = 'm' for music or 's' for sound effect
 bool Audio::play(int which, char type)
 {
@@ -87,6 +102,7 @@ bool Audio::play(int which, char type)
 	return true;
 }
 
+// free everything in music and sfx vectors
 void Audio::close()
 {
 	for (int i = 0; i < music.size(); i++)

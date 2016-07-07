@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Game.h"
 
+// 
 Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
 {
 }
 
+// 
 Player::~Player()
 {
 }
@@ -39,6 +41,7 @@ void Player::handleAerials()
 }
 */
 
+// process any inputs in given event
 bool Player::handleInput(SDL_Event* e)
 {
 	if (e->type == SDL_KEYDOWN)
@@ -73,6 +76,7 @@ bool Player::handleInput(SDL_Event* e)
 	return true;
 }
 
+// move player horizontally/vertically, manage collisions
 void Player::handleMovements()
 {
 	if (moveSpeed != 0)

@@ -22,29 +22,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Graphics.h"
 #include "Audio.h"
 
+// directory and extension of level files
 std::string Level::lDir = "Resources/";
 std::string Level::lExt = ".map";
+
+// numerical level ID
 int Level::levelID = -1;
+
+// level information
 int Level::w = 0;
 int Level::h = 0;
 int Level::wPixels = 0;
 int Level::hPixels = 0;
 int Level::totalUnits = 0;
 int Level::totalPixels = 0;
+
+// numerical level background ID
 int Level::bgID = 0;
+
+// numerical level music ID
 int Level::musicID = 0;
+
 // int Level::moveX = 0;
 // int Level::moveY = 0;
 
+// 
 Level::Level()
 {
 }
 
+// call clearEntities()
 Level::~Level()
 {
 	Game::clearEntities();
 }
 
+// generate given level, play music, initialize background, store level information
 bool Level::generateLevel(int which)
 {
 	int x = 0, y = 0;
@@ -114,6 +127,7 @@ bool Level::generateLevel(int which)
 	return true;
 }
 
+// clear entities, close level-specific graphics, clear level info
 void Level::closeLevel(void)
 {
 	Game::clearEntities();
@@ -141,6 +155,7 @@ void Level::moveLevel(int mX, int mY)
 }
 */
 
+// return level width
 // char = 'u' for width in units, or 'p' for width in pixels; returns 0 if invalid argument
 int Level::getw(char which)
 {
@@ -151,6 +166,7 @@ int Level::getw(char which)
 	return 0;
 }
 
+// return level height
 // char = 'u' for height in units, or 'p' for height in pixels; returns 0 if invalid argument
 int Level::geth(char which)
 {
@@ -161,6 +177,7 @@ int Level::geth(char which)
 	return 0;
 }
 
+// return total units or pixels
 // char = 'u' for total level units, or 'p' for total level pixels; returns 0 if invalid argument
 int Level::getTotal(char which)
 {
@@ -184,7 +201,6 @@ int Level::getBGID()
 }
 
 // return the level's music ID
-
 int Level::getMusicID()
 {
 	return musicID;

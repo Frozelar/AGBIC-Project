@@ -21,18 +21,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Collectible.h"
 
+// updated with user input
 SDL_Event Game::inputEvent;
+
+// game score
 int Game::score = 0;
+
+// store specified entities (allEntities owns every entity, the rest simply point to them)
 std::vector<StaticEntity*> Game::allEntities;
 std::vector<StaticEntity*> Game::staticEntities;
 std::vector<PhysicsEntity*> Game::dynamicEntities;
 std::vector<StaticEntity*> Game::renderedEntities;
 std::vector<StaticEntity*> Game::collisionEntities;
 std::vector<Collectible*> Game::collectibles;
+
+// player
 Player* Game::gPlayer = NULL;
+
+// identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::blockIDs = { "White" };
 std::vector<std::string> Game::collectibleIDs = { "Coin" };
 std::vector<std::string> Game::particleIDs = { "Snow" };
+
+// constant values
 const int Game::UNIT_W = 32;
 const int Game::UNIT_H = 32;
 const float Game::GRAVITY_START = 1;
@@ -44,20 +55,31 @@ const float Game::JUMP_START = -8;
 const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 const int Game::BOB_SPEED = 64;
+
+// map of game controls
 std::map<std::string, int> Game::Controls;
+
+// offsets used in level loading
 std::vector<int> Game::entityOffset = { 1, 1000, 2000, 3000 };	// player, block, enemy, collectible
+
+// which state the game is in
+GameMode Game::Mode = TITLE;
+
 // std::vector<StaticEntity*> Game::destroyBuffer;
 
+// call init()
 Game::Game()
 {
 	init();
 }
 
+// call close()
 Game::~Game()
 {
 	close();
 }
 
+// seed rng, initialize controls, create player object
 bool Game::init()
 {
 	srand(time(NULL));
@@ -69,6 +91,7 @@ bool Game::init()
 	return true;
 }
 
+// delete all entities and delete player
 void Game::close()
 {
 	clearEntities();
@@ -79,6 +102,7 @@ void Game::close()
 	}
 }
 
+// check for any collisions with given object
 // PhysicsEntity* = first colliding entity, bool = make entities resolve collision?, index = index of entity in collisionEntities[] (if applicable)
 bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
 {
@@ -145,7 +169,7 @@ bool Game::checkCollision(PhysicsEntity* e1, bool resolveCollision, int index)
 }
 */
 
-// Return whether or not the two rectangles are colliding
+// return whether or not the two rectangles are colliding
 bool Game::checkCollision(SDL_Rect r1, SDL_Rect r2)
 {
 	if ((r1.x + r1.w > r2.x && r1.x < r2.x + r2.w) && (r1.y + r1.h > r2.y && r1.y < r2.y + r2.h))
@@ -154,6 +178,7 @@ bool Game::checkCollision(SDL_Rect r1, SDL_Rect r2)
 		return false;
 }
 
+// detect which direction the two given objects are colliding in, and store this info in the first entity
 int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 {
 	int dir = -1;
@@ -187,6 +212,8 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 	return dir;
 }
 
+// create new entity
+// SDL_Rect = rect for entity, int = entity type, int = subtype
 bool Game::newEntity(SDL_Rect box, int type, int subtype)
 {
 	if (/*type == STATIC_ENTITY ||*/ type == BLOCK)
@@ -216,6 +243,7 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 	return true;
 }
 
+// clear all entities
 void Game::clearEntities(void)
 {
 	for (int i = collectibles.size() - 1; i >= 0; i--)
@@ -259,6 +287,8 @@ void Game::clearEntities(void)
 	}
 }
 
+// called each frame
+// destroy entity if needed and call onProcess() for each entity
 void Game::process()
 {
 	for (int i = 0; i < collectibles.size(); i++)

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Level.h"
 #include "Audio.h"
 
+// create static classes
 Window gWindow;
 Game gGame;
 Graphics gGraphics;
@@ -34,8 +35,7 @@ int main(int argc, char** argv)
 {
 	bool quit = false;
 	int curlevel = 0;
-	// Game::newEntity({ 100, 600, 32, 32 }, BLOCK, WHITE);
-	// Game::newEntity({ 196, 632, 32, 32 }, BLOCK, WHITE);
+
 	while (!quit)
 	{
 		if (Level::getID() == -1)

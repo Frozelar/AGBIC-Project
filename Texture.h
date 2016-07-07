@@ -51,6 +51,6 @@ public:
 	// set blend mode
 	void txSetBlendMode(SDL_BlendMode b);
 
-	SDL_Texture* texture = NULL;
-	SDL_Rect rect;
+	SDL_Texture* txTexture = NULL;
+	SDL_Rect txRect;
 };

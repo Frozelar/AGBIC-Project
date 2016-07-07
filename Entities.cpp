@@ -21,15 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Game.h"
 #include "Audio.h"
 
+// entity rect = passed rect
 Entity::Entity(SDL_Rect box)
 {
 	rect = box;
 }
 
+// 
 Entity::~Entity()
 {
 }
 
+// initialize variables
 StaticEntity::StaticEntity(SDL_Rect pbox, int ptype, int psubtype) : Entity(pbox)
 {
 	entityType = ptype;
@@ -38,6 +41,7 @@ StaticEntity::StaticEntity(SDL_Rect pbox, int ptype, int psubtype) : Entity(pbox
 	// gfxRect = { pbox.x - Graphics::GFX_OFFSET * 2, pbox.y - Graphics::GFX_OFFSET * 2, pbox.w + Graphics::GFX_OFFSET, pbox.h + Graphics::GFX_OFFSET };
 }
 
+// call onDestroy()
 StaticEntity::~StaticEntity()
 {
 	onDestroy();
@@ -50,20 +54,24 @@ void StaticEntity::syncGFX()
 }
 */
 
+// return entityType
 int StaticEntity::getType()
 {
 	return entityType;
 }
 
+// return subtype
 int StaticEntity::getSubtype()
 {
 	return subtype;
 }
 
+// 
 void StaticEntity::onProcess()
 {
 }
 
+// 
 void StaticEntity::onDestroy()
 {
 }
@@ -75,6 +83,7 @@ void StaticEntity::render()
 }
 */
 
+// initialize members
 PhysicsEntity::PhysicsEntity(SDL_Rect pbox, int ptype, int psubtype) : StaticEntity(pbox, ptype, psubtype)
 {
 	moveSpeed = 0;
@@ -83,11 +92,12 @@ PhysicsEntity::PhysicsEntity(SDL_Rect pbox, int ptype, int psubtype) : StaticEnt
 		collisions.push_back(NULL);
 }
 
+// 
 PhysicsEntity::~PhysicsEntity()
 {
 }
 
-// Move the entity and manage collisions
+// move entity horizontally and vertically, and manage collisions
 void PhysicsEntity::handleMovements()
 {
 	if (moveSpeed != 0)
@@ -158,7 +168,7 @@ void PhysicsEntity::handleMovements()
 			*/
 }
 
-// Manage aerialSpeed
+// manage aerialSpeed
 void PhysicsEntity::cycleAerials()
 {
 	if (aerialSpeed == Game::JUMP_START)

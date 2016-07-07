@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "Include.h"
 
+enum GameMode {
+	GAME, TITLE, MENU, LEVEL_BEGIN, LEVEL_END
+};
+
 class Game
 {
 public:
@@ -60,6 +64,7 @@ public:
 	static const int BOB_SPEED;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
+	static GameMode Mode;
 	// static std::vector<StaticEntity*> destroyBuffer;
 };
 

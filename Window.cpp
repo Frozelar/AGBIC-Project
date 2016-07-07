@@ -19,24 +19,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Window.h"
 #include "Graphics.h"
 
+// default window dimensions
 const int Window::DEFAULT_W = 1280;
 const int Window::DEFAULT_H = 720;
 
+// window object
 SDL_Window* Window::window = NULL;
+
+// renderer object
 SDL_Renderer* Window::renderer = NULL;
+
+// actual window dimensions
 int Window::w = 0;
 int Window::h = 0;
 
+// call init()
 Window::Window()
 {
 	init();
 }
 
+// call close()
 Window::~Window()
 {
 	close();
 }
 
+// initialize dimensions, create window and renderer objects, return success
 bool Window::init()
 {
 	w = DEFAULT_W;
@@ -46,6 +55,7 @@ bool Window::init()
 	return window != NULL && renderer != NULL;
 }
 
+// destroy window and renderer
 void Window::close()
 {
 	SDL_DestroyWindow(window);
@@ -54,6 +64,7 @@ void Window::close()
 	renderer = NULL;
 }
 
+// handle given window-related event
 bool Window::handleEvent(SDL_Event* e)
 {
 	if (e->type == SDL_WINDOWEVENT)
@@ -91,11 +102,13 @@ SDL_Renderer* Window::getRenderer()
 }
 */
 
+// return window width
 int Window::getw()
 {
 	return w;
 }
 
+// return window height
 int Window::geth()
 {
 	return h;
