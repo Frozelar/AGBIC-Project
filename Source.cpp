@@ -36,10 +36,18 @@ int main(int argc, char** argv)
 	bool quit = false;
 	int curlevel = 0;
 
+	Game::Mode = LEVEL_BEGIN;
+
 	while (!quit)
 	{
 		if (Level::getID() == -1)
 			Level::generateLevel(curlevel++);
+
+		if (Game::Mode == LEVEL_BEGIN)
+			quit = Level::begin();
+		else if (Game::Mode == LEVEL_END)
+			quit = Level::end();
+
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{

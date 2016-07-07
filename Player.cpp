@@ -47,9 +47,19 @@ bool Player::handleInput(SDL_Event* e)
 	if (e->type == SDL_KEYDOWN)
 	{
 		if (e->key.keysym.sym == Game::Controls["Move Left"])
-			moveSpeed = -Game::MOVE_SPEED;
+		{
+			if (moveSpeed >= 0)
+				moveSpeed = -Game::MOVE_SPEED;
+			else if (moveSpeed == -Game::MOVE_SPEED)
+				moveSpeed = -Game::MOVE_SPEED * 2;
+		}
 		else if (e->key.keysym.sym == Game::Controls["Move Right"])
-			moveSpeed = Game::MOVE_SPEED;
+		{
+			if (moveSpeed <= 0)
+				moveSpeed = Game::MOVE_SPEED;
+			else if (moveSpeed == Game::MOVE_SPEED)
+				moveSpeed = Game::MOVE_SPEED * 2;
+		}
 		else if (e->key.keysym.sym == Game::Controls["Jump"])
 		{
 			if (aerialSpeed == 0)

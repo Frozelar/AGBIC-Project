@@ -27,6 +27,8 @@ public:
 
 	static bool generateLevel(int);
 	static void closeLevel(void);
+	static bool begin(void);
+	static bool end(void);
 	// static void moveLevel(int = 0, int = 0);
 	static int getw(char = 'u');
 	static int geth(char = 'u');

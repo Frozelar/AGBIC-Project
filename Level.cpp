@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Window.h"
 #include "Level.h"
 #include "Game.h"
 #include "Player.h"
@@ -138,6 +139,84 @@ void Level::closeLevel(void)
 	w = wPixels = 0;
 	h = hPixels = 0;
 	totalUnits = totalPixels = 0;
+}
+
+// perform automated process when level begins
+bool Level::begin()
+{
+	bool quit = false;
+	bool done = false;
+	int target = Game::gPlayer->rect.y;
+	Game::gPlayer->rect.y = -Game::gPlayer->rect.h;
+	Game::gPlayer->aerialSpeed = Game::GRAVITY_START;
+
+	while (!quit && !done)
+	{
+		Graphics::manageCamera();
+		while (SDL_PollEvent(&Game::inputEvent) != NULL)
+		{
+			switch (Game::inputEvent.type)
+			{
+			case SDL_QUIT:
+				quit = true;
+				break;
+			case SDL_WINDOWEVENT:
+				Window::handleEvent(&Game::inputEvent);
+				break;
+			}
+		}
+		// Game::gPlayer->handleMovements();
+		// Game::process();
+		Graphics::renderAll();
+
+		Game::gPlayer->aerialSpeed *= Game::GRAVITY_MULT;
+		if (Game::gPlayer->aerialSpeed > Game::GRAVITY_MAX)
+			Game::gPlayer->aerialSpeed = Game::GRAVITY_MAX;
+		Game::gPlayer->rect.y += Game::gPlayer->aerialSpeed;
+
+		if (Game::gPlayer->rect.y >= target)
+			done = true;
+	}
+	Game::Mode = GAME;
+	return quit;
+}
+
+// perform automated process when level is finished
+bool Level::end()
+{
+	bool quit = false;
+	bool done = false;
+	Game::gPlayer->aerialSpeed = Game::JUMP_MAX;
+
+	while (!quit && !done)
+	{
+		Graphics::manageCamera();
+		while (SDL_PollEvent(&Game::inputEvent) != NULL)
+		{
+			switch (Game::inputEvent.type)
+			{
+			case SDL_QUIT:
+				quit = true;
+				break;
+			case SDL_WINDOWEVENT:
+				Window::handleEvent(&Game::inputEvent);
+				break;
+			}
+		}
+		// Game::gPlayer->handleMovements();
+		// Game::process();
+		Graphics::renderAll();
+
+		Game::gPlayer->aerialSpeed *= Game::GRAVITY_MULT;
+		if (Game::gPlayer->aerialSpeed <= Game::JUMP_START)
+			Game::gPlayer->aerialSpeed = Game::JUMP_START;
+		Game::gPlayer->rect.y += Game::gPlayer->aerialSpeed;
+
+		if (Game::gPlayer->rect.y <= -Game::gPlayer->rect.h)
+			done = true;
+	}
+	Game::Mode = MAP;
+	return quit;
 }
 
 /*
