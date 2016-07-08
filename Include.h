@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <random>
 #include <time.h>
+#include <unordered_map>
 
 class Window;
 class Texture;

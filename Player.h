@@ -27,7 +27,9 @@ public:
 	~Player();
 
 	void handleMovements(void);
-	// void handleAerials(void);
+	void cycleAerials(void);
 	bool handleInput(SDL_Event*);
+
+	std::unordered_map<std::string, bool> abilities;
 };
 

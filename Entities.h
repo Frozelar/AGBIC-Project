@@ -34,7 +34,7 @@ enum BlockType {
 };
 
 enum CollectibleType {
-	COIN, TOTAL_COLLECTIBLE_TYPES
+	COIN, SPRINT, JUMP_HEIGHT, DOUBLE_JUMP, TOTAL_COLLECTIBLE_TYPES
 };
 
 class Entity

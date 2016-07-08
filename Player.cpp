@@ -18,10 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Player.h"
 #include "Game.h"
+#include "Audio.h"
 
-// 
+// initialize members
 Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
 {
+	abilities["Sprint"] = false;
+	abilities["High Jump"] = false;
+	abilities["Double Jump"] = false;
 }
 
 // 
@@ -44,26 +48,28 @@ void Player::handleAerials()
 // process any inputs in given event
 bool Player::handleInput(SDL_Event* e)
 {
+	static int plJumpNum = 0;
+	if (plJumpNum != 0 && aerialSpeed == 0)
+		plJumpNum = 0;
 	if (e->type == SDL_KEYDOWN)
 	{
 		if (e->key.keysym.sym == Game::Controls["Move Left"])
 		{
-			if (moveSpeed >= 0)
-				moveSpeed = -Game::MOVE_SPEED;
-			else if (moveSpeed == -Game::MOVE_SPEED)
-				moveSpeed = -Game::MOVE_SPEED * 2;
+			moveSpeed = -Game::MOVE_SPEED;
 		}
 		else if (e->key.keysym.sym == Game::Controls["Move Right"])
 		{
-			if (moveSpeed <= 0)
-				moveSpeed = Game::MOVE_SPEED;
-			else if (moveSpeed == Game::MOVE_SPEED)
-				moveSpeed = Game::MOVE_SPEED * 2;
+			moveSpeed = Game::MOVE_SPEED;
 		}
 		else if (e->key.keysym.sym == Game::Controls["Jump"])
 		{
-			if (aerialSpeed == 0)
+			if (aerialSpeed == 0 || (abilities["Double Jump"] && plJumpNum == 1))
+			{
+				std::cout << plJumpNum << " ";
 				aerialSpeed = Game::JUMP_START;
+				if(plJumpNum == 1)
+					plJumpNum++;
+			}
 		}
 		else
 			return false;
@@ -77,7 +83,10 @@ bool Player::handleInput(SDL_Event* e)
 		else if (e->key.keysym.sym == Game::Controls["Jump"])
 		{
 			if (aerialSpeed < 0)
+			{
+				plJumpNum++;
 				aerialSpeed *= Game::JUMP_MULT / 4;
+			}
 		}
 		else
 			return false;
@@ -89,8 +98,16 @@ bool Player::handleInput(SDL_Event* e)
 // move player horizontally/vertically, manage collisions
 void Player::handleMovements()
 {
+	static int plFrameCount = 0;
+	if (abilities["Sprint"] && plFrameCount >= Game::WARMUP_DURATION && abs(moveSpeed) == Game::MOVE_SPEED)
+		moveSpeed = (moveSpeed > 0 ? 1 : -1) * Game::MOVE_SPEED * 2;
+	else if (abilities["Sprint"] && moveSpeed == 0 && plFrameCount != 0)
+		plFrameCount = 0;
 	if (moveSpeed != 0)
+	{
+		plFrameCount++;
 		rect.x += moveSpeed;
+	}
 	if (Game::checkCollision(this))
 	{
 		if (collisions[LEFT] != NULL)
@@ -162,5 +179,24 @@ void Player::handleMovements()
 			}
 			// collisions[DOWN] = NULL;
 		}
+	}
+}
+
+// manage aerialSpeed
+void Player::cycleAerials()
+{
+	if (aerialSpeed == Game::JUMP_START)
+		Audio::play(JUMP, 's');
+	if (aerialSpeed < 0)
+	{
+		aerialSpeed *= (Game::JUMP_MULT) + (!abilities["High Jump"] ? 0 : 0.02);
+		if (aerialSpeed >= (Game::JUMP_MAX + (abilities["High Jump"] ? 0.1 : 0)))
+			aerialSpeed = Game::GRAVITY_START;
+	}
+	else if (aerialSpeed > 0)
+	{
+		aerialSpeed *= Game::GRAVITY_MULT;
+		if (aerialSpeed > Game::GRAVITY_MAX)
+			aerialSpeed = Game::GRAVITY_MAX;
 	}
 }

@@ -40,7 +40,7 @@ Player* Game::gPlayer = NULL;
 
 // identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::blockIDs = { "White" };
-std::vector<std::string> Game::collectibleIDs = { "Coin" };
+std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "JumpHeight", "DoubleJump" };
 std::vector<std::string> Game::particleIDs = { "Snow" };
 
 // constant values
@@ -55,6 +55,7 @@ const float Game::JUMP_START = -8;
 const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 const int Game::BOB_SPEED = 64;
+const int Game::WARMUP_DURATION = 32;
 
 // map of game controls
 std::map<std::string, int> Game::Controls;
@@ -293,16 +294,19 @@ void Game::process()
 {
 	for (int i = 0; i < collectibles.size(); i++)
 	{
-		if (collectibles[i]->destroy)
+		if (collectibles[i] != NULL)
 		{
-			collectibles[i]->onDestroy();
-			delete collectibles[i];
-			collectibles[i] = NULL;
-			collectibles.pop_back();
-		}
-		else
-		{
-			collectibles[i]->onProcess();
+			if (collectibles[i]->destroy)
+			{
+				collectibles[i]->onDestroy();
+				delete collectibles[i];
+				collectibles[i] = NULL;
+				collectibles.erase(collectibles.begin() + i);
+			}
+			else
+			{
+				collectibles[i]->onProcess();
+			}
 		}
 	}
 }
