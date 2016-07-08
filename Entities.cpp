@@ -100,6 +100,14 @@ PhysicsEntity::~PhysicsEntity()
 // move entity horizontally and vertically, and manage collisions
 void PhysicsEntity::handleMovements()
 {
+	if (collisions[DOWN] == NULL && aerialSpeed == 0)
+		aerialSpeed = Game::GRAVITY_START;
+	if (moveSpeed != 0)
+		rect.x += moveSpeed;
+	if (aerialSpeed != 0)
+		rect.y += aerialSpeed;
+	cycleAerials();
+	/*
 	if (moveSpeed != 0)
 		rect.x += moveSpeed;
 	if (Game::checkCollision(this))
@@ -137,6 +145,7 @@ void PhysicsEntity::handleMovements()
 		collisions[UP] = NULL;
 		// collisions[DOWN] = NULL;
 	}
+	*/
 	
 	/*
 	if (moveSpeed != 0)

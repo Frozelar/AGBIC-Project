@@ -37,6 +37,10 @@ enum CollectibleType {
 	COIN, SPRINT, JUMP_HEIGHT, DOUBLE_JUMP, TOTAL_COLLECTIBLE_TYPES
 };
 
+enum EnemyType {
+	ICE, TOTAL_ENEMY_TYPES
+};
+
 class Entity
 {
 public:

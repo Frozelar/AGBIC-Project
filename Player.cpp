@@ -82,7 +82,6 @@ bool Player::handleInput(SDL_Event* e)
 		}
 		else
 			return false;
-
 	}
 	return true;
 }
@@ -104,27 +103,35 @@ void Player::handleMovements()
 	{
 		if (collisions[LEFT] != NULL)
 		{
-			if (collisions[LEFT]->getType() != COLLECTIBLE)
+			if (collisions[LEFT]->getType() == BLOCK)
 			{
 				while (Game::checkCollision(rect, collisions[LEFT]->rect))
 					rect.x++;
 			}
-			else
+			else if (collisions[LEFT]->getType() == COLLECTIBLE)
 			{
 				collisions[LEFT]->destroy = true;
+			}
+			else if (collisions[LEFT]->getType() == ENEMY)
+			{
+				destroy = true;
 			}
 			collisions[LEFT] = NULL;
 		}
 		if (collisions[RIGHT] != NULL)
 		{
-			if (collisions[RIGHT]->getType() != COLLECTIBLE)
+			if (collisions[RIGHT]->getType() == BLOCK)
 			{
 				while (Game::checkCollision(rect, collisions[RIGHT]->rect))
 					rect.x--;
 			}
-			else
+			else if (collisions[RIGHT]->getType() == COLLECTIBLE)
 			{
 				collisions[RIGHT]->destroy = true;
+			}
+			else if (collisions[RIGHT]->getType() == ENEMY)
+			{
+				destroy = true;
 			}
 			collisions[RIGHT] = NULL;
 		}
@@ -145,29 +152,37 @@ void Player::handleMovements()
 	{
 		if (collisions[UP] != NULL)
 		{
-			if (collisions[UP]->getType() != COLLECTIBLE)
+			if (collisions[UP]->getType() == BLOCK)
 			{
 				aerialSpeed = 0;
 				while (Game::checkCollision(rect, collisions[UP]->rect))
 					rect.y++;
 			}
-			else
+			else if (collisions[UP]->getType() == COLLECTIBLE)
 			{
 				collisions[UP]->destroy = true;
+			}
+			else if (collisions[UP]->getType() == ENEMY)
+			{
+				destroy = true;
 			}
 			collisions[UP] = NULL;
 		}
 		if (collisions[DOWN] != NULL)
 		{
-			if (collisions[DOWN]->getType() != COLLECTIBLE)
+			if (collisions[DOWN]->getType() == BLOCK)
 			{
 				aerialSpeed = 0;
 				while (Game::checkCollision(rect, collisions[DOWN]->rect))
 					rect.y--;
 			}
-			else
+			else if(collisions[DOWN]->getType() == COLLECTIBLE)
 			{
 				collisions[DOWN]->destroy = true;
+			}
+			else if (collisions[DOWN]->getType() == ENEMY)
+			{
+				destroy = true;
 			}
 			// collisions[DOWN] = NULL;
 		}

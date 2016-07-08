@@ -50,6 +50,7 @@ public:
 	static Player* gPlayer;
 	static std::vector<std::string> blockIDs;
 	static std::vector<std::string> collectibleIDs;
+	static std::vector<std::string> enemyIDs;
 	static std::vector<std::string> particleIDs;
 	static const int UNIT_W;
 	static const int UNIT_H;
@@ -63,6 +64,7 @@ public:
 	static const float ROTATION_SPEED;
 	static const int BOB_SPEED;
 	static const int WARMUP_DURATION;
+	static const int ENEMY_SPAWN_CHANCE;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
 	static GameMode Mode;

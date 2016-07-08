@@ -68,6 +68,8 @@ int main(int argc, char** argv)
 		Game::process();
 		// Level::moveLevel();
 		Graphics::renderAll();
+		if(Game::gPlayer->destroy)
+			quit = Game::gPlayer->destroy;
 	}
 	Level::closeLevel();
 	Game::close();

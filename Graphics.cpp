@@ -29,6 +29,7 @@ SDL_Rect Graphics::viewport = { 0, 0, 0, 0 };
 // textures for specified objects
 std::vector<Texture*> Graphics::blockGFX;
 std::vector<Texture*> Graphics::collectibleGFX;
+std::vector<Texture*> Graphics::enemyGFX;
 
 // store background objects and particles
 std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
@@ -55,6 +56,7 @@ std::string Graphics::rExt = ".png";
 std::string Graphics::blockPrefix = "blk";
 std::string Graphics::collectiblePrefix = "col";
 std::string Graphics::playerPrefix = "player";
+std::string Graphics::enemyPrefix = "nme";
 std::string Graphics::bgPrefix = "bg";
 std::string Graphics::bgObjectPrefix = "bgo";
 std::string Graphics::particlePrefix = "prt";
@@ -95,6 +97,11 @@ bool Graphics::init()
 		collectibleGFX.push_back(new Texture(0, 0, 0, 0));
 		collectibleGFX[i]->txLoadF(rDir + collectiblePrefix + Game::collectibleIDs[i] + rExt);
 	}
+	for (int i = 0; i < Game::enemyIDs.size(); i++)
+	{
+		enemyGFX.push_back(new Texture(0, 0, 0, 0));
+		enemyGFX[i]->txLoadF(rDir + enemyPrefix + Game::enemyIDs[i] + rExt);
+	}
 	return true;
 }
 
@@ -121,6 +128,14 @@ void Graphics::close()
 		{
 			delete collectibleGFX[i];
 			collectibleGFX[i] = NULL;
+		}
+	}
+	for (int i = 0; i < enemyGFX.size(); i++)
+	{
+		if (enemyGFX[i] != NULL)
+		{
+			delete enemyGFX[i];
+			enemyGFX[i] = NULL;
 		}
 	}
 }
@@ -159,8 +174,10 @@ void Graphics::renderAll()
 	SDL_Rect part = { 0, 0, 0, 0 };
 	static int plrot = 0;
 	static int clrot = 0;
+	static int enrot = 0;
 	plrot = abs(Game::gPlayer->aerialSpeed != 0 ? plrot + Game::gPlayer->aerialSpeed * Game::ROTATION_SPEED * (Game::gPlayer->aerialSpeed < 0 ? -1 : 1) : 0);
 	clrot += Game::ROTATION_SPEED;
+	enrot += Game::ROTATION_SPEED * 2;
 	viewport.w = Window::getw();
 	viewport.h = Window::geth();
 	SDL_RenderClear(Window::renderer);
@@ -189,6 +206,10 @@ void Graphics::renderAll()
 			case COLLECTIBLE:
 				collectibleGFX[Game::renderedEntities[i]->getSubtype()]->txRect = { Game::renderedEntities[i]->rect.x - viewport.x, Game::renderedEntities[i]->rect.y - viewport.y, Game::renderedEntities[i]->rect.w, Game::renderedEntities[i]->rect.h };
 				collectibleGFX[Game::renderedEntities[i]->getSubtype()]->txRender(NULL, NULL, clrot, SDL_FLIP_NONE);
+				break;
+			case ENEMY:
+				enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRect = { Game::renderedEntities[i]->rect.x - viewport.x, Game::renderedEntities[i]->rect.y - viewport.y, Game::renderedEntities[i]->rect.w, Game::renderedEntities[i]->rect.h };
+				enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRender(NULL, NULL, enrot, SDL_FLIP_NONE);
 				break;
 			}
 		}
@@ -371,4 +392,9 @@ void Graphics::manageParticles(int which)
 		}
 		break;
 	}
+}
+
+SDL_Rect Graphics::getViewport()
+{
+	return viewport;
 }

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include "Entities.h"
 #include "Player.h"
 #include "Collectible.h"
+#include "Graphics.h"
 
 // updated with user input
 SDL_Event Game::inputEvent;
@@ -41,6 +42,7 @@ Player* Game::gPlayer = NULL;
 // identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::blockIDs = { "White" };
 std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "JumpHeight", "DoubleJump" };
+std::vector<std::string> Game::enemyIDs = { "Ice" };
 std::vector<std::string> Game::particleIDs = { "Snow" };
 
 // constant values
@@ -56,6 +58,7 @@ const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 const int Game::BOB_SPEED = 64;
 const int Game::WARMUP_DURATION = 32;
+const int Game::ENEMY_SPAWN_CHANCE = 64;
 
 // map of game controls
 std::map<std::string, int> Game::Controls;
@@ -244,7 +247,8 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 	}
 	else if (/*type == PHYSICS_ENTITY ||*/ type == ENEMY)
 	{
-		allEntities.push_back(new PhysicsEntity(box, type, subtype));
+		SDL_Rect actualbox = { box.x, box.y, box.w, box.h };
+		allEntities.push_back(new PhysicsEntity(actualbox, type, subtype));
 		dynamicEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
@@ -326,6 +330,25 @@ void Game::process()
 				collectibles[i]->onProcess();
 			}
 		}
+	}
+	for (int i = 0; i < dynamicEntities.size(); i++)
+	{
+		if (dynamicEntities[i] != NULL)
+		{
+			dynamicEntities[i]->handleMovements();
+			dynamicEntities[i]->onProcess();
+		}
+	}
+	if (rand() % ENEMY_SPAWN_CHANCE == 1)
+	{
+		SDL_Rect box = { 0, 0, UNIT_W, UNIT_H };
+		SDL_Rect vp = Graphics::getViewport();
+		box.x = rand() % (gPlayer->rect.x + vp.w) + (gPlayer->rect.x - vp.w);
+		box.w /= (rand() % 2 == 0 ? 2 : 1);
+		box.h = box.w;
+		box.y = -box.h;
+		newEntity(box, ENEMY, ICE);
+		dynamicEntities.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
 	}
 }
 

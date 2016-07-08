@@ -42,6 +42,7 @@ public:
 	static void closeBG(void);
 	static void manageBG(void);
 	static void manageParticles(int);
+	static SDL_Rect getViewport(void);
 
 	static const int GFX_OFFSET;
 	static const int BG_ALPHA_BASE;
@@ -52,6 +53,7 @@ private:
 	static SDL_Rect viewport;
 	static std::vector<Texture*> blockGFX;
 	static std::vector<Texture*> collectibleGFX;
+	static std::vector<Texture*> enemyGFX;
 	static std::vector<std::pair<Texture*, int>> bgObjects;
 	static std::vector<std::pair<Texture*, int>> particles;
 	static float particleDensity;
@@ -62,6 +64,7 @@ private:
 	static std::string rExt;
 	static std::string blockPrefix;
 	static std::string collectiblePrefix;
+	static std::string enemyPrefix;
 	static std::string playerPrefix;
 	static std::string bgPrefix;
 	static std::string bgObjectPrefix;
