@@ -30,6 +30,7 @@ public:
 	void cycleAerials(void);
 	bool handleInput(SDL_Event*);
 
+	int jumps;
 	std::unordered_map<std::string, bool> abilities;
 };
 

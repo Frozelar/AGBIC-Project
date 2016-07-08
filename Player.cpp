@@ -26,6 +26,7 @@ Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
 	abilities["Sprint"] = false;
 	abilities["High Jump"] = false;
 	abilities["Double Jump"] = false;
+	jumps = 0;
 }
 
 // 
@@ -48,10 +49,7 @@ void Player::handleAerials()
 // process any inputs in given event
 bool Player::handleInput(SDL_Event* e)
 {
-	static int plJumpNum = 0;
-	if (plJumpNum != 0 && aerialSpeed == 0)
-		plJumpNum = 0;
-	if (e->type == SDL_KEYDOWN)
+	if (e->type == SDL_KEYDOWN && e->key.repeat == NULL)
 	{
 		if (e->key.keysym.sym == Game::Controls["Move Left"])
 		{
@@ -63,12 +61,9 @@ bool Player::handleInput(SDL_Event* e)
 		}
 		else if (e->key.keysym.sym == Game::Controls["Jump"])
 		{
-			if (aerialSpeed == 0 || (abilities["Double Jump"] && plJumpNum == 1))
+			if (aerialSpeed == 0 || (abilities["Double Jump"] && jumps == 1))
 			{
-				std::cout << plJumpNum << " ";
 				aerialSpeed = Game::JUMP_START;
-				if(plJumpNum == 1)
-					plJumpNum++;
 			}
 		}
 		else
@@ -82,11 +77,8 @@ bool Player::handleInput(SDL_Event* e)
 			moveSpeed = 0;
 		else if (e->key.keysym.sym == Game::Controls["Jump"])
 		{
-			if (aerialSpeed < 0)
-			{
-				plJumpNum++;
+			if(aerialSpeed < 0)
 				aerialSpeed *= Game::JUMP_MULT / 4;
-			}
 		}
 		else
 			return false;
@@ -186,7 +178,10 @@ void Player::handleMovements()
 void Player::cycleAerials()
 {
 	if (aerialSpeed == Game::JUMP_START)
+	{
 		Audio::play(JUMP, 's');
+		jumps++;
+	}
 	if (aerialSpeed < 0)
 	{
 		aerialSpeed *= (Game::JUMP_MULT) + (!abilities["High Jump"] ? 0 : 0.02);
@@ -199,4 +194,6 @@ void Player::cycleAerials()
 		if (aerialSpeed > Game::GRAVITY_MAX)
 			aerialSpeed = Game::GRAVITY_MAX;
 	}
+	else if (aerialSpeed == 0)
+		jumps = 0;
 }

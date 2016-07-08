@@ -184,13 +184,29 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 {
 	int dir = -1;
 	SDL_Rect check = e1->rect;
-	if (e1->aerialSpeed != 0 || e1->moveSpeed != 0)
+
+	if (e1->aerialSpeed > 0 && r2.y >= e1->rect.y + e1->rect.h - e1->aerialSpeed)
+		dir = DOWN;
+	else if (e1->aerialSpeed < 0 && r2.y + r2.h <= e1->rect.y - e1->aerialSpeed)
+		dir = UP;
+
+	if (e1->moveSpeed > 0 && r2.x >= e1->rect.x + e1->rect.w - e1->moveSpeed)
+		dir = RIGHT;
+	else if (e1->moveSpeed < 0 && r2.x + r2.w <= e1->rect.x - e1->moveSpeed)
+		dir = LEFT;
+
+	if (dir == -1)
+		dir = UP; // DOWN;
+
+	/*
+	if (e1->aerialSpeed != 0)// || e1->moveSpeed != 0)
 	{
 		if (e1->aerialSpeed > 0)
 			dir = DOWN;
 		else if (e1->aerialSpeed < 0)
 			dir = UP;
 		check.y -= e1->aerialSpeed;
+		// check.x -= e1->moveSpeed;
 		if (checkCollision(check, r2))
 			dir = -1;
 	}
@@ -201,6 +217,7 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 			dir = RIGHT;
 		else if (e1->moveSpeed < 0)
 			dir = LEFT;
+		// check.y -= e1->aerialSpeed;
 		check.x -= e1->moveSpeed;
 		if (checkCollision(check, r2))
 			dir = -1;
@@ -210,6 +227,7 @@ int Game::findCollision(PhysicsEntity* e1, SDL_Rect r2)
 		dir = DOWN;
 		// std::cout << "COLLISION ERROR: findCollision(). Direction set to DOWN to avoid crashing." << std::endl;
 	}
+	*/
 	return dir;
 }
 
