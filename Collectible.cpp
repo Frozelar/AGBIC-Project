@@ -1,6 +1,7 @@
 #include "Collectible.h"
 #include "Player.h"
 #include "Game.h"
+#include "Audio.h"
 
 // initialize variables
 Collectible::Collectible(SDL_Rect box, int type) : StaticEntity(box, COLLECTIBLE, type)
@@ -17,6 +18,7 @@ Collectible::~Collectible()
 // called once when entity is deleted
 void Collectible::onDestroy()
 {
+	Audio::play(COLLECT, 's');
 	switch (subtype)
 	{
 	case COIN:

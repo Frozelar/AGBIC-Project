@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Include.h"
 
 enum SFXType {
-	JUMP
+	JUMP, COLLECT
 };
 
 class Audio

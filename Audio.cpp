@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // number of elements
 const int Audio::TOTAL_MUSIC = 1;
-const int Audio::TOTAL_SFX = 1;
+const int Audio::TOTAL_SFX = 2;
 
 // directories
 std::string Audio::mDir = "Resources/";
@@ -40,7 +40,7 @@ std::vector<Mix_Chunk*> Audio::sfx;
 
 // identifiers (in file names)
 std::vector<std::string> Audio::musicIDs = { "GlaciersPeak" };
-std::vector<std::string> Audio::sfxIDs = { "Jump" };
+std::vector<std::string> Audio::sfxIDs = { "Jump", "Collect" };
 
 // call init()
 Audio::Audio()
