@@ -25,13 +25,20 @@ void Collectible::onDestroy()
 		Game::score += 10;
 		break;
 	case SPRINT:
+		Game::score += 1;
 		Game::gPlayer->abilities["Sprint"] = true;
 		break;
 	case JUMP_HEIGHT:
+		Game::score += 1;
 		Game::gPlayer->abilities["High Jump"] = true;
 		break;
 	case DOUBLE_JUMP:
+		Game::score += 1;
 		Game::gPlayer->abilities["Double Jump"] = true;
+		break;
+	case KEY:
+		Game::score += 1;
+		Game::gPlayer->abilities["Key"] = true;
 		break;
 	}
 }

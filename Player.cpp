@@ -26,6 +26,7 @@ Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
 	abilities["Sprint"] = false;
 	abilities["High Jump"] = false;
 	abilities["Double Jump"] = false;
+	abilities["Key"] = false;
 	jumps = 0;
 }
 
@@ -154,7 +155,8 @@ void Player::handleMovements()
 		{
 			if (collisions[UP]->getType() == BLOCK)
 			{
-				aerialSpeed = 0;
+				// aerialSpeed = 0;
+				aerialSpeed = Game::GRAVITY_START;
 				while (Game::checkCollision(rect, collisions[UP]->rect))
 					rect.y++;
 			}
@@ -172,6 +174,9 @@ void Player::handleMovements()
 		{
 			if (collisions[DOWN]->getType() == BLOCK)
 			{
+				if (collisions[DOWN]->getSubtype() == GOAL && abilities["Key"])
+					Game::Mode = LEVEL_END;
+
 				aerialSpeed = 0;
 				while (Game::checkCollision(rect, collisions[DOWN]->rect))
 					rect.y--;
@@ -211,4 +216,7 @@ void Player::cycleAerials()
 	}
 	else if (aerialSpeed == 0)
 		jumps = 0;
+
+	if (aerialSpeed != 0 && jumps == 0)
+		jumps++;
 }
