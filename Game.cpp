@@ -60,7 +60,7 @@ const int Game::BOB_SPEED = 64;
 const int Game::WARMUP_DURATION = 32;
 
 // chances of an enemy spawning
-int Game::enemySpawnChance = 150; //64;
+int Game::enemySpawnChance = 128; //64;
 
 // map of game controls
 std::map<std::string, int> Game::Controls;

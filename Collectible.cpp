@@ -48,7 +48,7 @@ void Collectible::onDestroy()
 	case KEY:
 		Game::score += 5;
 		Graphics::particleDensity += 0.5;
-		Game::enemySpawnChance -= 10;
+		Game::enemySpawnChance -= 12;
 		Game::gPlayer->abilities["Key"] = true;
 		break;
 	}
