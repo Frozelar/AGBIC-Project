@@ -64,7 +64,7 @@ public:
 	static const float ROTATION_SPEED;
 	static const int BOB_SPEED;
 	static const int WARMUP_DURATION;
-	static const int ENEMY_SPAWN_CHANCE;
+	static  int enemySpawnChance;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
 	static GameMode Mode;

@@ -58,7 +58,9 @@ const int Game::MOVE_SPEED = 2;
 const float Game::ROTATION_SPEED = 2.5;
 const int Game::BOB_SPEED = 64;
 const int Game::WARMUP_DURATION = 32;
-const int Game::ENEMY_SPAWN_CHANCE = 64;
+
+// chances of an enemy spawning
+int Game::enemySpawnChance = 150; //64;
 
 // map of game controls
 std::map<std::string, int> Game::Controls;
@@ -339,16 +341,19 @@ void Game::process()
 			dynamicEntities[i]->onProcess();
 		}
 	}
-	if (rand() % ENEMY_SPAWN_CHANCE == 1)
+	if (enemySpawnChance > 0)
 	{
-		SDL_Rect box = { 0, 0, UNIT_W, UNIT_H };
-		SDL_Rect vp = Graphics::getViewport();
-		box.x = rand() % (gPlayer->rect.x + vp.w) + (gPlayer->rect.x - vp.w);
-		box.w /= (rand() % 2 == 0 ? 2 : 1);
-		box.h = box.w;
-		box.y = -box.h;
-		newEntity(box, ENEMY, ICE);
-		dynamicEntities.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
+		if (rand() % enemySpawnChance == 1)
+		{
+			SDL_Rect box = { 0, 0, UNIT_W, UNIT_H };
+			SDL_Rect vp = Graphics::getViewport();
+			box.x = rand() % (gPlayer->rect.x + vp.w) + (gPlayer->rect.x - vp.w);
+			box.w /= (rand() % 2 == 0 ? 2 : 1);
+			box.h = box.w;
+			box.y = -box.h;
+			newEntity(box, ENEMY, ICE);
+			dynamicEntities.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
+		}
 	}
 }
 

@@ -46,6 +46,7 @@ public:
 
 	static const int GFX_OFFSET;
 	static const int BG_ALPHA_BASE;
+	static float particleDensity;
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;
 
@@ -56,7 +57,6 @@ private:
 	static std::vector<Texture*> enemyGFX;
 	static std::vector<std::pair<Texture*, int>> bgObjects;
 	static std::vector<std::pair<Texture*, int>> particles;
-	static float particleDensity;
 	static Texture* bg;
 	static Texture* playerGFX;
 	static SDL_Color renderColor;

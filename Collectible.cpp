@@ -1,6 +1,7 @@
 #include "Collectible.h"
 #include "Player.h"
 #include "Game.h"
+#include "Graphics.h"
 #include "Audio.h"
 
 // initialize variables
@@ -23,21 +24,31 @@ void Collectible::onDestroy()
 	{
 	case COIN:
 		Game::score += 10;
+		Graphics::particleDensity += 0.1;
+		Game::enemySpawnChance -= 4;
 		break;
 	case SPRINT:
 		Game::score += 1;
+		Graphics::particleDensity += 0.3;
+		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["Sprint"] = true;
 		break;
 	case JUMP_HEIGHT:
 		Game::score += 1;
+		Graphics::particleDensity += 0.3;
+		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["High Jump"] = true;
 		break;
 	case DOUBLE_JUMP:
 		Game::score += 1;
+		Graphics::particleDensity += 0.3;
+		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["Double Jump"] = true;
 		break;
 	case KEY:
-		Game::score += 1;
+		Game::score += 5;
+		Graphics::particleDensity += 0.5;
+		Game::enemySpawnChance -= 10;
 		Game::gPlayer->abilities["Key"] = true;
 		break;
 	}

@@ -68,7 +68,7 @@ const int Graphics::GFX_OFFSET = 0;
 const int Graphics::BG_ALPHA_BASE = 255;
 
 // value used for determining density of particles
-float Graphics::particleDensity = 2;
+float Graphics::particleDensity = 0; //2;
 
 // call init()
 Graphics::Graphics()

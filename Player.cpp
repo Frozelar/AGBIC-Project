@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Game.h"
 #include "Audio.h"
+#include "Level.h"
 
 // initialize members
 Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
@@ -191,6 +192,16 @@ void Player::handleMovements()
 			}
 			// collisions[DOWN] = NULL;
 		}
+	}
+	while (rect.x < 0)
+	{
+		rect.x++;
+		moveSpeed = 0;
+	}
+	while (rect.x + rect.w >= Level::getw('p'))
+	{
+		rect.x--;
+		moveSpeed = 0;
 	}
 }
 
