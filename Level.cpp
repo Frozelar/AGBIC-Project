@@ -146,12 +146,14 @@ bool Level::begin()
 {
 	bool quit = false;
 	bool done = false;
+	int curfps = 0;
 	int target = Game::gPlayer->rect.y;
 	Game::gPlayer->rect.y = -Game::gPlayer->rect.h;
 	Game::gPlayer->aerialSpeed = Game::GRAVITY_START;
 
 	while (!quit && !done)
 	{
+		curfps = SDL_GetTicks();
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
@@ -176,6 +178,9 @@ bool Level::begin()
 
 		if (Game::gPlayer->rect.y >= target)
 			done = true;
+
+		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
+			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 	}
 	Game::Mode = GAME;
 	return quit;
@@ -186,10 +191,12 @@ bool Level::end()
 {
 	bool quit = false;
 	bool done = false;
+	int curfps = 0;
 	Game::gPlayer->aerialSpeed = Game::JUMP_MAX;
 
 	while (!quit && !done)
 	{
+		curfps = SDL_GetTicks();
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
@@ -214,6 +221,9 @@ bool Level::end()
 
 		if (Game::gPlayer->rect.y <= -Game::gPlayer->rect.h)
 			done = true;
+
+		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
+			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 	}
 	Game::Mode = MAP;
 	return quit;

@@ -50,7 +50,7 @@ bool Window::init()
 {
 	w = DEFAULT_W;
 	h = DEFAULT_H;
-	window = SDL_CreateWindow("Ice Age", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("Ice Age", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN /* | SDL_WINDOW_RESIZABLE */);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	return window != NULL && renderer != NULL;
 }

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Game.h"
 #include "Level.h"
+#include "Message.h"
 
 // viewport rect
 SDL_Rect Graphics::viewport = { 0, 0, 0, 0 };
@@ -60,6 +61,7 @@ std::string Graphics::enemyPrefix = "nme";
 std::string Graphics::bgPrefix = "bg";
 std::string Graphics::bgObjectPrefix = "bgo";
 std::string Graphics::particlePrefix = "prt";
+std::string Graphics::textBGPrefix = "textBG";
 
 // amount that graphics are offset from hitboxes
 const int Graphics::GFX_OFFSET = 0;
@@ -69,6 +71,17 @@ const int Graphics::BG_ALPHA_BASE = 255;
 
 // value used for determining density of particles
 float Graphics::particleDensity = 0; //2;
+
+// text-related members
+Texture* Graphics::textBG = NULL;
+std::string Graphics::fontName = "AveriaSans-Regular.ttf";
+
+// container of current messages
+std::vector<Message*> Graphics::messages;
+
+// messages that are displayed when a collectible is collected for the first time
+// std::vector<std::string> Graphics::collectiblePickupMsgs;
+// std::vector<Texture*> Graphics::collectiblePickupTextures;
 
 // call init()
 Graphics::Graphics()
@@ -85,6 +98,8 @@ Graphics::~Graphics()
 // initialize all graphics
 bool Graphics::init()
 {
+	TTF_Init();
+
 	playerGFX = new Texture(0, 0, 0, 0);
 	playerGFX->txLoadF(rDir + playerPrefix + rExt);
 	for (int i = 0; i < Game::blockIDs.size(); i++)
@@ -102,6 +117,8 @@ bool Graphics::init()
 		enemyGFX.push_back(new Texture(0, 0, 0, 0));
 		enemyGFX[i]->txLoadF(rDir + enemyPrefix + Game::enemyIDs[i] + rExt);
 	}
+	textBG = new Texture(0, 0, 0, 0);
+	textBG->txLoadF(rDir + textBGPrefix + rExt);
 	return true;
 }
 
@@ -138,11 +155,17 @@ void Graphics::close()
 			enemyGFX[i] = NULL;
 		}
 	}
+	if (textBG != NULL)
+	{
+		delete textBG;
+		textBG = NULL;
+	}
 }
 
 // delete graphics only related to the level in specific
 void Graphics::closeLevelGFX()
 {
+	clearMessages();
 	if (bg != NULL)
 	{
 		delete bg;
@@ -166,6 +189,12 @@ void Graphics::closeLevelGFX()
 		}
 		particles.pop_back();
 	}
+}
+
+void Graphics::clearMessages()
+{
+	for (int i = 0; i < messages.size(); i++)
+		messages.pop_back();
 }
 
 // render everything
@@ -234,6 +263,17 @@ void Graphics::renderAll()
 			particles[i].first->txRender();
 			particles[i].first->txRect = part;
 		}
+	}
+
+	for (int i = 0; i < messages.size(); i++)
+	{
+		if (messages[i]->displayTime <= 0 && messages[i]->displayTime != -1)
+		{
+			messages.erase(messages.begin() + i);
+			i--;
+		}
+		else
+			messages[i]->render();
 	}
 
 	SDL_RenderPresent(Window::renderer);
@@ -392,6 +432,33 @@ void Graphics::manageParticles(int which)
 		}
 		break;
 	}
+}
+
+void Graphics::newMessage(std::string pmsg, int psize, int ptime, SDL_Color pcolor, Direction pdir, Direction pside, bool pshow)
+{
+	messages.push_back(new Message(pmsg, psize, ptime, pcolor, pdir, pside, pshow));
+}
+
+void Graphics::handleGameOverlay(int time, int score)
+{
+	static int timeIndex = -1, scoreIndex = -1;
+	static int oldTime = 0, oldScore = 0;
+	if (timeIndex == -1 || scoreIndex == -1)
+	{
+		timeIndex = messages.size();
+		newMessage(std::to_string(time), 36, -1, { 0, 0, 0, 255 }, UP, RIGHT, true);
+		scoreIndex = messages.size();
+		newMessage(std::to_string(score), 36, -1, { 0, 0, 0, 255 }, DOWN, RIGHT, true);
+	}
+	else
+	{
+		if(oldTime != time)
+			messages[timeIndex]->setText(std::to_string(time));
+		if(oldScore != score)
+			messages[scoreIndex]->setText(std::to_string(score));
+	}
+	oldTime = time;
+	oldScore = score;
 }
 
 SDL_Rect Graphics::getViewport()

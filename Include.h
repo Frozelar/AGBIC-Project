@@ -43,6 +43,7 @@ class Player;
 class Collectible;
 class Level;
 class Audio;
+class Message;
 
 enum Direction {
 	UP, DOWN, LEFT, RIGHT, TOTAL_DIRECTIONS

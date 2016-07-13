@@ -41,7 +41,10 @@ public:
 	static void loadBG(int);
 	static void closeBG(void);
 	static void manageBG(void);
-	static void manageParticles(int);
+	static void manageParticles(int); 
+	static void newMessage(std::string, int = 36, int = 300, SDL_Color = { 255, 255, 255, 255 }, Direction = DOWN, Direction = LEFT, bool = true);
+	static void clearMessages(void);
+	static void handleGameOverlay(int, int);
 	static SDL_Rect getViewport(void);
 
 	static const int GFX_OFFSET;
@@ -49,6 +52,10 @@ public:
 	static float particleDensity;
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;
+	static std::string rDir;
+	static std::string rExt;
+	static Texture* textBG;
+	static std::string fontName;
 
 private:
 	static SDL_Rect viewport;
@@ -57,11 +64,12 @@ private:
 	static std::vector<Texture*> enemyGFX;
 	static std::vector<std::pair<Texture*, int>> bgObjects;
 	static std::vector<std::pair<Texture*, int>> particles;
+	static std::vector<Message*> messages;
+	// static std::vector<std::string> collectiblePickupMsgs;
+	// static std::vector<Texture*> collectiblePickupTextures;
 	static Texture* bg;
 	static Texture* playerGFX;
 	static SDL_Color renderColor;
-	static std::string rDir;
-	static std::string rExt;
 	static std::string blockPrefix;
 	static std::string collectiblePrefix;
 	static std::string enemyPrefix;
@@ -69,5 +77,6 @@ private:
 	static std::string bgPrefix;
 	static std::string bgObjectPrefix;
 	static std::string particlePrefix;
+	static std::string textBGPrefix;
 };
 

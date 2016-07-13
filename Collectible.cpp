@@ -19,6 +19,10 @@ Collectible::~Collectible()
 // called once when entity is deleted
 void Collectible::onDestroy()
 {
+	static std::vector<bool> firstCollect;
+	while (firstCollect.size() < TOTAL_COLLECTIBLE_TYPES)
+		firstCollect.push_back(false);
+
 	Audio::play(COLLECT, 's');
 	switch (subtype)
 	{
@@ -33,7 +37,7 @@ void Collectible::onDestroy()
 		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["Sprint"] = true;
 		break;
-	case JUMP_HEIGHT:
+	case HIGH_JUMP:
 		Game::score += 1;
 		Graphics::particleDensity += 0.3;
 		Game::enemySpawnChance -= 8;
@@ -51,6 +55,12 @@ void Collectible::onDestroy()
 		Game::enemySpawnChance -= 12;
 		Game::gPlayer->abilities["Key"] = true;
 		break;
+	}
+
+	if (firstCollect[subtype] == false)
+	{
+		firstCollect[subtype] = true;
+		Graphics::newMessage(Game::collectibleIDs[subtype]);
 	}
 }
 

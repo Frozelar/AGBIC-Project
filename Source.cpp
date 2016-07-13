@@ -35,16 +35,21 @@ int main(int argc, char** argv)
 {
 	bool quit = false;
 	int curlevel = 0;
+	Uint32 curfps = 0, curtime = 0, levelstart = 0;
 
 	Game::Mode = LEVEL_BEGIN;
 
 	while (!quit)
 	{
+		curfps = SDL_GetTicks();
 		if (Level::getID() == -1)
 			Level::generateLevel(curlevel++);
 
 		if (Game::Mode == LEVEL_BEGIN)
+		{
 			quit = Level::begin();
+			levelstart = SDL_GetTicks();
+		}
 		else if (Game::Mode == LEVEL_END)
 			quit = Level::end();
 
@@ -70,6 +75,11 @@ int main(int argc, char** argv)
 		Graphics::renderAll();
 		if(Game::gPlayer->destroy)
 			quit = Game::gPlayer->destroy;
+		// if (1000 / Game::FPS > SDL_GetTicks() - curfps)
+		// 	SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
+		curtime = (curfps - levelstart) / 1000;
+		if (Game::Mode == GAME)
+			Graphics::handleGameOverlay(curtime, Game::score);
 	}
 	Level::closeLevel();
 	Game::close();
