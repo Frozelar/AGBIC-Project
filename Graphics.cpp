@@ -69,12 +69,18 @@ const int Graphics::GFX_OFFSET = 0;
 // value used for determining alpha of background objects
 const int Graphics::BG_ALPHA_BASE = 255;
 
+// default menu size
+const SDL_Rect Graphics::MENU_RECT = { Window::getw() / 4, Window::geth() / 4, Window::getw() / 2, Window::geth() / 2 };
+
 // value used for determining density of particles
 float Graphics::particleDensity = 0; //2;
 
 // text-related members
 Texture* Graphics::textBG = NULL;
 std::string Graphics::fontName = "AveriaSans-Regular.ttf";
+TTF_Font* Graphics::gFont = NULL;
+SDL_Color Graphics::gTextColor = { 255, 255, 255, 255 };
+int Graphics::gFontSize = 36;
 
 // container of current messages
 std::vector<Message*> Graphics::messages;
@@ -98,7 +104,9 @@ Graphics::~Graphics()
 // initialize all graphics
 bool Graphics::init()
 {
+	std::string fnt = rDir + fontName;
 	TTF_Init();
+	gFont = TTF_OpenFont(fnt.c_str(), gFontSize);
 
 	playerGFX = new Texture(0, 0, 0, 0);
 	playerGFX->txLoadF(rDir + playerPrefix + rExt);

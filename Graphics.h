@@ -49,6 +49,7 @@ public:
 
 	static const int GFX_OFFSET;
 	static const int BG_ALPHA_BASE;
+	static const SDL_Rect MENU_RECT;
 	static float particleDensity;
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;
@@ -56,6 +57,9 @@ public:
 	static std::string rExt;
 	static Texture* textBG;
 	static std::string fontName;
+	static TTF_Font* gFont;
+	static SDL_Color gTextColor;
+	static int gFontSize;
 
 private:
 	static SDL_Rect viewport;

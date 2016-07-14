@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Level.h"
 #include "Audio.h"
+#include "Menu.h"
 
 // create static classes
 Window gWindow;
@@ -30,6 +31,7 @@ Game gGame;
 Graphics gGraphics;
 Level gLevel;
 Audio gAudio;
+Menu gMenu;
 
 int main(int argc, char** argv)
 {
@@ -37,21 +39,39 @@ int main(int argc, char** argv)
 	int curlevel = 0;
 	Uint32 curfps = 0, curtime = 0, levelstart = 0;
 
-	Game::Mode = LEVEL_BEGIN;
+	Game::Mode = TITLE;
 
 	while (!quit)
 	{
 		curfps = SDL_GetTicks();
-		if (Level::getID() == -1)
+		switch (Game::Mode)
+		{
+		case TITLE:
+			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);
+			if (quit)
+			{
+				Game::close();
+				return 0;
+			}
+			break;
+		case PAUSE:
+			quit = Menu::loop(PAUSE, Graphics::MENU_RECT, &Game::inputEvent);
+			break;
+		}
+
+		if (Game::Mode != TITLE && Level::getID() == -1)
 			Level::generateLevel(curlevel++);
 
-		if (Game::Mode == LEVEL_BEGIN)
+		switch (Game::Mode)
 		{
+		case LEVEL_BEGIN:
 			quit = Level::begin();
 			levelstart = SDL_GetTicks();
-		}
-		else if (Game::Mode == LEVEL_END)
+			break;
+		case LEVEL_END:
 			quit = Level::end();
+			break;
+		}
 
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)

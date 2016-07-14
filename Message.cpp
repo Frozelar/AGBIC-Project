@@ -7,8 +7,8 @@
 // initialize members
 Message::Message(std::string pmsg, int psize, int ptime, SDL_Color pcolor, Direction pdir, Direction pside, bool pshow)
 {
-	std::string name = Graphics::rDir + Graphics::fontName;
-	font = TTF_OpenFont(name.c_str(), psize);
+	// std::string name = Graphics::rDir + Graphics::fontName;
+	font = Graphics::gFont;
 	msg = pmsg;
 	fontSize = psize;
 	displayTime = ptime;

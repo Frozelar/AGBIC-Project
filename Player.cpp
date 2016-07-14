@@ -82,6 +82,10 @@ bool Player::handleInput(SDL_Event* e)
 			if(aerialSpeed < 0)
 				aerialSpeed *= Game::JUMP_MULT / 4;
 		}
+		else if (e->key.keysym.sym == Game::Controls["Pause"])
+		{
+			Game::Mode = PAUSE;
+		}
 		else
 			return false;
 	}

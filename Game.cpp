@@ -93,6 +93,7 @@ bool Game::init()
 	Controls["Move Left"] = SDLK_a;
 	Controls["Move Right"] = SDLK_d;
 	Controls["Jump"] = SDLK_w;
+	Controls["Pause"] = SDLK_p;
 	gPlayer = new Player({ 100, 0, UNIT_W, UNIT_H });
 
 	return true;

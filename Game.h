@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Include.h"
 
 enum GameMode {
-	GAME, TITLE, MENU, LEVEL_BEGIN, LEVEL_END, MAP
+	TITLE, PAUSE, GAME, LEVEL_BEGIN, LEVEL_END, MAP
 };
 
 class Game
