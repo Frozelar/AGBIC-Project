@@ -15,6 +15,7 @@ Sound effects made (by me) using:
 
 Music credits:
 - "The Glacier's Peak", a Sonic Advance remix made by jmr on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR02370
+- "Crystalline Caverns", a Super Mario World 2: Yoshi's Island remix made by McVaffe on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR00860
 
 Other credits:
 - Some of the very early code was derived from examples shown in LazyFoo's SDL tutorials: http://lazyfoo.net/tutorials/SDL/
