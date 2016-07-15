@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Texture.h"
 #include "Graphics.h"
+#include "Audio.h"
 
 // which menu
 int Menu::type = -1;
@@ -13,8 +14,9 @@ std::vector<std::pair<Texture*, std::string>> Menu::options;
 // background that is displayed on the title screen
 Texture* Menu::titleBG = NULL;
 
-// used in graphics file loading
+// used in file loading
 std::string Menu::titleBGPrefix = "titleBG";
+std::string Menu::titleMusicPrefix = "titleMusic";
 
 // current menu rect
 SDL_Rect Menu::rect;
@@ -43,6 +45,8 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 	bool quit = false;
 	int done = false;
 
+	if(type == TITLE)
+		playMusic();
 	while (!quit && !done)
 	{
 		while (SDL_PollEvent(e) != NULL)
@@ -199,6 +203,8 @@ int Menu::handleEvent(SDL_Event* e)
 void Menu::render()
 {
 	SDL_RenderClear(Window::renderer);
+	if (type == PAUSE)
+		Graphics::renderAll(false);
 	if (type == TITLE)
 		titleBG->txRender();
 	for (int i = 0; i < options.size(); i++)
@@ -218,7 +224,7 @@ void Menu::init(void)
 		if (i < title.size())
 		{
 			options.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), title[i]));
-			options[i].first->txLoadT(title[i], Graphics::gFont, Graphics::gTextColor);
+			options[i].first->txLoadT(title[i], Graphics::gFont, Graphics::black);
 			options[i].first->txRect.x = (i > 0 ? options[i - 1].first->txRect.x : rect.x + Game::UNIT_W);
 			options[i].first->txRect.y = (i > 0 ? options[i - 1].first->txRect.y + options[i - 1].first->txRect.h + Game::UNIT_H : rect.y + Game::UNIT_H);
 			origOptions.push_back(options[i].first->txRect);
@@ -226,7 +232,7 @@ void Menu::init(void)
 		else if (i - title.size() < pause.size())
 		{
 			options.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), pause[i - title.size()]));
-			options[i].first->txLoadT(pause[i - title.size()], Graphics::gFont, Graphics::gTextColor);
+			options[i].first->txLoadT(pause[i - title.size()], Graphics::gFont, Graphics::black);
 			options[i].first->txRect.x = (i > title.size() ? options[i - 1].first->txRect.x : rect.x + Game::UNIT_W);
 			options[i].first->txRect.y = (i > title.size() ? options[i - 1].first->txRect.y + options[i - 1].first->txRect.h + Game::UNIT_H : rect.y + Game::UNIT_H);
 			origOptions.push_back(options[i].first->txRect);
@@ -254,4 +260,9 @@ void Menu::clear()
 	}
 	rect = { 0, 0, 0, 0 };
 	type = -1;
+}
+
+void Menu::playMusic()
+{
+	Audio::play(TITLE, 'm');
 }

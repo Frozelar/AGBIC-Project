@@ -84,7 +84,7 @@ bool Level::generateLevel(int which)
 	levelMap >> unitType;
 	bgID = unitType;
 	levelMap >> unitType;
-	musicID = unitType;
+	musicID = unitType + 1;
 
 	for (int i = 0; i < totalPixels;)
 	{

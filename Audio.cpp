@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Audio.h"
 
 // number of elements
-const int Audio::TOTAL_MUSIC = 1;
-const int Audio::TOTAL_SFX = 2;
+// const int Audio::TOTAL_MUSIC = 2;
+// const int Audio::TOTAL_SFX = 2;
 
 // directories
 std::string Audio::mDir = "Resources/";
@@ -39,7 +39,7 @@ std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
 
 // identifiers (in file names)
-std::vector<std::string> Audio::musicIDs = { "GlaciersPeak" };
+std::vector<std::string> Audio::musicIDs = { "CrystallineCaverns", "GlaciersPeak" };
 std::vector<std::string> Audio::sfxIDs = { "Jump", "Collect" };
 
 // call init()
@@ -64,12 +64,12 @@ bool Audio::init()
 		std::cout << Mix_GetError() << std::endl;
 		return false;
 	}
-	for (int i = 0; i < TOTAL_MUSIC; i++)
+	for (int i = 0; i < musicIDs.size(); i++)
 	{
 		ID = mDir + mPrefix + musicIDs[i] + mExt;
 		music.push_back(Mix_LoadMUS(ID.c_str()));
 	}
-	for (int i = 0; i < TOTAL_SFX; i++)
+	for (int i = 0; i < sfxIDs.size(); i++)
 	{
 		ID = sDir + sPrefix + sfxIDs[i] + sExt;
 		sfx.push_back(Mix_LoadWAV(ID.c_str()));

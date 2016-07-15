@@ -36,7 +36,7 @@ public:
 	static bool init(void);
 	static void close(void);
 	static void closeLevelGFX(void);
-	static void renderAll(void);
+	static void renderAll(bool = true);
 	static void manageCamera(void);
 	static void loadBG(int);
 	static void closeBG(void);
@@ -44,7 +44,7 @@ public:
 	static void manageParticles(int); 
 	static void newMessage(std::string, int = 36, int = 300, SDL_Color = { 255, 255, 255, 255 }, Direction = DOWN, Direction = LEFT, bool = true);
 	static void clearMessages(void);
-	static void handleGameOverlay(int, int);
+	static void handleGameOverlay(int, int, bool = false);
 	static SDL_Rect getViewport(void);
 
 	static const int GFX_OFFSET;
@@ -58,7 +58,9 @@ public:
 	static Texture* textBG;
 	static std::string fontName;
 	static TTF_Font* gFont;
-	static SDL_Color gTextColor;
+	// static SDL_Color gTextColor;
+	static SDL_Color white;
+	static SDL_Color black;
 	static int gFontSize;
 
 private:

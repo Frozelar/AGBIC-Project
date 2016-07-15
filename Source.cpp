@@ -47,6 +47,10 @@ int main(int argc, char** argv)
 		switch (Game::Mode)
 		{
 		case TITLE:
+			Level::closeLevel();
+			curtime = 0;
+			Game::score = 0;
+			Graphics::handleGameOverlay(0, 0, true);
 			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);
 			if (quit)
 			{
@@ -60,7 +64,7 @@ int main(int argc, char** argv)
 		}
 
 		if (Game::Mode != TITLE && Level::getID() == -1)
-			Level::generateLevel(curlevel++);
+			Level::generateLevel(curlevel/*++*/);
 
 		switch (Game::Mode)
 		{

@@ -79,7 +79,9 @@ float Graphics::particleDensity = 0; //2;
 Texture* Graphics::textBG = NULL;
 std::string Graphics::fontName = "AveriaSans-Regular.ttf";
 TTF_Font* Graphics::gFont = NULL;
-SDL_Color Graphics::gTextColor = { 255, 255, 255, 255 };
+// SDL_Color Graphics::gTextColor = { 255, 255, 255, 255 };
+SDL_Color Graphics::white = { 255, 255, 255, 255 };
+SDL_Color Graphics::black = { 0, 0, 0, 255 };
 int Graphics::gFontSize = 36;
 
 // container of current messages
@@ -179,7 +181,7 @@ void Graphics::closeLevelGFX()
 		delete bg;
 		bg = NULL;
 	}
-	for (int i = 0; i < bgObjects.size(); i++)
+	for (int i = bgObjects.size() - 1; i >= 0; i--)
 	{
 		if (bgObjects[i].first != NULL)
 		{
@@ -188,7 +190,7 @@ void Graphics::closeLevelGFX()
 		}
 		bgObjects.pop_back();
 	}
-	for (int i = 0; i < particles.size(); i++)
+	for (int i = particles.size() - 1; i >= 0; i--)
 	{
 		if (particles[i].first != NULL)
 		{
@@ -206,7 +208,7 @@ void Graphics::clearMessages()
 }
 
 // render everything
-void Graphics::renderAll()
+void Graphics::renderAll(bool manageRenderer)
 {
 	SDL_Rect part = { 0, 0, 0, 0 };
 	static int plrot = 0;
@@ -217,10 +219,14 @@ void Graphics::renderAll()
 	enrot += Game::ROTATION_SPEED * 2;
 	viewport.w = Window::getw();
 	viewport.h = Window::geth();
-	SDL_RenderClear(Window::renderer);
-	SDL_SetRenderDrawColor(Window::renderer, renderColor.r, renderColor.g, renderColor.b, renderColor.a);
-	// SDL_RenderSetClipRect(Window::renderer, &viewport);
-	// SDL_RenderSetViewport(Window::renderer, &viewport);
+
+	if (manageRenderer)
+	{
+		SDL_RenderClear(Window::renderer);
+		SDL_SetRenderDrawColor(Window::renderer, renderColor.r, renderColor.g, renderColor.b, renderColor.a);
+		// SDL_RenderSetClipRect(Window::renderer, &viewport);
+		// SDL_RenderSetViewport(Window::renderer, &viewport);
+	}
 
 	manageBG();
 	bg->txRender();
@@ -284,7 +290,8 @@ void Graphics::renderAll()
 			messages[i]->render();
 	}
 
-	SDL_RenderPresent(Window::renderer);
+	if(manageRenderer)
+		SDL_RenderPresent(Window::renderer);
 }
 
 // center camera over player if not at level edges
@@ -447,10 +454,16 @@ void Graphics::newMessage(std::string pmsg, int psize, int ptime, SDL_Color pcol
 	messages.push_back(new Message(pmsg, psize, ptime, pcolor, pdir, pside, pshow));
 }
 
-void Graphics::handleGameOverlay(int time, int score)
+void Graphics::handleGameOverlay(int time, int score, bool reset)
 {
 	static int timeIndex = -1, scoreIndex = -1;
 	static int oldTime = 0, oldScore = 0;
+	if (reset)
+	{
+		timeIndex = scoreIndex = -1;
+		oldTime = oldScore = 0;
+		return;
+	}
 	if (timeIndex == -1 || scoreIndex == -1)
 	{
 		timeIndex = messages.size();

@@ -33,8 +33,6 @@ public:
 	static bool play(int, char);
 	static void close(void);
 
-	static const int TOTAL_MUSIC;
-	static const int TOTAL_SFX;
 	static std::vector<std::string> musicIDs;
 	static std::vector<std::string> sfxIDs;
 
