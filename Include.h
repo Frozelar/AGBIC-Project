@@ -44,6 +44,8 @@ class Collectible;
 class Level;
 class Audio;
 class Message;
+class Menu;
+class Enemy;
 
 enum Direction {
 	UP, DOWN, LEFT, RIGHT, TOTAL_DIRECTIONS

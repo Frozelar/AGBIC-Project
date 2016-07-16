@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Include.h"
 
 enum GameMode {
-	TITLE, PAUSE, GAME, LEVEL_BEGIN, LEVEL_END, MAP
+	TITLE, PAUSE, GAME, LEVEL_BEGIN, LEVEL_END, BOSS
 };
 
 class Game
@@ -47,6 +47,7 @@ public:
 	static std::vector<StaticEntity*> renderedEntities;
 	static std::vector<StaticEntity*> collisionEntities;
 	static std::vector<Collectible*> collectibles;
+	static std::vector<Enemy*> enemies;
 	static Player* gPlayer;
 	static std::vector<std::string> blockIDs;
 	static std::vector<std::string> collectibleIDs;

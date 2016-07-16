@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Game.h"
 #include "Audio.h"
 #include "Level.h"
+#include "Graphics.h"
 
 // initialize members
 Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
@@ -213,6 +214,19 @@ void Player::handleMovements()
 	{
 		rect.x--;
 		moveSpeed = 0;
+	}
+	if (Game::Mode == BOSS)
+	{
+		while (rect.x < Graphics::getViewport().x)
+		{
+			rect.x++;
+			moveSpeed = 0;
+		}
+		while (rect.x + rect.w >= Graphics::getViewport().x + Graphics::getViewport().w)
+		{
+			rect.x--;
+			moveSpeed = 0;
+		}
 	}
 }
 

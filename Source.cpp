@@ -81,7 +81,8 @@ int main(int argc, char** argv)
 			gamestart = SDL_GetTicks();
 		oldMode = Game::Mode;
 
-		Graphics::manageCamera();
+		if(Game::Mode != BOSS)
+			Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
 			switch (Game::inputEvent.type)

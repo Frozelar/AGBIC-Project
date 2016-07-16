@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Game.h"
 //#include "Entities.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Collectible.h"
 #include "Graphics.h"
 #include "Level.h"
@@ -36,6 +37,7 @@ std::vector<PhysicsEntity*> Game::dynamicEntities;
 std::vector<StaticEntity*> Game::renderedEntities;
 std::vector<StaticEntity*> Game::collisionEntities;
 std::vector<Collectible*> Game::collectibles;
+std::vector<Enemy*> Game::enemies;
 
 // player
 Player* Game::gPlayer = NULL;
@@ -43,7 +45,7 @@ Player* Game::gPlayer = NULL;
 // identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::blockIDs = { "White", "Goal" };
 std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "HighJump", "DoubleJump", "Key" };
-std::vector<std::string> Game::enemyIDs = { "Ice" };
+std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss" };
 std::vector<std::string> Game::particleIDs = { "Snow" };
 
 // constant values
@@ -253,10 +255,11 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 	else if (/*type == PHYSICS_ENTITY ||*/ type == ENEMY)
 	{
 		SDL_Rect actualbox = { box.x, box.y, box.w, box.h };
-		allEntities.push_back(new PhysicsEntity(actualbox, type, subtype));
+		allEntities.push_back(new Enemy(actualbox, subtype));
 		dynamicEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
+		enemies.push_back(static_cast<Enemy*>(allEntities.back()));
 	}
 	else if (type == COLLECTIBLE)
 	{
@@ -279,6 +282,12 @@ void Game::clearEntities(void)
 		//if (collectibles[i] != NULL)
 		//	collectibles[i] = NULL;
 		collectibles.pop_back();
+	}
+	for (int i = enemies.size() - 1; i >= 0; i--)
+	{
+		//if (enemies[i] != NULL)
+		//	enemies[i] = NULL;
+		enemies.pop_back();
 	}
 	for (int i = staticEntities.size() - 1; i >= 0; i--)
 	{
@@ -333,6 +342,23 @@ void Game::process()
 			else
 			{
 				collectibles[i]->onProcess();
+			}
+		}
+	}
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		if (enemies[i] != NULL)
+		{
+			if (enemies[i]->destroy)
+			{
+				enemies[i]->onDestroy();
+				delete enemies[i];
+				enemies[i] = NULL;
+				enemies.erase(enemies.begin() + i);
+			}
+			else
+			{
+				enemies[i]->onProcess();
 			}
 		}
 	}

@@ -246,7 +246,7 @@ bool Level::end()
 		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
 			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 	}
-	Game::Mode = MAP;
+
 	return quit;
 }
 
