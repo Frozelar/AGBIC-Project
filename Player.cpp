@@ -95,7 +95,9 @@ bool Player::handleInput(SDL_Event* e)
 // move player horizontally/vertically, manage collisions
 void Player::handleMovements()
 {
+	static bool gotEnd = false;
 	static int plFrameCount = 0;
+
 	if (abilities["Sprint"] && plFrameCount >= Game::WARMUP_DURATION && abs(moveSpeed) == Game::MOVE_SPEED)
 		moveSpeed = (moveSpeed > 0 ? 1 : -1) * Game::MOVE_SPEED * 2;
 	else if (abilities["Sprint"] && moveSpeed == 0 && plFrameCount != 0)
@@ -180,7 +182,12 @@ void Player::handleMovements()
 			if (collisions[DOWN]->getType() == BLOCK)
 			{
 				if (collisions[DOWN]->getSubtype() == GOAL && abilities["Key"])
+				{
+					if(!gotEnd)
+						Game::score += 100;
+					gotEnd = true;
 					Game::Mode = LEVEL_END;
+				}
 
 				aerialSpeed = 0;
 				while (Game::checkCollision(rect, collisions[DOWN]->rect))

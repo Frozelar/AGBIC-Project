@@ -267,7 +267,7 @@ void Graphics::renderAll(bool manageRenderer)
 	playerGFX->txRect = { Game::gPlayer->rect.x - viewport.x, Game::gPlayer->rect.y - viewport.y, Game::gPlayer->rect.w, Game::gPlayer->rect.h };
 	playerGFX->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
 
-	manageParticles(Level::getID());
+	manageParticles(SNOW /* Level::getID() */);
 	for (int i = 0; i < particles.size(); i++)
 	{
 		if (Game::checkCollision(viewport, particles[i].first->txRect))
