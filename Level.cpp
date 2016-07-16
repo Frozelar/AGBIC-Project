@@ -148,8 +148,16 @@ bool Level::begin()
 	bool done = false;
 	int curfps = 0;
 	int target = Game::gPlayer->rect.y;
-	Game::gPlayer->rect.y = -Game::gPlayer->rect.h;
-	Game::gPlayer->aerialSpeed = Game::GRAVITY_START;
+	if (levelID == 0)
+	{
+		Game::gPlayer->rect.y = hPixels;
+		Game::gPlayer->aerialSpeed = -Game::GRAVITY_START;
+	}
+	else if (levelID == 1)
+	{
+		Game::gPlayer->rect.y = -Game::gPlayer->rect.h;
+		Game::gPlayer->aerialSpeed = Game::GRAVITY_START;
+	}
 
 	while (!quit && !done)
 	{
@@ -171,13 +179,26 @@ bool Level::begin()
 		// Game::process();
 		Graphics::renderAll();
 
-		Game::gPlayer->aerialSpeed *= Game::GRAVITY_MULT;
-		if (Game::gPlayer->aerialSpeed > Game::GRAVITY_MAX)
-			Game::gPlayer->aerialSpeed = Game::GRAVITY_MAX;
-		Game::gPlayer->rect.y += Game::gPlayer->aerialSpeed;
+		if (levelID == 0)
+		{
+			Game::gPlayer->aerialSpeed *= Game::GRAVITY_MULT;
+			if (abs(Game::gPlayer->aerialSpeed) > Game::GRAVITY_MAX)
+				Game::gPlayer->aerialSpeed = -Game::GRAVITY_MAX;
+			Game::gPlayer->rect.y += Game::gPlayer->aerialSpeed;
 
-		if (Game::gPlayer->rect.y >= target)
-			done = true;
+			if (Game::gPlayer->rect.y <= target)
+				done = true;
+		}
+		else if (levelID == 1)
+		{
+			Game::gPlayer->aerialSpeed *= Game::GRAVITY_MULT;
+			if (Game::gPlayer->aerialSpeed > Game::GRAVITY_MAX)
+				Game::gPlayer->aerialSpeed = Game::GRAVITY_MAX;
+			Game::gPlayer->rect.y += Game::gPlayer->aerialSpeed;
+
+			if (Game::gPlayer->rect.y >= target)
+				done = true;
+		}
 
 		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
 			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));

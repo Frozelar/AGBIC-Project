@@ -460,6 +460,7 @@ void Graphics::handleGameOverlay(int time, int score, bool reset)
 	static int oldTime = 0, oldScore = 0;
 	if (reset)
 	{
+		clearMessages();
 		timeIndex = scoreIndex = -1;
 		oldTime = oldScore = 0;
 		return;

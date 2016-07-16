@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "Collectible.h"
 #include "Graphics.h"
+#include "Level.h"
 
 // updated with user input
 SDL_Event Game::inputEvent;
@@ -355,6 +356,23 @@ void Game::process()
 			box.y = -box.h;
 			newEntity(box, ENEMY, ICE);
 			dynamicEntities.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
+		}
+	}
+
+	if (Level::getID() == 0)
+	{
+		if (gPlayer->rect.y > Level::geth('p'))
+		{
+			Level::generateLevel(1);
+			Game::Mode = LEVEL_BEGIN;
+		}
+	}
+	else if (Level::getID() == 1)
+	{
+		if (gPlayer->rect.y + gPlayer->rect.h < 0)
+		{
+			Level::generateLevel(0);
+			Game::Mode = LEVEL_BEGIN;
 		}
 	}
 }
