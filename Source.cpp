@@ -49,6 +49,7 @@ int main(int argc, char** argv)
 		{
 		case TITLE:
 			Level::closeLevel();
+			Game::gPlayer->resetAbilities();
 			curtime = 0;
 			Game::score = 0;
 			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);

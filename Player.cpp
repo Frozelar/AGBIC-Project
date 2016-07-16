@@ -25,10 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // initialize members
 Player::Player(SDL_Rect box) : PhysicsEntity(box, PLAYER, -1)
 {
-	abilities["Sprint"] = false;
-	abilities["High Jump"] = false;
-	abilities["Double Jump"] = false;
-	abilities["Key"] = false;
+	resetAbilities();
 	jumps = 0;
 }
 
@@ -67,6 +64,7 @@ bool Player::handleInput(SDL_Event* e)
 			if (aerialSpeed == 0 || (abilities["Double Jump"] && jumps == 1))
 			{
 				aerialSpeed = Game::JUMP_START;
+				Audio::play(JUMP, 's');
 			}
 		}
 		else
@@ -235,7 +233,7 @@ void Player::cycleAerials()
 {
 	if (aerialSpeed == Game::JUMP_START)
 	{
-		Audio::play(JUMP, 's');
+		// Audio::play(JUMP, 's');
 		jumps++;
 	}
 	if (aerialSpeed < 0)
@@ -255,4 +253,13 @@ void Player::cycleAerials()
 
 	if (aerialSpeed != 0 && jumps == 0)
 		jumps++;
+}
+
+// set all abilities to false
+void Player::resetAbilities()
+{
+	abilities["Sprint"] = false;
+	abilities["High Jump"] = false;
+	abilities["Double Jump"] = false;
+	abilities["Key"] = false;
 }
