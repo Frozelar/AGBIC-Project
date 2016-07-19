@@ -41,7 +41,7 @@ void Enemy::onProcess()
 			int enemychance = 16;
 			int eyechance = 256;
 			static bool eye = false;
-			if (Game::enemies[eyeIndex] == NULL || Game::enemies[eyeIndex]->getSubtype() != EYE)
+			if (eyeIndex >= Game::enemies.size() || Game::enemies[eyeIndex] == NULL || Game::enemies[eyeIndex]->getSubtype() != EYE)
 			{
 				bool found = false;
 				for (int i = 0; i < Game::enemies.size(); i++)
@@ -69,6 +69,7 @@ void Enemy::onProcess()
 						delete r;
 						r = NULL;
 					}
+					Game::gScore += 100;
 					Game::Mode = GAME_END;
 					Game::enemySpawnChance = 0;
 					Audio::play(EXPLODE, 's');

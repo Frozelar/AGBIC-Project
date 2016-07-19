@@ -46,6 +46,7 @@ public:
 	static void newMessage(std::string, int = 36, int = 300, SDL_Color = { 255, 255, 255, 255 }, Direction = DOWN, Direction = LEFT, bool = true);
 	static void clearMessages(void);
 	static void handleGameOverlay(int, int, bool = false);
+	static void playGameEnd(bool = false);
 	static SDL_Rect getViewport(void);
 
 	static const int GFX_OFFSET;
@@ -77,6 +78,9 @@ private:
 	// static std::vector<Texture*> collectiblePickupTextures;
 	static Texture* bg;
 	static Texture* playerGFX;
+	static std::pair<Texture*, std::string> winText;
+	static std::vector<std::string> creditsText;
+	static std::vector<Texture*> credits;
 	static SDL_Color renderColor;
 	static std::string blockPrefix;
 	static std::string collectiblePrefix;

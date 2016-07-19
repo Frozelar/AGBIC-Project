@@ -51,8 +51,10 @@ int main(int argc, char** argv)
 			Level::closeLevel();
 			Game::gPlayer->resetAbilities();
 			curtime = 0;
-			Game::score = 0;
+			Game::gScore = 0;
+			Game::gTime = 0;
 			curlevel = 0;
+			Graphics::playGameEnd(true);
 			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);
 			if (quit)
 			{
@@ -109,8 +111,9 @@ int main(int argc, char** argv)
 		// if (1000 / Game::FPS > SDL_GetTicks() - curfps)
 		// 	SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 		curtime = (curfps - gamestart) / 1000;
-		if (Game::Mode == GAME)
-			Graphics::handleGameOverlay(curtime, Game::score);
+		Game::gTime = curtime;
+		if (Game::Mode == GAME || Game::Mode == GAME_END)
+			Graphics::handleGameOverlay(Game::gTime, Game::gScore);
 		curlevel = Level::getID();
 	}
 	Level::closeLevel();

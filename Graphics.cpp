@@ -92,6 +92,26 @@ std::vector<Message*> Graphics::messages;
 // std::vector<std::string> Graphics::collectiblePickupMsgs;
 // std::vector<Texture*> Graphics::collectiblePickupTextures;
 
+// displayed after the final boss is defeated
+std::pair<Texture*, std::string> Graphics::winText;
+std::vector<Texture*> Graphics::credits;
+
+std::vector<std::string> Graphics::creditsText = { 
+	"Ice Age", "\n", 
+	"Copyright (C) 2016 Frozelar", "\n", 
+	"Made for the 2016 A Game By Its Cover game jam", "\n\n\n",
+	"Programming, Graphics, and Sound Effects done by me (Frozelar)", "\n\n\n"
+	"Music taken from OverClocked Remix (ocremix.org):", "\n",
+	"\"The Glacier's Peak\", a Sonic Advance remix made by jmr", "\n",
+	"\"Crystalline Caverns\", a Super Mario World 2: Yoshi's Island remix by McVaffe", "\n\n\n", 
+	"A full list of credits, relevant links, and licensing information can all be found in the README.", "\n\n\n",
+	"Special Thanks:", "\n\n",
+	"Kiwisauce",
+	"for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.", "\n\n",
+	"Unormal",
+	"for teaching me superior programming practices and giving me a lot of advice.", "\n\n\n",
+	"Thanks so much for playing!\n\n\n" };
+
 // call init()
 Graphics::Graphics()
 {
@@ -130,6 +150,21 @@ bool Graphics::init()
 	}
 	textBG = new Texture(0, 0, 0, 0);
 	textBG->txLoadF(rDir + textBGPrefix + rExt);
+
+	winText.second = "YOU WIN";
+	winText.first = new Texture(0, 0, 0, 0);
+	winText.first->txLoadT(winText.second, gFont, black);
+	winText.first->txRect.x = Window::getw();
+	winText.first->txRect.y = Window::geth() / 2 - winText.first->txRect.h / 2;
+	credits.resize(creditsText.size());
+	for (int i = 0; i < credits.size(); i++)
+	{
+		credits[i] = new Texture(0, 0, 0, 0);
+		credits[i]->txLoadT(creditsText[i], gFont, black);
+		// credits[i]->txRect.x = Window::getw() / 2 - (credits[i]->txRect.x + credits[i]->txRect.w / 2);
+		credits[i]->txRect.x = Game::UNIT_W;
+		credits[i]->txRect.y = Window::geth();
+	}
 	return true;
 }
 
@@ -170,6 +205,19 @@ void Graphics::close()
 	{
 		delete textBG;
 		textBG = NULL;
+	}
+	if (winText.first != NULL)
+	{
+		delete winText.first;
+		winText.first = NULL;
+	}
+	for (int i = 0; i < credits.size(); i++)
+	{
+		if (credits[i] != NULL)
+		{
+			delete credits[i];
+			credits[i] = NULL;
+		}
 	}
 }
 
@@ -291,6 +339,9 @@ void Graphics::renderAll(bool manageRenderer)
 			messages[i]->render();
 	}
 
+	if (Game::Mode == GAME_END)
+		playGameEnd();
+
 	if(manageRenderer)
 		SDL_RenderPresent(Window::renderer);
 }
@@ -313,6 +364,102 @@ void Graphics::manageCamera()
 		viewport.x = 0;
 	if (viewport.y < 0)
 		viewport.y = 0;
+}
+
+// play credits/end sequence
+void Graphics::playGameEnd(bool reset)
+{
+	static bool showWin = true;
+	static bool showCredits = false;
+	static bool showInfo = false;
+	static int delay = 180;
+	static int winRot = 15;
+	static int tscore = -1;
+	static int ttime = -1;
+	static int i = 0;
+	static Texture timetx;
+	static Texture scoretx;
+
+	if (reset)
+	{
+		showWin = true;
+		showCredits = false;
+		showInfo = false;
+		delay = 180;
+		winRot = 15;
+		tscore = -1;
+		ttime = -1;
+		i = 0;
+		for (int i = 0; i < credits.size(); i++)
+		{
+			credits[i]->txRect.x = Game::UNIT_W;
+			credits[i]->txRect.y = Window::geth();
+		}
+		winText.first->txRect.x = Window::getw();
+		winText.first->txRect.y = Window::geth() / 2 - winText.first->txRect.h / 2;
+		return;
+	}
+	if (showCredits)
+	{
+		for (int j = 0; j <= i; j++)
+		{
+			if (credits[j]->txRect.y + credits[j]->txRect.h >= 0)
+			{
+				credits[j]->txRect.y--;
+				credits[j]->txRender();
+			}
+		}
+		if (i < credits.size() - 1)
+		{
+			if (credits[i]->txRect.y + credits[i]->txRect.h + Game::UNIT_H < credits[i + 1]->txRect.y)
+				i++;
+		}
+		else
+		{
+			if (credits[i]->txRect.y + credits[i]->txRect.h <= 0)
+				showInfo = true;
+		}
+	}
+	if (showWin)
+	{
+		if (tscore == -1 || ttime == -1)
+		{
+			tscore = Game::gScore;
+			ttime = Game::gTime;
+		}
+		if (winText.first->txRect.x > Game::UNIT_W * 2)
+		{
+			winText.first->txRect.x -= winRot * 0.009;
+			winRot += 2;
+		}
+		else
+		{
+			if (delay <= 0)
+			{
+				showWin = false;
+				showCredits = true;
+			}
+			if (showWin && !showInfo)
+				delay--;
+		}
+		winText.first->txRender(NULL, NULL, winRot, SDL_FLIP_NONE);
+	}
+	if (showInfo)
+	{
+		if (!showWin)
+		{
+			showWin = true;
+			winRot = 0;
+			winText.first->txRect.x = Game::UNIT_W;
+			winText.first->txRect.y = Game::UNIT_H;
+			timetx.txRect = { winText.first->txRect.x + winText.first->txRect.w + Game::UNIT_W * 3, winText.first->txRect.y, 0, 0 };
+			timetx.txLoadT("Final Time: " + std::to_string(ttime), gFont, black);
+			scoretx.txRect = { timetx.txRect.x + timetx.txRect.w + Game::UNIT_W * 3, winText.first->txRect.y, 0, 0 };
+			scoretx.txLoadT("Final Score: " + std::to_string(tscore), gFont, black);
+		}
+		timetx.txRender();
+		scoretx.txRender();
+	}
 }
 
 // load given background
@@ -489,6 +636,11 @@ void Graphics::handleGameOverlay(int time, int score, bool reset)
 			messages[timeIndex]->setText(std::to_string(time));
 		if(oldScore != score)
 			messages[scoreIndex]->setText(std::to_string(score));
+		if (Game::Mode == GAME_END)
+		{
+			messages[timeIndex]->text->txRect.y = Window::geth();
+			messages[scoreIndex]->text->txRect.y = Window::geth();
+		}
 	}
 	oldTime = time;
 	oldScore = score;

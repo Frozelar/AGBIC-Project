@@ -94,7 +94,7 @@ bool Player::handleInput(SDL_Event* e)
 // move player horizontally/vertically, manage collisions
 void Player::handleMovements()
 {
-	static bool gotEnd = false;
+	//static bool gotEnd = false;
 	static int plFrameCount = 0;
 
 	if (abilities["Sprint"] && plFrameCount >= Game::WARMUP_DURATION && abs(moveSpeed) == Game::MOVE_SPEED)
@@ -191,9 +191,9 @@ void Player::handleMovements()
 			{
 				if (collisions[DOWN]->getSubtype() == GOAL && abilities["Key"])
 				{
-					if(!gotEnd)
-						Game::score += 100;
-					gotEnd = true;
+					//if(!gotEnd)
+						Game::gScore += 100;
+					//gotEnd = true;
 					Game::Mode = LEVEL_END;
 				}
 

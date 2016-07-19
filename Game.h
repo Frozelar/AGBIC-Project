@@ -40,7 +40,8 @@ public:
 	// static void manageBuffers(void);
 
 	static SDL_Event inputEvent;
-	static int score;
+	static int gScore;
+	static int gTime;
 	static std::vector<StaticEntity*> allEntities;
 	// static std::vector<StaticEntity*> staticEntities;
 	// static std::vector<PhysicsEntity*> dynamicEntities;

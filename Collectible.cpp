@@ -27,30 +27,30 @@ void Collectible::onDestroy()
 	switch (subtype)
 	{
 	case COIN:
-		Game::score += 10;
+		Game::gScore += 10;
 		Graphics::particleDensity += 0.1;
 		Game::enemySpawnChance -= 4;
 		break;
 	case SPRINT:
-		Game::score += 1;
+		Game::gScore += 1;
 		Graphics::particleDensity += 0.3;
 		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["Sprint"] = true;
 		break;
 	case HIGH_JUMP:
-		Game::score += 1;
+		Game::gScore += 1;
 		Graphics::particleDensity += 0.3;
 		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["High Jump"] = true;
 		break;
 	case DOUBLE_JUMP:
-		Game::score += 1;
+		Game::gScore += 1;
 		Graphics::particleDensity += 0.3;
 		Game::enemySpawnChance -= 8;
 		Game::gPlayer->abilities["Double Jump"] = true;
 		break;
 	case KEY:
-		Game::score += 5;
+		Game::gScore += 5;
 		Graphics::particleDensity += 0.5;
 		Game::enemySpawnChance -= 12;
 		Game::gPlayer->abilities["Key"] = true;

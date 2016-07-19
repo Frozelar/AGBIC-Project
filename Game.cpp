@@ -28,7 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 SDL_Event Game::inputEvent;
 
 // game score
-int Game::score = 0;
+int Game::gScore = 0;
+
+// game time
+int Game::gTime = 0;
 
 // store specified entities (allEntities owns every entity, the rest simply point to them)
 std::vector<StaticEntity*> Game::allEntities;
@@ -380,7 +383,7 @@ void Game::process()
 			}
 		}
 	}
-	std::cout << enemies.size() << std::endl;
+
 	if (enemySpawnChance > 0)
 	{
 		if (rand() % enemySpawnChance == 1)
@@ -396,20 +399,23 @@ void Game::process()
 		}
 	}
 
-	if (Level::getID() == 0)
+	if (Game::Mode == GAME || /* Game::Mode == LEVEL_BEGIN || */ Game::Mode == LEVEL_END)
 	{
-		if (gPlayer->rect.y > Level::geth('p'))
+		if (Level::getID() == 0)
 		{
-			Level::generateLevel(1);
-			Game::Mode = LEVEL_BEGIN;
+			if (gPlayer->rect.y > Level::geth('p'))
+			{
+				Level::generateLevel(1);
+				Game::Mode = LEVEL_BEGIN;
+			}
 		}
-	}
-	else if (Level::getID() == 1)
-	{
-		if (gPlayer->rect.y + gPlayer->rect.h < 0)
+		else if (Level::getID() == 1)
 		{
-			Level::generateLevel(0);
-			Game::Mode = LEVEL_BEGIN;
+			if (gPlayer->rect.y + gPlayer->rect.h < 0)
+			{
+				Level::generateLevel(0);
+				Game::Mode = LEVEL_BEGIN;
+			}
 		}
 	}
 }
