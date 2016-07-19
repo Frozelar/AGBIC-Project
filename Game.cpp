@@ -32,8 +32,8 @@ int Game::score = 0;
 
 // store specified entities (allEntities owns every entity, the rest simply point to them)
 std::vector<StaticEntity*> Game::allEntities;
-std::vector<StaticEntity*> Game::staticEntities;
-std::vector<PhysicsEntity*> Game::dynamicEntities;
+// std::vector<StaticEntity*> Game::staticEntities;
+// std::vector<PhysicsEntity*> Game::dynamicEntities;
 std::vector<StaticEntity*> Game::renderedEntities;
 std::vector<StaticEntity*> Game::collisionEntities;
 std::vector<Collectible*> Game::collectibles;
@@ -249,7 +249,7 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 	if (/*type == STATIC_ENTITY ||*/ type == BLOCK)
 	{
 		allEntities.push_back(new StaticEntity(box, type, subtype));
-		staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		// staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 		renderedEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 	}
@@ -257,16 +257,15 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 	{
 		SDL_Rect actualbox = { box.x, box.y, box.w, box.h };
 		allEntities.push_back(new Enemy(actualbox, subtype));
-		dynamicEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
+		// dynamicEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		enemies.push_back(static_cast<Enemy*>(allEntities.back()));
-		enemies.back()->dynamicEntitiesIndex = dynamicEntities.size() - 1;
 	}
 	else if (type == COLLECTIBLE)
 	{
 		allEntities.push_back(new Collectible(box, subtype));
-		staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
+		// staticEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 		renderedEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<StaticEntity*>(allEntities.back()));
 		collectibles.push_back(static_cast<Collectible*>(allEntities.back()));
@@ -291,18 +290,22 @@ void Game::clearEntities(void)
 		//	enemies[i] = NULL;
 		enemies.pop_back();
 	}
+	/*
 	for (int i = staticEntities.size() - 1; i >= 0; i--)
 	{
 		//if (staticEntities[i] != NULL)
 		//	staticEntities[i] = NULL;
 		staticEntities.pop_back();
 	}
+	*/
+	/*
 	for (int i = dynamicEntities.size() - 1; i >= 0; i--)
 	{
 		//if (dynamicEntities[i] != NULL)
 		//	dynamicEntities[i] = NULL;
 		dynamicEntities.pop_back();
 	}
+	*/
 	for (int i = renderedEntities.size() - 1; i >= 0; i--)
 	{
 		//if (renderedEntities[i] != NULL)
@@ -330,6 +333,16 @@ void Game::clearEntities(void)
 // destroy entity if needed and call onProcess() for each entity
 void Game::process()
 {
+	/*
+	for (int i = 0; i < dynamicEntities.size(); i++)
+	{
+		if (dynamicEntities[i] != NULL && !dynamicEntities[i]->destroy)
+		{
+			dynamicEntities[i]->handleMovements();
+			dynamicEntities[i]->onProcess();
+		}
+	}
+	*/
 	for (int i = 0; i < collectibles.size(); i++)
 	{
 		if (collectibles[i] != NULL)
@@ -351,26 +364,20 @@ void Game::process()
 	{
 		if (enemies[i] != NULL)
 		{
+			if (enemies[i]->rect.y > Level::geth('p'))
+				enemies[i]->destroy = true;
 			if (enemies[i]->destroy)
 			{
 				enemies[i]->onDestroy();
-				dynamicEntities.erase(dynamicEntities.begin() + enemies[i]->dynamicEntitiesIndex);
 				delete enemies[i];
 				enemies[i] = NULL;
 				enemies.erase(enemies.begin() + i);
 			}
 			else
 			{
+				enemies[i]->handleMovements();
 				enemies[i]->onProcess();
 			}
-		}
-	}
-	for (int i = 0; i < dynamicEntities.size(); i++)
-	{
-		if (dynamicEntities[i] != NULL && !dynamicEntities[i]->destroy)
-		{
-			dynamicEntities[i]->handleMovements();
-			dynamicEntities[i]->onProcess();
 		}
 	}
 	if (enemySpawnChance > 0)
@@ -384,7 +391,7 @@ void Game::process()
 			box.h = box.w;
 			box.y = -box.h;
 			newEntity(box, ENEMY, ICE);
-			dynamicEntities.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
+			enemies.back()->moveSpeed = Game::MOVE_SPEED * (rand() % 2 + (-1));
 		}
 	}
 

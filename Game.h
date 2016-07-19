@@ -42,8 +42,8 @@ public:
 	static SDL_Event inputEvent;
 	static int score;
 	static std::vector<StaticEntity*> allEntities;
-	static std::vector<StaticEntity*> staticEntities;
-	static std::vector<PhysicsEntity*> dynamicEntities;
+	// static std::vector<StaticEntity*> staticEntities;
+	// static std::vector<PhysicsEntity*> dynamicEntities;
 	static std::vector<StaticEntity*> renderedEntities;
 	static std::vector<StaticEntity*> collisionEntities;
 	static std::vector<Collectible*> collectibles;

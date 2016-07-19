@@ -38,13 +38,13 @@ void Enemy::onProcess()
 		}
 		if (Game::Mode == BOSS)
 		{
-			int enemychance = 32;
+			int enemychance = 16;
 			int eyechance = 256;
 			static bool eye = false;
 			if (Game::enemies[eyeIndex] == NULL || Game::enemies[eyeIndex]->getSubtype() != EYE)
 			{
 				SDL_Rect* r;
-				for (int i = 0; i < 256; i++)
+				for (int i = 0; i < 128; i++)
 				{
 					r = new SDL_Rect;
 					r->x = rect.x + (rand() % rect.w);
