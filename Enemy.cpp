@@ -43,24 +43,39 @@ void Enemy::onProcess()
 			static bool eye = false;
 			if (Game::enemies[eyeIndex] == NULL || Game::enemies[eyeIndex]->getSubtype() != EYE)
 			{
-				SDL_Rect* r;
-				for (int i = 0; i < 128; i++)
+				bool found = false;
+				for (int i = 0; i < Game::enemies.size(); i++)
 				{
-					r = new SDL_Rect;
-					r->x = rect.x + (rand() % rect.w);
-					r->y = rect.y + (rand() % rect.h);
-					r->w = rand() % 4 + 1;
-					r->h = r->w;
-					Graphics::spawnParticle(SNOW, r);
-					delete r;
-					r = NULL;
+					if (Game::enemies[i] != NULL)
+					{
+						if (Game::enemies[i]->getSubtype() == EYE)
+						{
+							eyeIndex = i;
+							found = true;
+						}
+					}
 				}
-				Game::Mode = GAME_END;
-				Game::enemySpawnChance = 0;
-				Audio::play(EXPLODE, 's');
-				eye = false;
-				destroy = true;
-				break;
+				if (!found)
+				{
+					SDL_Rect* r;
+					for (int i = 0; i < 128; i++)
+					{
+						r = new SDL_Rect;
+						r->x = rect.x + (rand() % rect.w);
+						r->y = rect.y + (rand() % rect.h);
+						r->w = rand() % 4 + 1;
+						r->h = r->w;
+						Graphics::spawnParticle(SNOW, r);
+						delete r;
+						r = NULL;
+					}
+					Game::Mode = GAME_END;
+					Game::enemySpawnChance = 0;
+					Audio::play(EXPLODE, 's');
+					eye = false;
+					destroy = true;
+					break;
+				}
 			}
 			if (!eye)
 			{

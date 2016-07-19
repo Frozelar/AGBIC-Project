@@ -380,6 +380,7 @@ void Game::process()
 			}
 		}
 	}
+	std::cout << enemies.size() << std::endl;
 	if (enemySpawnChance > 0)
 	{
 		if (rand() % enemySpawnChance == 1)
