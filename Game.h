@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Include.h"
 
 enum GameMode {
-	TITLE, PAUSE, GAME, LEVEL_BEGIN, LEVEL_END, BOSS
+	TITLE, PAUSE, GAME, LEVEL_BEGIN, LEVEL_END, BOSS, GAME_END
 };
 
 class Game
@@ -66,7 +66,8 @@ public:
 	static const float ROTATION_SPEED;
 	static const int BOB_SPEED;
 	static const int WARMUP_DURATION;
-	static  int enemySpawnChance;
+	static const int DEFAULT_ENEMY_SPAWN_CHANCE;
+	static int enemySpawnChance;
 	static std::map<std::string, int> Controls;
 	static std::vector<int> entityOffset;
 	static GameMode Mode;

@@ -73,6 +73,7 @@ const int Graphics::BG_ALPHA_BASE = 255;
 const SDL_Rect Graphics::MENU_RECT = { Window::getw() / 4, Window::geth() / 4, Window::getw() / 2, Window::geth() / 2 };
 
 // value used for determining density of particles
+const float Graphics::DEFAULT_PARTICLE_DENSITY = 0;
 float Graphics::particleDensity = 0; //2;
 
 // text-related members
@@ -419,15 +420,7 @@ void Graphics::manageParticles(int which)
 			loops = (rand() % abs(static_cast<int>(loops * 100 - 100)) == 1 ? 1 : 0);
 		while (loops-- > 0)
 		{
-			particles.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + 1));
-			particles[particles.size() - 1].first->txLoadF(rDir + particlePrefix + Game::particleIDs[which] + rExt);
-			// particles[particles.size() - 1].first->rect.x = rand() % (viewport.x + viewport.w) + viewport.x;
-			particles[particles.size() - 1].first->txRect.x = rand() % (Game::gPlayer->rect.x + viewport.w) + (Game::gPlayer->rect.x - viewport.w);
-			particles[particles.size() - 1].first->txRect.w /= (rand() % 9 + 1);
-			if (particles[particles.size() - 1].first->txRect.w <= 0)
-				particles[particles.size() - 1].first->txRect.w = 1;
-			particles[particles.size() - 1].first->txRect.h = particles[particles.size() - 1].first->txRect.w;
-			particles[particles.size() - 1].first->txRect.y -= particles[particles.size() - 1].first->txRect.h;
+			spawnParticle(which);
 		}
 		for (int i = 0; i < particles.size(); i++)
 		{
@@ -447,6 +440,24 @@ void Graphics::manageParticles(int which)
 		}
 		break;
 	}
+}
+
+void Graphics::spawnParticle(int which, SDL_Rect* prect)
+{
+	particles.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + 1));
+	particles[particles.size() - 1].first->txLoadF(rDir + particlePrefix + Game::particleIDs[which] + rExt);
+	if (prect == NULL)
+	{
+		// particles[particles.size() - 1].first->rect.x = rand() % (viewport.x + viewport.w) + viewport.x;
+		particles[particles.size() - 1].first->txRect.x = rand() % (Game::gPlayer->rect.x + viewport.w) + (Game::gPlayer->rect.x - viewport.w);
+		particles[particles.size() - 1].first->txRect.w /= (rand() % 9 + 1);
+		if (particles[particles.size() - 1].first->txRect.w <= 0)
+			particles[particles.size() - 1].first->txRect.w = 1;
+		particles[particles.size() - 1].first->txRect.h = particles[particles.size() - 1].first->txRect.w;
+		particles[particles.size() - 1].first->txRect.y -= particles[particles.size() - 1].first->txRect.h;
+	}
+	else
+		particles[particles.size() - 1].first->txRect = *prect;
 }
 
 void Graphics::newMessage(std::string pmsg, int psize, int ptime, SDL_Color pcolor, Direction pdir, Direction pside, bool pshow)

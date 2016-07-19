@@ -45,7 +45,7 @@ Player* Game::gPlayer = NULL;
 // identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::blockIDs = { "White", "Goal" };
 std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "HighJump", "DoubleJump", "Key" };
-std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss" };
+std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye" };
 std::vector<std::string> Game::particleIDs = { "Snow" };
 
 // constant values
@@ -64,6 +64,7 @@ const int Game::BOB_SPEED = 64;
 const int Game::WARMUP_DURATION = 32;
 
 // chances of an enemy spawning
+const int Game::DEFAULT_ENEMY_SPAWN_CHANCE = 128;
 int Game::enemySpawnChance = 128; //64;
 
 // map of game controls
@@ -260,6 +261,7 @@ bool Game::newEntity(SDL_Rect box, int type, int subtype)
 		renderedEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		collisionEntities.push_back(static_cast<PhysicsEntity*>(allEntities.back()));
 		enemies.push_back(static_cast<Enemy*>(allEntities.back()));
+		enemies.back()->dynamicEntitiesIndex = dynamicEntities.size() - 1;
 	}
 	else if (type == COLLECTIBLE)
 	{
@@ -352,6 +354,7 @@ void Game::process()
 			if (enemies[i]->destroy)
 			{
 				enemies[i]->onDestroy();
+				dynamicEntities.erase(dynamicEntities.begin() + enemies[i]->dynamicEntitiesIndex);
 				delete enemies[i];
 				enemies[i] = NULL;
 				enemies.erase(enemies.begin() + i);
@@ -364,7 +367,7 @@ void Game::process()
 	}
 	for (int i = 0; i < dynamicEntities.size(); i++)
 	{
-		if (dynamicEntities[i] != NULL)
+		if (dynamicEntities[i] != NULL && !dynamicEntities[i]->destroy)
 		{
 			dynamicEntities[i]->handleMovements();
 			dynamicEntities[i]->onProcess();

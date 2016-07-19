@@ -41,7 +41,8 @@ public:
 	static void loadBG(int);
 	static void closeBG(void);
 	static void manageBG(void);
-	static void manageParticles(int); 
+	static void manageParticles(int);
+	static void spawnParticle(int, SDL_Rect* = NULL);
 	static void newMessage(std::string, int = 36, int = 300, SDL_Color = { 255, 255, 255, 255 }, Direction = DOWN, Direction = LEFT, bool = true);
 	static void clearMessages(void);
 	static void handleGameOverlay(int, int, bool = false);
@@ -50,6 +51,7 @@ public:
 	static const int GFX_OFFSET;
 	static const int BG_ALPHA_BASE;
 	static const SDL_Rect MENU_RECT;
+	static const float DEFAULT_PARTICLE_DENSITY;
 	static float particleDensity;
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;

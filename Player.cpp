@@ -121,7 +121,10 @@ void Player::handleMovements()
 			}
 			else if (collisions[LEFT]->getType() == ENEMY)
 			{
-				destroy = true;
+				if (collisions[LEFT]->getSubtype() != EYE)
+					destroy = true;
+				else
+					collisions[LEFT]->destroy = true;
 			}
 			collisions[LEFT] = NULL;
 		}
@@ -138,7 +141,10 @@ void Player::handleMovements()
 			}
 			else if (collisions[RIGHT]->getType() == ENEMY)
 			{
-				destroy = true;
+				if (collisions[RIGHT]->getSubtype() != EYE)
+					destroy = true;
+				else
+					collisions[RIGHT]->destroy = true;
 			}
 			collisions[RIGHT] = NULL;
 		}
@@ -172,7 +178,10 @@ void Player::handleMovements()
 			}
 			else if (collisions[UP]->getType() == ENEMY)
 			{
-				destroy = true;
+				if (collisions[UP]->getSubtype() != EYE)
+					destroy = true;
+				else
+					collisions[UP]->destroy = true;
 			}
 			collisions[UP] = NULL;
 		}
@@ -198,7 +207,10 @@ void Player::handleMovements()
 			}
 			else if (collisions[DOWN]->getType() == ENEMY)
 			{
-				destroy = true;
+				if (collisions[DOWN]->getSubtype() != EYE)
+					destroy = true;
+				else
+					collisions[DOWN]->destroy = true;
 			}
 			// collisions[DOWN] = NULL;
 		}
@@ -262,4 +274,7 @@ void Player::resetAbilities()
 	abilities["High Jump"] = false;
 	abilities["Double Jump"] = false;
 	abilities["Key"] = false;
+
+	Game::enemySpawnChance = Game::DEFAULT_ENEMY_SPAWN_CHANCE;
+	Graphics::particleDensity = Graphics::DEFAULT_PARTICLE_DENSITY;
 }

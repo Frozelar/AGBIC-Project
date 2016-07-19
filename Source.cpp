@@ -52,6 +52,7 @@ int main(int argc, char** argv)
 			Game::gPlayer->resetAbilities();
 			curtime = 0;
 			Game::score = 0;
+			curlevel = 0;
 			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);
 			if (quit)
 			{

@@ -11,5 +11,7 @@ public:
 	void onProcess(void);
 	void handleMovements(void);
 	void cycleAerials(void);
+
+	int dynamicEntitiesIndex = 0;
 };
 
