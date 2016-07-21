@@ -122,7 +122,7 @@ void Player::handleMovements()
 			else if (collisions[LEFT]->getType() == ENEMY)
 			{
 				if (collisions[LEFT]->getSubtype() != EYE)
-					destroy = true;
+					Game::Mode = TITLE;
 				else
 					collisions[LEFT]->destroy = true;
 			}
@@ -142,7 +142,7 @@ void Player::handleMovements()
 			else if (collisions[RIGHT]->getType() == ENEMY)
 			{
 				if (collisions[RIGHT]->getSubtype() != EYE)
-					destroy = true;
+					Game::Mode = TITLE;
 				else
 					collisions[RIGHT]->destroy = true;
 			}
@@ -179,7 +179,7 @@ void Player::handleMovements()
 			else if (collisions[UP]->getType() == ENEMY)
 			{
 				if (collisions[UP]->getSubtype() != EYE)
-					destroy = true;
+					Game::Mode = TITLE;
 				else
 					collisions[UP]->destroy = true;
 			}
@@ -208,7 +208,7 @@ void Player::handleMovements()
 			else if (collisions[DOWN]->getType() == ENEMY)
 			{
 				if (collisions[DOWN]->getSubtype() != EYE)
-					destroy = true;
+					Game::Mode = TITLE;
 				else
 					collisions[DOWN]->destroy = true;
 			}

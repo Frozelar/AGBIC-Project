@@ -123,6 +123,9 @@ bool Level::generateLevel(int which)
 	}
 	Audio::play(musicID, 'm');
 	Graphics::loadBG(bgID);
+	std::cout << Game::collisionEntities.size() << std::endl;
+	setCollisions();
+	std::cout << Game::collisionEntities.size() << std::endl;
 
 	levelMap.close();
 	return true;
@@ -264,6 +267,101 @@ void Level::moveLevel(int mX, int mY)
 	}
 }
 */
+
+// determine which static entities need to be checked for collision and which don't
+void Level::setCollisions()
+{
+	// SDL_Rect r1 = { 0, 0, 0, 0 };
+	// SDL_Rect r2 = { 0, 0, 0, 0 };
+	SDL_Rect r = { 0, 0, 0, 0 };
+	SDL_Rect rset = { 0, 0, 0, 0 };
+	bool up = false, down = false, left = false, right = false;
+	for (int i = 0; i < Game::collisionEntities.size(); i++)
+	{
+		if (Game::collisionEntities[i]->getType() == BLOCK)
+		{
+			rset = { Game::collisionEntities[i]->rect.x + 1, Game::collisionEntities[i]->rect.y + 1, Game::collisionEntities[i]->rect.w - 2, Game::collisionEntities[i]->rect.h - 2 };
+			r = rset;
+			if (r.y - Game::collisionEntities[i]->rect.h < 0)
+				up = true;
+			if (r.y + Game::collisionEntities[i]->rect.h >= Level::geth('p'))
+				down = true;
+			if (r.x - Game::collisionEntities[i]->rect.w < 0)
+				left = true;
+			if (r.x + Game::collisionEntities[i]->rect.w >= Level::getw('p'))
+				right = true;
+			if (!up && i > 0)
+			{
+				r.y -= Game::collisionEntities[i]->rect.h;
+				for (int j = 0; j < i; j++)
+				{
+					if (Game::checkCollision(r, Game::collisionEntities[j]->rect))
+					{
+						up = true;
+						break;
+					}
+				}
+				r = rset;
+			}
+			if (!down && i < Game::collisionEntities.size() - 1)
+			{
+				r.y += Game::collisionEntities[i]->rect.h;
+				for (int j = i + 1; j < Game::collisionEntities.size(); j++)
+				{
+					if (Game::checkCollision(r, Game::collisionEntities[j]->rect))
+					{
+						down = true;
+						break;
+					}
+				}
+				r = rset;
+			}
+			if (!left && i > 0)
+			{
+				r.x -= Game::collisionEntities[i]->rect.w;
+				if (Game::checkCollision(r, Game::collisionEntities[i - 1]->rect))
+					left = true;
+				r = rset;
+			}
+			if (!right && i < Game::collisionEntities.size() - 1)
+			{
+				r.x += Game::collisionEntities[i]->rect.w;
+				if (Game::checkCollision(r, Game::collisionEntities[i + 1]->rect))
+					right = true;
+				r = rset;
+			}
+			if (up && down && left && right)
+			{
+				Game::collisionEntities.erase(Game::collisionEntities.begin() + i);
+				i--;
+			}
+			up = down = left = right = false;
+
+			/*
+			r1 = Game::collisionEntities[i]->rect;
+			r1.y -= r1.h;
+			r2 = Game::collisionEntities[i - Level::getw()]->rect;
+			if (!Game::checkCollision(r1, r2))
+				surrounded = false;
+			r1.y = Game::collisionEntities[i]->rect.y + r1.h;
+			r2 = Game::collisionEntities[i + Level::getw()]->rect;
+			if (!Game::checkCollision(r1, r2))
+				surrounded = false;
+			r1.y = Game::collisionEntities[i]->rect.y;
+			r1.x -= r1.w;
+			r2 = Game::collisionEntities[i - 1]->rect;
+			if (!Game::checkCollision(r1, r2))
+				surrounded = false;
+			r1.x = Game::collisionEntities[i]->rect.x + r1.w;
+			r2 = Game::collisionEntities[i + 1]->rect;
+			if (!Game::checkCollision(r1, r2))
+				surrounded = false;
+			if (surrounded)
+				Game::collisionEntities.erase(Game::collisionEntities.begin() + i);
+				*/
+		}
+	}
+}
 
 // return level width
 // char = 'u' for width in units, or 'p' for width in pixels; returns 0 if invalid argument
