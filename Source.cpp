@@ -36,57 +36,19 @@ Menu gMenu;
 int main(int argc, char** argv)
 {
 	bool quit = false;
-	int curlevel = 0;
-	int oldMode = 0;
-	Uint32 curfps = 0, curtime = 0, gamestart = 0;
+	// int curlevel = 0;
+	// int oldMode = 0;
+	// Uint32 curfps = 0, curtime = 0, gamestart = 0;
 
 	Game::Mode = TITLE;
 
 	while (!quit)
 	{
-		curfps = SDL_GetTicks();
-		switch (Game::Mode)
-		{
-		case TITLE:
-			Level::closeLevel();
-			Game::gPlayer->resetAbilities();
-			curtime = 0;
-			Game::gScore = 0;
-			Game::gTime = 0;
-			curlevel = 0;
-			Graphics::playGameEnd(true);
-			quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &Game::inputEvent);
-			if (quit)
-			{
-				Game::close();
-				return 0;
-			}
-			break;
-		case PAUSE:
-			quit = Menu::loop(PAUSE, Graphics::MENU_RECT, &Game::inputEvent);
-			break;
-		}
-
-		if (Game::Mode != TITLE && Level::getID() == -1)
-			Level::generateLevel(curlevel/*++*/);
-
-		switch (Game::Mode)
-		{
-		case LEVEL_BEGIN:
-			Graphics::handleGameOverlay(0, 0, true);
-			quit = Level::begin();
-			// levelstart = SDL_GetTicks();
-			break;
-		case LEVEL_END:
-			quit = Level::end();
-			break;
-		}
-		if (Game::Mode == GAME && oldMode == TITLE)
-			gamestart = SDL_GetTicks();
-		oldMode = Game::Mode;
-
-		if(Game::Mode != BOSS)
+		if (Game::Mode != BOSS)
 			Graphics::manageCamera();
+		quit = Game::manageMode();
+		if (quit)
+			break;
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
 			switch (Game::inputEvent.type)
@@ -102,19 +64,16 @@ int main(int argc, char** argv)
 				break;
 			}
 		}
+		if(Game::gPlayer->destroy)
+			quit = Game::gPlayer->destroy;
 		Game::gPlayer->handleMovements();
 		Game::process();
 		// Level::moveLevel();
 		Graphics::renderAll();
-		if(Game::gPlayer->destroy)
-			quit = Game::gPlayer->destroy;
 		// if (1000 / Game::FPS > SDL_GetTicks() - curfps)
 		// 	SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
-		curtime = (curfps - gamestart) / 1000;
-		Game::gTime = curtime;
 		if (Game::Mode == GAME || Game::Mode == GAME_END)
 			Graphics::handleGameOverlay(Game::gTime, Game::gScore);
-		curlevel = Level::getID();
 	}
 	Level::closeLevel();
 	Game::close();

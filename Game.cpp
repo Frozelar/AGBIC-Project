@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Window.h"
 #include "Game.h"
 //#include "Entities.h"
 #include "Player.h"
@@ -23,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Collectible.h"
 #include "Graphics.h"
 #include "Level.h"
+#include "Menu.h"
 
 // updated with user input
 SDL_Event Game::inputEvent;
@@ -418,6 +420,48 @@ void Game::process()
 			}
 		}
 	}
+}
+
+bool Game::manageMode(void)
+{
+	static bool quit = false;
+	static Uint32 curfps = 0, gamestart = 0, oldMode = 0;
+	curfps = SDL_GetTicks();
+	switch (Mode)
+	{
+	case TITLE:
+		gScore = 0;
+		gTime = 0;
+		// gamestart = SDL_GetTicks();
+		Level::closeLevel();
+		gPlayer->resetAbilities();
+		Graphics::playGameEnd(true);
+		quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &inputEvent);
+		if (quit)
+			return quit;
+		break;
+	case PAUSE:
+		quit = Menu::loop(PAUSE, Graphics::MENU_RECT, &inputEvent);
+		break;
+	}
+	if (Game::Mode != TITLE && Level::getID() == -1)
+		Level::generateLevel(0 /*Level::getID()*//*++*/);
+	switch (Mode)
+	{
+	case LEVEL_BEGIN:
+		Graphics::handleGameOverlay(0, 0, true);
+		quit = Level::begin();
+		// levelstart = SDL_GetTicks();
+		break;
+	case LEVEL_END:
+		quit = Level::end();
+		break;
+	}
+	if (Game::Mode == GAME && oldMode == TITLE)
+		gamestart = SDL_GetTicks();
+	oldMode = Mode;
+	gTime = (curfps - gamestart) / 1000;
+	return quit;
 }
 
 /*

@@ -67,7 +67,7 @@ std::string Graphics::textBGPrefix = "textBG";
 const int Graphics::GFX_OFFSET = 0;
 
 // value used for determining alpha of background objects
-const int Graphics::BG_ALPHA_BASE = 255;
+const int Graphics::BG_ALPHA_BASE = 25;
 
 // default menu size
 const SDL_Rect Graphics::MENU_RECT = { Window::getw() / 4, Window::geth() / 4, Window::getw() / 2, Window::geth() / 2 };
@@ -259,7 +259,7 @@ void Graphics::clearMessages()
 // render everything
 void Graphics::renderAll(bool manageRenderer)
 {
-	SDL_Rect part = { 0, 0, 0, 0 };
+	// SDL_Rect part = { 0, 0, 0, 0 };
 	static int plrot = 0;
 	static int clrot = 0;
 	static int enrot = 0;
@@ -277,10 +277,11 @@ void Graphics::renderAll(bool manageRenderer)
 		// SDL_RenderSetViewport(Window::renderer, &viewport);
 	}
 
-	manageBG();
 	bg->txRender();
-	for (int i = 0; i < bgObjects.size(); i++)
-		bgObjects[i].first->txRender();
+	manageBG();
+	// for (int i = 0; i < bgObjects.size(); i++)
+	// 	if(Game::checkCollision(viewport, bgObjects[i].first->txRect))
+	// 		bgObjects[i].first->txRender();
 
 	// only render if entity's rect is colliding with viewport rect
 	for (int i = 0; i < Game::renderedEntities.size(); i++)
@@ -317,16 +318,6 @@ void Graphics::renderAll(bool manageRenderer)
 	playerGFX->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
 
 	manageParticles(SNOW /* Level::getID() */);
-	for (int i = 0; i < particles.size(); i++)
-	{
-		if (Game::checkCollision(viewport, particles[i].first->txRect))
-		{
-			part = particles[i].first->txRect;
-			particles[i].first->txRect = { particles[i].first->txRect.x - viewport.x, particles[i].first->txRect.y - viewport.y, particles[i].first->txRect.w, particles[i].first->txRect.h };
-			particles[i].first->txRender();
-			particles[i].first->txRect = part;
-		}
-	}
 
 	for (int i = 0; i < messages.size(); i++)
 	{
@@ -472,7 +463,8 @@ void Graphics::loadBG(int which)
 	case MOUNTAINS:
 		bg = new Texture(0, 0, 0, 0);
 		bg->txLoadF(rDir + bgPrefix + bgIDs[which] + rExt);
-		manageBG();
+		// manageBG();
+		createBGObjects();
 		break;
 	}
 }
@@ -499,11 +491,22 @@ void Graphics::closeBG()
 // handle background and background objects (called each frame)
 void Graphics::manageBG()
 {
+	static SDL_Rect vp = viewport;
+	for (int i = 0; i < bgObjects.size(); i++)
+	{
+		if (viewport.x != vp.x)
+			bgObjects[i].first->txRect.x -= bgObjects[i].second * (vp.x - viewport.x < 0 ? 1 : -1);
+		// if (Game::checkCollision(viewport, bgObjects[i].first->txRect))
+			bgObjects[i].first->txRender();
+	}
+	vp = viewport;
+
+	/*
 	SDL_Rect window{ 0, 0, Window::getw(), Window::geth() };
 	static SDL_Rect vp = viewport;
 	for (int i = 0; i < bgObjects.size(); i++)
 	{
-		if (/* bgObjects.size() > 2 && */ !Game::checkCollision(window, bgObjects[i].first->txRect))
+		if (/* bgObjects.size() > 2 &&  !Game::checkCollision(window, bgObjects[i].first->txRect))
 		{
 			delete bgObjects[i].first;
 			bgObjects[i].first = NULL;
@@ -520,7 +523,7 @@ void Graphics::manageBG()
 	{
 		if (bgObjects[0].first->txRect.x > window.x && vp.x - viewport.x > 0)
 		{
-			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED/* * 0.5*/)));
+			bgObjects.insert(bgObjects.begin(), std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED/* * 0.5 )));
 			bgObjects[0].first->txLoadF(rDir + bgObjectPrefix + bgObjectIDs[Level::getBGID()] + rExt);
 			bgObjects[0].first->txSetAlpha(BG_ALPHA_BASE / 2);
 			bgObjects[0].first->txRect.w *= ceil((1 / (rand() % 3 + 1)));
@@ -535,7 +538,7 @@ void Graphics::manageBG()
 		if (i > 0)
 			if (bgObjects[i - 1].first->txRect.x + bgObjects[i - 1].first->txRect.w > window.x + window.w)
 				break;
-		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED/* * 0.5*/)));
+		bgObjects.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2 + 1) + (Game::MOVE_SPEED/* * 0.5 )));
 		bgObjects[i].first->txLoadF(rDir + bgObjectPrefix + bgObjectIDs[Level::getBGID()] + rExt);
 		bgObjects[i].first->txSetAlpha(BG_ALPHA_BASE / (rand() % (BG_ALPHA_BASE / 51) + 2));
 		if (i > 0)
@@ -553,11 +556,29 @@ void Graphics::manageBG()
 		}
 	}
 	vp = viewport;
+	*/
+}
+
+// place all background objects
+void Graphics::createBGObjects()
+{
+	int maxGap = 64;
+	for (int x = 0 - viewport.x, y = 0; x < Level::getw('p');)
+	{
+		bgObjects.push_back(std::pair<Texture*, int>(new Texture(x, y, 0, 0), rand() % (Game::MOVE_SPEED * 2) + (Game::MOVE_SPEED/* * 0.5*/)));
+		bgObjects.back().first->txLoadF(rDir + bgObjectPrefix + bgObjectIDs[Level::getBGID()] + rExt);
+		bgObjects.back().first->txSetAlpha((BG_ALPHA_BASE * bgObjects.back().second > 255 * 0.75 ? 255 * 0.75 : BG_ALPHA_BASE * bgObjects.back().second));
+		bgObjects.back().first->txRect.w *= ceil((1 / (rand() % 3 + 1)));
+		bgObjects.back().first->txRect.y += rand() % (Window::geth() / 4);
+		x = bgObjects.back().first->txRect.x + bgObjects.back().first->txRect.w + (rand() % maxGap);
+	}
+
 }
 
 // manage particle engine each frame; do not call until you want particles to begin spawning
 void Graphics::manageParticles(int which)
 {
+	SDL_Rect part = { 0, 0, 0, 0 };
 	// static int counter = 0;
 	switch (which)
 	{
@@ -583,6 +604,14 @@ void Graphics::manageParticles(int which)
 				if(rand() % 8 == 1)
 					particles[i].first->txRect.x += (particles[i].second / 2 * (rand() % 2 == 0 ? -1 : 1));
 				particles[i].first->txRect.y += particles[i].second;
+
+				if (Game::checkCollision(viewport, particles[i].first->txRect))
+				{
+					part = particles[i].first->txRect;
+					particles[i].first->txRect = { particles[i].first->txRect.x - viewport.x, particles[i].first->txRect.y - viewport.y, particles[i].first->txRect.w, particles[i].first->txRect.h };
+					particles[i].first->txRender();
+					particles[i].first->txRect = part;
+				}
 			}
 		}
 		break;

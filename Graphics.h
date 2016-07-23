@@ -41,6 +41,7 @@ public:
 	static void loadBG(int);
 	static void closeBG(void);
 	static void manageBG(void);
+	static void createBGObjects(void);
 	static void manageParticles(int);
 	static void spawnParticle(int, SDL_Rect* = NULL);
 	static void newMessage(std::string, int = 36, int = 300, SDL_Color = { 255, 255, 255, 255 }, Direction = DOWN, Direction = LEFT, bool = true);

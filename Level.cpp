@@ -123,9 +123,7 @@ bool Level::generateLevel(int which)
 	}
 	Audio::play(musicID, 'm');
 	Graphics::loadBG(bgID);
-	std::cout << Game::collisionEntities.size() << std::endl;
 	setCollisions();
-	std::cout << Game::collisionEntities.size() << std::endl;
 
 	levelMap.close();
 	return true;

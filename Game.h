@@ -37,6 +37,7 @@ public:
 	static bool newEntity(SDL_Rect, int, int);
 	static void clearEntities(void);
 	static void process(void);
+	static bool manageMode(void);
 	// static void manageBuffers(void);
 
 	static SDL_Event inputEvent;
