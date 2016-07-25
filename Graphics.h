@@ -62,10 +62,12 @@ public:
 	static Texture* textBG;
 	static std::string fontName;
 	static TTF_Font* gFont;
+	static TTF_Font* gSmallFont;
 	// static SDL_Color gTextColor;
 	static SDL_Color white;
 	static SDL_Color black;
 	static int gFontSize;
+	static int gSmallFontSize;
 
 private:
 	static SDL_Rect viewport;

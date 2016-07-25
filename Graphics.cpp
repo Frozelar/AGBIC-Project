@@ -80,10 +80,12 @@ float Graphics::particleDensity = 0; //2;
 Texture* Graphics::textBG = NULL;
 std::string Graphics::fontName = "AveriaSans-Regular.ttf";
 TTF_Font* Graphics::gFont = NULL;
+TTF_Font* Graphics::gSmallFont = NULL;
 // SDL_Color Graphics::gTextColor = { 255, 255, 255, 255 };
 SDL_Color Graphics::white = { 255, 255, 255, 255 };
 SDL_Color Graphics::black = { 0, 0, 0, 255 };
 int Graphics::gFontSize = 36;
+int Graphics::gSmallFontSize = 18;
 
 // container of current messages
 std::vector<Message*> Graphics::messages;
@@ -130,6 +132,7 @@ bool Graphics::init()
 	std::string fnt = rDir + fontName;
 	TTF_Init();
 	gFont = TTF_OpenFont(fnt.c_str(), gFontSize);
+	gSmallFont = TTF_OpenFont(fnt.c_str(), gSmallFontSize);
 
 	playerGFX = new Texture(0, 0, 0, 0);
 	playerGFX->txLoadF(rDir + playerPrefix + rExt);
@@ -219,6 +222,10 @@ void Graphics::close()
 			credits[i] = NULL;
 		}
 	}
+	TTF_CloseFont(gFont);
+	gFont = NULL;
+	TTF_CloseFont(gSmallFont);
+	gSmallFont = NULL;
 }
 
 // delete graphics only related to the level in specific

@@ -17,6 +17,7 @@ public:
 private:
 	static int type;
 	static std::vector<std::pair<Texture*, std::string>> options;
+	static std::vector<std::pair<Texture*, std::string>> notes;
 	static Texture* titleBG;
 	static std::string titleBGPrefix;
 	static std::string titleMusicPrefix;

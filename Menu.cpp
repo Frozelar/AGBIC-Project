@@ -11,6 +11,9 @@ int Menu::type = -1;
 // all menu options
 std::vector<std::pair<Texture*, std::string>> Menu::options;
 
+// everything else displayed on the title screen
+std::vector<std::pair<Texture*, std::string>> Menu::notes;
+
 // background that is displayed on the title screen
 Texture* Menu::titleBG = NULL;
 
@@ -25,6 +28,9 @@ SDL_Rect Menu::rect;
 std::vector<std::string> title = { "Play Game", "Exit" };
 std::vector<std::string> pause = { "Resume", "Exit to Title" };
 std::vector<SDL_Rect> origOptions;
+
+// displayed on main menu (note: not part of Menu class)
+std::vector<std::string> strings = { "Copyright (C) 2016 Frozelar", "You may want to read TUTORIAL.txt before playing!" };
 
 Menu::Menu()
 {
@@ -206,7 +212,11 @@ void Menu::render()
 	if (type == PAUSE)
 		Graphics::renderAll(false);
 	if (type == TITLE)
+	{
 		titleBG->txRender();
+		for (int i = 0; i < notes.size(); i++)
+			notes[i].first->txRender();
+	}
 	for (int i = 0; i < options.size(); i++)
 	{
 		if (type == TITLE && i < title.size())
@@ -238,6 +248,23 @@ void Menu::init(void)
 			origOptions.push_back(options[i].first->txRect);
 		}
 	}
+	for (int i = 0; i < strings.size(); i++)
+	{
+		notes.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), strings[i]));
+		notes[i].first->txLoadT(strings[i], Graphics::gSmallFont, Graphics::black);
+
+		// may want to change this later to be more automated or something I don't know
+		if (i == 0)
+		{
+			notes[i].first->txRect.x = Window::getw() - notes[i].first->txRect.w - Game::UNIT_W;
+			notes[i].first->txRect.y = Window::geth() - notes[i].first->txRect.h - Game::UNIT_H;
+		}
+		else if (i == 1)
+		{
+			notes[i].first->txRect.x = options[title.size() - 1].first->txRect.x;
+			notes[i].first->txRect.y = options[title.size() - 1].first->txRect.y + options[title.size() - 1].first->txRect.h + Game::UNIT_H;
+		}
+	}
 	titleBG = new Texture(0, 0, 0, 0);
 	titleBG->txLoadF(Graphics::rDir + titleBGPrefix + Graphics::rExt);
 }
@@ -251,6 +278,15 @@ void Menu::clear()
 			delete options[i].first;
 			options[i].first = NULL;
 			options.pop_back();
+		}
+	}
+	for (int i = notes.size() - 1; i >= 0; i--)
+	{
+		if (notes[i].first != NULL)
+		{
+			delete notes[i].first;
+			notes[i].first = NULL;
+			notes.pop_back();
 		}
 	}
 	if (titleBG != NULL)

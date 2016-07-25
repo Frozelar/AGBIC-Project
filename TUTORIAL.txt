@@ -1,0 +1,15 @@
+~ CONTROLS ~
+The game uses WASD for movement.
+W: Jump
+A: Move Left
+D: Move Right
+
+~ INFO ~
+The various collectibles throughout the game all have different functions.  Some simply increase your score, while others give you new abilities.  Be sure to pay attention to the pop-ups that show up in the upper-left of the screen when you collect them!
+Do you like it when someone touches your eye?  Of course not!  Just remember that for the boss.
+
+I hope everything else can be figured out simply by playing the game.  Shame on me if that's not the case.
+
+~ STORY ~
+You're a triangle!  Isn't that great?
+One day, you were wandering in the Land of Square Snow, and you noticed that it started raining huge chunks of ice.  Looks like those would cause great amounts of pain if you were to get hit by one!  What the heck could be causing something like this?  Surely it couldn't hurt to check it out, right?
