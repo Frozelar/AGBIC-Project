@@ -116,7 +116,7 @@ std::vector<std::string> Graphics::creditsText = {
 	"Made for the 2016 A Game By Its Cover game jam", "\n\n\n",
 	"Programming, Graphics, and Sound Effects done by Frozelar", "\n\n\n"
 	"Music taken from OverClocked Remix (ocremix.org):", "\n",
-	"\"The Glacier's Peak\", a Sonic Advance remix by jmr", "\n",
+	"\"The Glacier's Peak\", a Sonic Advance remix by jmr",
 	"\"Crystalline Caverns\", a Super Mario World 2: Yoshi's Island remix by McVaffe", "\n\n\n", 
 	"A full list of credits, relevant links, licensing information, and further elaborations can all be found in the README.", "\n\n\n",
 	"Special Thanks:", "\n",
