@@ -30,7 +30,7 @@ std::vector<std::string> pause = { "Resume", "Exit to Title" };
 std::vector<SDL_Rect> origOptions;
 
 // displayed on main menu (note: not part of Menu class)
-std::vector<std::string> strings = { "Copyright (C) 2016 Frozelar", "You may want to read TUTORIAL.txt before playing!" };
+std::vector<std::string> strings = { "Ice Age", "Copyright (C) 2016 Frozelar", "You may want to read TUTORIAL.txt before playing!" };
 
 Menu::Menu()
 {
@@ -208,6 +208,11 @@ int Menu::handleEvent(SDL_Event* e)
 
 void Menu::render()
 {
+	static float rot = 0;
+	rot += Game::ROTATION_SPEED;
+	if (rot >= 360)
+		rot = 0;
+
 	SDL_RenderClear(Window::renderer);
 	if (type == PAUSE)
 		Graphics::renderAll(false);
@@ -215,7 +220,12 @@ void Menu::render()
 	{
 		titleBG->txRender();
 		for (int i = 0; i < notes.size(); i++)
-			notes[i].first->txRender();
+		{
+			if (i == 0)
+				notes[i].first->txRender(NULL, NULL, rot, SDL_FLIP_NONE);
+			else
+				notes[i].first->txRender();
+		}
 	}
 	for (int i = 0; i < options.size(); i++)
 	{
@@ -251,16 +261,23 @@ void Menu::init(void)
 	for (int i = 0; i < strings.size(); i++)
 	{
 		notes.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), strings[i]));
-		notes[i].first->txLoadT(strings[i], Graphics::gSmallFont, Graphics::black);
 
 		// may want to change this later to be more automated or something I don't know
 		if (i == 0)
 		{
-			notes[i].first->txRect.x = Window::getw() - notes[i].first->txRect.w - Game::UNIT_W;
-			notes[i].first->txRect.y = Window::geth() - notes[i].first->txRect.h - Game::UNIT_H;
+			notes[i].first->txLoadT(strings[i], Graphics::gLargeFont, Graphics::black);
+			notes[i].first->txRect.x = Window::getw() - notes[i].first->txRect.w - Game::UNIT_W * 4;
+			notes[i].first->txRect.y = Game::UNIT_H * 4;
 		}
 		else if (i == 1)
 		{
+			notes[i].first->txLoadT(strings[i], Graphics::gSmallFont, Graphics::black);
+			notes[i].first->txRect.x = Window::getw() - notes[i].first->txRect.w - Game::UNIT_W;
+			notes[i].first->txRect.y = Window::geth() - notes[i].first->txRect.h - Game::UNIT_H;
+		}
+		else if (i == 2)
+		{
+			notes[i].first->txLoadT(strings[i], Graphics::gSmallFont, Graphics::black);
 			notes[i].first->txRect.x = options[title.size() - 1].first->txRect.x;
 			notes[i].first->txRect.y = options[title.size() - 1].first->txRect.y + options[title.size() - 1].first->txRect.h + Game::UNIT_H;
 		}

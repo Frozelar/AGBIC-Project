@@ -338,6 +338,10 @@ void Game::clearEntities(void)
 // destroy entity if needed and call onProcess() for each entity
 void Game::process()
 {
+	static int messageTime = 300;
+	static std::vector<std::pair<bool, int>> firstCollect;
+	while (firstCollect.size() < TOTAL_COLLECTIBLE_TYPES)
+		firstCollect.push_back(std::pair<bool, int>(false, -1));
 	/*
 	for (int i = 0; i < dynamicEntities.size(); i++)
 	{
@@ -354,6 +358,7 @@ void Game::process()
 		{
 			if (collectibles[i]->destroy)
 			{
+				firstCollect[collectibles[i]->getSubtype()].second = messageTime;
 				collectibles[i]->onDestroy();
 				delete collectibles[i];
 				collectibles[i] = NULL;
@@ -365,6 +370,24 @@ void Game::process()
 			}
 		}
 	}
+	for (int i = 0; i < firstCollect.size(); i++)
+	{
+		if (firstCollect[i].first == false && firstCollect[i].second >= 0)
+		{
+			if (firstCollect[i].second == messageTime)
+				Graphics::newMessage(Game::collectibleIDs[i], Graphics::gFontSize, messageTime);
+
+			if (firstCollect[i].second > 0)
+				firstCollect[i].second--;
+			else
+			{
+				Graphics::newMessage(Graphics::tipStrings[i], Graphics::gSmallFontSize, messageTime);
+				firstCollect[i].first = true;
+				firstCollect[i].second--;
+			}
+		}
+	}
+
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		if (enemies[i] != NULL)

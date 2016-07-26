@@ -63,17 +63,21 @@ public:
 	static std::string fontName;
 	static TTF_Font* gFont;
 	static TTF_Font* gSmallFont;
+	static TTF_Font* gLargeFont;
 	// static SDL_Color gTextColor;
 	static SDL_Color white;
 	static SDL_Color black;
 	static int gFontSize;
 	static int gSmallFontSize;
+	static int gLargeFontSize;
+	static std::vector<std::string> tipStrings;
 
 private:
 	static SDL_Rect viewport;
 	static std::vector<Texture*> blockGFX;
 	static std::vector<Texture*> collectibleGFX;
 	static std::vector<Texture*> enemyGFX;
+	static std::vector<Texture*> tips;
 	static std::vector<std::pair<Texture*, int>> bgObjects;
 	static std::vector<std::pair<Texture*, int>> particles;
 	static std::vector<Message*> messages;

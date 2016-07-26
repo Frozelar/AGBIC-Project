@@ -81,11 +81,13 @@ Texture* Graphics::textBG = NULL;
 std::string Graphics::fontName = "AveriaSans-Regular.ttf";
 TTF_Font* Graphics::gFont = NULL;
 TTF_Font* Graphics::gSmallFont = NULL;
+TTF_Font* Graphics::gLargeFont = NULL;
 // SDL_Color Graphics::gTextColor = { 255, 255, 255, 255 };
 SDL_Color Graphics::white = { 255, 255, 255, 255 };
 SDL_Color Graphics::black = { 0, 0, 0, 255 };
 int Graphics::gFontSize = 36;
 int Graphics::gSmallFontSize = 18;
+int Graphics::gLargeFontSize = 72;
 
 // container of current messages
 std::vector<Message*> Graphics::messages;
@@ -97,6 +99,16 @@ std::vector<Message*> Graphics::messages;
 // displayed after the final boss is defeated
 std::pair<Texture*, std::string> Graphics::winText;
 std::vector<Texture*> Graphics::credits;
+
+// tips that are displayed after collecting a collectible
+std::vector<std::string> Graphics::tipStrings = {
+	"Score increased by 10 points.",
+	"Hold a direction for a bit of time to move more quickly.",
+	"Jump height increased.",
+	"Press Jump in mid-air to perform a double jump.",
+	"Goal platform is now active."
+};
+std::vector<Texture*> Graphics::tips;
 
 std::vector<std::string> Graphics::creditsText = { 
 	"Ice Age", "\n", 
@@ -112,7 +124,8 @@ std::vector<std::string> Graphics::creditsText = {
 	/* "for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.", */
 	"Unormal", "\n\n\n",
 	/* "for teaching me superior programming practices and giving me a lot of advice.", */
-	"Thanks so much for playing!\n\n\n" };
+	"Thanks so much for playing!\n\n\n" 
+};
 
 // call init()
 Graphics::Graphics()
@@ -133,6 +146,7 @@ bool Graphics::init()
 	TTF_Init();
 	gFont = TTF_OpenFont(fnt.c_str(), gFontSize);
 	gSmallFont = TTF_OpenFont(fnt.c_str(), gSmallFontSize);
+	gLargeFont = TTF_OpenFont(fnt.c_str(), gLargeFontSize);
 
 	playerGFX = new Texture(0, 0, 0, 0);
 	playerGFX->txLoadF(rDir + playerPrefix + rExt);
@@ -226,6 +240,8 @@ void Graphics::close()
 	gFont = NULL;
 	TTF_CloseFont(gSmallFont);
 	gSmallFont = NULL;
+	TTF_CloseFont(gLargeFont);
+	gLargeFont = NULL;
 }
 
 // delete graphics only related to the level in specific
@@ -267,12 +283,18 @@ void Graphics::clearMessages()
 void Graphics::renderAll(bool manageRenderer)
 {
 	// SDL_Rect part = { 0, 0, 0, 0 };
-	static int plrot = 0;
-	static int clrot = 0;
-	static int enrot = 0;
+	static float plrot = 0;
+	static float clrot = 0;
+	static float enrot = 0;
 	plrot = abs(Game::gPlayer->aerialSpeed != 0 ? plrot + Game::gPlayer->aerialSpeed * Game::ROTATION_SPEED * (Game::gPlayer->aerialSpeed < 0 ? -1 : 1) : 0);
 	clrot += Game::ROTATION_SPEED;
 	enrot += Game::ROTATION_SPEED * 2;
+	if (plrot >= 360)
+		plrot = 0;
+	if (clrot >= 360)
+		clrot = 0;
+	if (enrot >= 360)
+		enrot = 0;
 	viewport.w = Window::getw();
 	viewport.h = Window::geth();
 

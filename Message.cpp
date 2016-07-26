@@ -8,7 +8,10 @@
 Message::Message(std::string pmsg, int psize, int ptime, SDL_Color pcolor, Direction pdir, Direction pside, bool pshow)
 {
 	// std::string name = Graphics::rDir + Graphics::fontName;
-	font = Graphics::gFont;
+	if (psize == Graphics::gSmallFontSize)
+		font = Graphics::gSmallFont;
+	else
+		font = Graphics::gFont;
 	msg = pmsg;
 	fontSize = psize;
 	displayTime = ptime;

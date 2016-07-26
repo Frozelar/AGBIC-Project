@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Graphics.h"
 #include "Audio.h"
+#include "Message.h"
 
 // initialize variables
 Collectible::Collectible(SDL_Rect box, int type) : StaticEntity(box, COLLECTIBLE, type)
@@ -19,9 +20,12 @@ Collectible::~Collectible()
 // called once when entity is deleted
 void Collectible::onDestroy()
 {
-	static std::vector<bool> firstCollect;
+	/*
+	static int messageTime = 300;
+	static std::vector<std::pair<bool, int>> firstCollect;
 	while (firstCollect.size() < TOTAL_COLLECTIBLE_TYPES)
-		firstCollect.push_back(false);
+		firstCollect.push_back(std::pair<bool, int>(false, messageTime));
+		*/
 
 	Audio::play(COLLECT, 's');
 	switch (subtype)
@@ -57,11 +61,22 @@ void Collectible::onDestroy()
 		break;
 	}
 
-	if (firstCollect[subtype] == false)
+	/*
+	if (firstCollect[subtype].first == false)
 	{
-		firstCollect[subtype] = true;
-		Graphics::newMessage(Game::collectibleIDs[subtype]);
+		if (firstCollect[subtype].second == messageTime)
+			Graphics::newMessage(Game::collectibleIDs[subtype], 36, messageTime);
+
+		if (firstCollect[subtype].second > 0)
+			firstCollect[subtype].second--;
+		else
+		{
+			firstCollect[subtype].first = true;
+			return true;
+		}
 	}
+	return false;
+	*/
 }
 
 // called each frame
