@@ -458,6 +458,8 @@ bool Game::manageMode(void)
 		// gamestart = SDL_GetTicks();
 		Level::closeLevel();
 		gPlayer->resetAbilities();
+		gPlayer->moveSpeed = 0;
+		gPlayer->aerialSpeed = 0;
 		Graphics::playGameEnd(true);
 		quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &inputEvent);
 		oldMode = TITLE;
@@ -474,10 +476,14 @@ bool Game::manageMode(void)
 	{
 	case LEVEL_BEGIN:
 		Graphics::handleGameOverlay(0, 0, true);
+		gPlayer->moveSpeed = 0;
+		gPlayer->aerialSpeed = 0;
 		quit = Level::begin();
 		// levelstart = SDL_GetTicks();
 		break;
 	case LEVEL_END:
+		gPlayer->moveSpeed = 0;
+		gPlayer->aerialSpeed = 0;
 		quit = Level::end();
 		break;
 	}
