@@ -460,6 +460,7 @@ bool Game::manageMode(void)
 		gPlayer->resetAbilities();
 		Graphics::playGameEnd(true);
 		quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &inputEvent);
+		oldMode = TITLE;
 		if (quit)
 			return quit;
 		break;

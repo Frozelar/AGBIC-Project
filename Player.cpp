@@ -122,7 +122,7 @@ void Player::handleMovements()
 			else if (collisions[LEFT]->getType() == ENEMY)
 			{
 				if (collisions[LEFT]->getSubtype() != EYE)
-					Game::Mode = TITLE;
+					onHit();
 				else
 					collisions[LEFT]->destroy = true;
 			}
@@ -142,7 +142,7 @@ void Player::handleMovements()
 			else if (collisions[RIGHT]->getType() == ENEMY)
 			{
 				if (collisions[RIGHT]->getSubtype() != EYE)
-					Game::Mode = TITLE;
+					onHit();
 				else
 					collisions[RIGHT]->destroy = true;
 			}
@@ -179,7 +179,7 @@ void Player::handleMovements()
 			else if (collisions[UP]->getType() == ENEMY)
 			{
 				if (collisions[UP]->getSubtype() != EYE)
-					Game::Mode = TITLE;
+					onHit();
 				else
 					collisions[UP]->destroy = true;
 			}
@@ -208,7 +208,7 @@ void Player::handleMovements()
 			else if (collisions[DOWN]->getType() == ENEMY)
 			{
 				if (collisions[DOWN]->getSubtype() != EYE)
-					Game::Mode = TITLE;
+					onHit();
 				else
 					collisions[DOWN]->destroy = true;
 			}
@@ -277,4 +277,11 @@ void Player::resetAbilities()
 
 	Game::enemySpawnChance = Game::DEFAULT_ENEMY_SPAWN_CHANCE;
 	Graphics::particleDensity = Graphics::DEFAULT_PARTICLE_DENSITY;
+}
+
+// called when the player gets hit
+void Player::onHit()
+{
+	Game::Mode = TITLE;
+	Audio::play(EXPLODE, 's');
 }

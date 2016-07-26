@@ -20,13 +20,6 @@ Collectible::~Collectible()
 // called once when entity is deleted
 void Collectible::onDestroy()
 {
-	/*
-	static int messageTime = 300;
-	static std::vector<std::pair<bool, int>> firstCollect;
-	while (firstCollect.size() < TOTAL_COLLECTIBLE_TYPES)
-		firstCollect.push_back(std::pair<bool, int>(false, messageTime));
-		*/
-
 	Audio::play(COLLECT, 's');
 	switch (subtype)
 	{
@@ -60,23 +53,6 @@ void Collectible::onDestroy()
 		Game::gPlayer->abilities["Key"] = true;
 		break;
 	}
-
-	/*
-	if (firstCollect[subtype].first == false)
-	{
-		if (firstCollect[subtype].second == messageTime)
-			Graphics::newMessage(Game::collectibleIDs[subtype], 36, messageTime);
-
-		if (firstCollect[subtype].second > 0)
-			firstCollect[subtype].second--;
-		else
-		{
-			firstCollect[subtype].first = true;
-			return true;
-		}
-	}
-	return false;
-	*/
 }
 
 // called each frame
