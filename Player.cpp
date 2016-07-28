@@ -59,7 +59,7 @@ bool Player::handleInput(SDL_Event* e)
 		{
 			moveSpeed = Game::MOVE_SPEED;
 		}
-		else if (e->key.keysym.sym == Game::Controls["Jump"])
+		else if (e->key.keysym.sym == Game::Controls["Jump"] || e->key.keysym.sym == Game::Controls["JumpAlt"])
 		{
 			if (aerialSpeed == 0 || (abilities["Double Jump"] && jumps == 1))
 			{
@@ -76,7 +76,7 @@ bool Player::handleInput(SDL_Event* e)
 			moveSpeed = 0;
 		else if (e->key.keysym.sym == Game::Controls["Move Right"] && moveSpeed > 0)
 			moveSpeed = 0;
-		else if (e->key.keysym.sym == Game::Controls["Jump"])
+		else if (e->key.keysym.sym == Game::Controls["Jump"] || e->key.keysym.sym == Game::Controls["JumpAlt"])
 		{
 			if(aerialSpeed < 0)
 				aerialSpeed *= Game::JUMP_MULT / 4;

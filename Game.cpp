@@ -102,6 +102,7 @@ bool Game::init()
 	Controls["Move Left"] = SDLK_a;
 	Controls["Move Right"] = SDLK_d;
 	Controls["Jump"] = SDLK_w;
+	Controls["JumpAlt"] = SDLK_SPACE;
 	Controls["Pause"] = SDLK_p;
 	gPlayer = new Player({ 100, 0, UNIT_W, UNIT_H });
 
@@ -342,6 +343,16 @@ void Game::process()
 	static std::vector<std::pair<bool, int>> firstCollect;
 	while (firstCollect.size() < TOTAL_COLLECTIBLE_TYPES)
 		firstCollect.push_back(std::pair<bool, int>(false, -1));
+
+	if (Mode == TITLE)
+	{
+		for (int i = 0; i < firstCollect.size(); i++)
+		{
+			firstCollect[i].first = false;
+			firstCollect[i].second = -1;
+		}
+		return;
+	}
 	/*
 	for (int i = 0; i < dynamicEntities.size(); i++)
 	{
@@ -448,11 +459,13 @@ void Game::process()
 bool Game::manageMode(void)
 {
 	static bool quit = false;
-	static Uint32 curfps = 0, gamestart = 0, oldMode = 0;
+	static Uint32 curfps = 0, gamestart = 0, paused = 0, totalpaused = 0, oldMode = 0;
 	curfps = SDL_GetTicks();
 	switch (Mode)
 	{
 	case TITLE:
+		paused = 0;
+		totalpaused = 0;
 		gScore = 0;
 		gTime = 0;
 		// gamestart = SDL_GetTicks();
@@ -460,6 +473,7 @@ bool Game::manageMode(void)
 		gPlayer->resetAbilities();
 		gPlayer->moveSpeed = 0;
 		gPlayer->aerialSpeed = 0;
+		process();
 		Graphics::playGameEnd(true);
 		quit = Menu::loop(TITLE, { 0, 0, Window::getw(), Window::geth() }, &inputEvent);
 		oldMode = TITLE;
@@ -467,7 +481,10 @@ bool Game::manageMode(void)
 			return quit;
 		break;
 	case PAUSE:
+		paused = SDL_GetTicks();
 		quit = Menu::loop(PAUSE, Graphics::MENU_RECT, &inputEvent);
+		paused = SDL_GetTicks() - paused;
+		totalpaused += paused;
 		break;
 	}
 	if (Game::Mode != TITLE && Level::getID() == -1)
@@ -490,7 +507,7 @@ bool Game::manageMode(void)
 	if (Game::Mode == GAME && oldMode == TITLE)
 		gamestart = SDL_GetTicks();
 	oldMode = Mode;
-	gTime = (curfps - gamestart) / 1000;
+	gTime = (curfps - gamestart - totalpaused) / 1000;
 	return quit;
 }
 

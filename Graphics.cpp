@@ -116,15 +116,19 @@ std::vector<std::string> Graphics::creditsText = {
 	"Made for the 2016 A Game By Its Cover game jam", "\n\n\n",
 	"Programming, Graphics, and Sound Effects done by Frozelar", "\n\n\n"
 	"Music taken from OverClocked Remix (ocremix.org):", "\n",
-	"\"The Glacier's Peak\", a Sonic Advance remix by jmr",
-	"\"Crystalline Caverns\", a Super Mario World 2: Yoshi's Island remix by McVaffe", "\n\n\n", 
+	"\"The Glacier's Peak\", a Sonic Advance remix by jmr  (In-game)",
+	"\"Crystalline Caverns\", a Super Mario World 2: Yoshi's Island remix by McVaffe  (Title screen)", "\n\n\n", 
 	"A full list of credits, relevant links, licensing information, and further elaborations can all be found in the README.", "\n\n\n",
+	"Much thanks to those who tested the game:", "\n",
+	"Ashan",
+	"Jane C.",
+	"darkychao", "\n\n\n",
 	"Special Thanks:", "\n",
 	"Kiwisauce",
-	/* "for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.", */
-	"Unormal", "\n\n\n",
-	/* "for teaching me superior programming practices and giving me a lot of advice.", */
-	"Thanks so much for playing!\n\n\n" 
+	"for inspiring me to pursue game development, and for providing me with plenty of guidance along the way.", "\n",
+	"Unormal",
+	"for teaching me superior programming practices and giving me a lot of advice." "\n\n\n",
+	"Thanks so much for playing!" 
 };
 
 // call init()

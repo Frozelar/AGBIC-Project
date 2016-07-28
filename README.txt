@@ -14,13 +14,18 @@ Sound effects made (by me) using:
 - BFXR: http://www.bfxr.net/
 
 Music credits:
-- "The Glacier's Peak", a Sonic Advance remix made by jmr on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR02370
-- "Crystalline Caverns", a Super Mario World 2: Yoshi's Island remix made by McVaffe on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR00860
+- In-game:  "The Glacier's Peak", a Sonic Advance remix made by jmr on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR02370
+- Title screen:  "Crystalline Caverns", a Super Mario World 2: Yoshi's Island remix made by McVaffe on OverClocked Remix ( http://ocremix.org ).  The remix can be found here: http://ocremix.org/remix/OCR00860
 
 Other credits:
 - Some of the very early code was derived from examples shown in LazyFoo's SDL tutorials: http://lazyfoo.net/tutorials/SDL/
 - The game uses the font AvariaSans-Regular, which is licensed under the terms of the OFL.  A copy of the OFL is included in OFL.txt.
 - Several SDL DLLs (Windows) or frameworks (Mac OS X) are distributed with the application under the terms of the LGPL.
+
+Big thanks to those who tested the game:
+- Ashan
+- Jane C.
+- darkychao
 
 Special Thanks:
 - Kiwisauce
