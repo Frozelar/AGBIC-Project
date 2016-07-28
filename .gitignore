@@ -28,12 +28,13 @@
 *.app
 
 # Others
-*.zip
-*.gz
 .vs
 Debug
-AGBIC.sdf
-AGBIC.sln
-AGBIC.vcxproj
-AGBIC.vcxproj.filters
-AGBIC.vcxproj.user
+Release
+*.zip
+*.gz
+*.sdf
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
