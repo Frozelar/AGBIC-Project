@@ -103,7 +103,7 @@ std::vector<Texture*> Graphics::credits;
 // tips that are displayed after collecting a collectible
 std::vector<std::string> Graphics::tipStrings = {
 	"Score increased by 10 points.",
-	"Hold a direction for a bit of time to move more quickly.",
+	"Movement speed increased.", // "Hold a direction for a bit of time to move more quickly.",
 	"Jump height increased.",
 	"Press Jump in mid-air to perform a double jump.",
 	"Goal platform is now active."

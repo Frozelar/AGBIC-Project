@@ -3,14 +3,14 @@ Copyright (C) 2016 Frozelar
 Email: frostyfish88@gmail.com
 Ice Age is licensed under the terms of the GNU General Public License v3.0.  A copy of the license is provided in License.txt.
 
-Coded (by me) with:
+Coded (by Frozelar) with:
 - C++ (using Microsoft Visual Studio: https://www.visualstudio.com/)
 - Simple DirectMedia Layer Library 2.0 (SDL): https://www.libsdl.org/
 
-Graphics drawn (by me) using:
+Graphics drawn (by Frozelar) using:
 - Paint.NET: http://www.getpaint.net/
 
-Sound effects made (by me) using:
+Sound effects made (by Frozelar) using:
 - BFXR: http://www.bfxr.net/
 
 Music credits:
