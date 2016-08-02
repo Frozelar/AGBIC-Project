@@ -33,6 +33,9 @@ SDL_Renderer* Window::renderer = NULL;
 int Window::w = 0;
 int Window::h = 0;
 
+// is fullscreen?
+bool Window::fullscreen = false;
+
 // call init()
 Window::Window()
 {
@@ -93,6 +96,12 @@ bool Window::handleEvent(SDL_Event* e)
 	}
 	*/
 	return true;
+}
+
+void Window::toggleFullscreen()
+{
+	fullscreen = !fullscreen;
+	SDL_SetWindowFullscreen(window, (fullscreen ? SDL_WINDOW_FULLSCREEN : NULL));
 }
 
 /*

@@ -56,9 +56,9 @@ int main(int argc, char** argv)
 			case SDL_QUIT:
 				quit = true;
 				break;
-			case SDL_WINDOWEVENT:
-				Window::handleEvent(&Game::inputEvent);
-				break;
+			//case SDL_WINDOWEVENT:
+			//	Window::handleEvent(&Game::inputEvent);
+			//	break;
 			default:
 				Game::gPlayer->handleInput(&Game::inputEvent);
 				break;

@@ -62,9 +62,9 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 			case SDL_QUIT:
 				quit = true;
 				break;
-			case SDL_WINDOWEVENT:
-				Window::handleEvent(e);
-				break;
+			//case SDL_WINDOWEVENT:
+			//	Window::handleEvent(e);
+			//	break;
 			default:
 				done = handleEvent(e);
 				break;
@@ -92,6 +92,9 @@ int Menu::handleEvent(SDL_Event* e)
 	// {
 
 	// }
+	if (e->type == SDL_KEYUP)
+		if (e->key.keysym.sym == Game::Controls["Fullscreen"])
+			Window::toggleFullscreen();
 	
 	if (e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEMOTION)
 	{

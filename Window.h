@@ -28,6 +28,7 @@ public:
 	static bool init(void);
 	static void close(void);
 	static bool handleEvent(SDL_Event* e);
+	static void toggleFullscreen(void);
 	static int getw(void);
 	static int geth(void);
 
@@ -37,6 +38,7 @@ public:
 
 private:
 	static SDL_Window* window;
+	static bool fullscreen;
 	static int w;
 	static int h;
 };

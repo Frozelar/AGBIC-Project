@@ -104,6 +104,7 @@ bool Game::init()
 	Controls["Jump"] = SDLK_w;
 	Controls["JumpAlt"] = SDLK_SPACE;
 	Controls["Pause"] = SDLK_p;
+	Controls["Fullscreen"] = SDLK_f;
 	gPlayer = new Player({ 100, 0, UNIT_W, UNIT_H });
 
 	return true;

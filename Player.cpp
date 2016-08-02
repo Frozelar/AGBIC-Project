@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Player.h"
+#include "Window.h"
 #include "Game.h"
 #include "Audio.h"
 #include "Level.h"
@@ -85,6 +86,10 @@ bool Player::handleInput(SDL_Event* e)
 		{
 			Game::Mode = PAUSE;
 		}
+		else if (e->key.keysym.sym == Game::Controls["Fullscreen"])
+		{
+			Window::toggleFullscreen();
+		}
 		else
 			return false;
 	}
@@ -149,18 +154,20 @@ void Player::handleMovements()
 			collisions[RIGHT] = NULL;
 		}
 	}
-	if (aerialSpeed != 0)
-		rect.y += aerialSpeed;
-	cycleAerials();
 	if (collisions[DOWN] != NULL)
 	{
 		rect.y++;
 		if (!Game::checkCollision(rect, collisions[DOWN]->rect))
 			collisions[DOWN] = NULL;
+		//else
+		//	aerialSpeed = 0;
 		rect.y--;
 	}
 	else if (collisions[DOWN] == NULL && aerialSpeed == 0)
 		aerialSpeed = Game::GRAVITY_START;
+	if (aerialSpeed != 0)
+		rect.y += aerialSpeed;
+	cycleAerials();
 	if (Game::checkCollision(this))
 	{
 		if (collisions[UP] != NULL)
