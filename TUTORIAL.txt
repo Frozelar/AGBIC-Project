@@ -1,9 +1,9 @@
 ~ CONTROLS ~
-- The game uses WASD for movement.
   W or SPACE: Jump
   A: Move Left
   D: Move Right
   P: Pause
+  F: Toggle Fullscreen
 
 ~ INFO ~
 - The various collectibles throughout the game all have different functions.  
