@@ -162,7 +162,8 @@ bool Level::begin()
 
 	while (!quit && !done)
 	{
-		curfps = SDL_GetTicks();
+		if (!Window::isVSync())
+			curfps = SDL_GetTicks();
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
@@ -201,8 +202,9 @@ bool Level::begin()
 				done = true;
 		}
 
-		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
-			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
+		if (!Window::isVSync())
+			if (1000 / Game::FPS > SDL_GetTicks() - curfps)
+				SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 	}
 	Game::Mode = GAME;
 	return quit;
@@ -218,7 +220,8 @@ bool Level::end()
 
 	while (!quit && !done)
 	{
-		curfps = SDL_GetTicks();
+		if (!Window::isVSync())
+			curfps = SDL_GetTicks();
 		Graphics::manageCamera();
 		while (SDL_PollEvent(&Game::inputEvent) != NULL)
 		{
@@ -244,8 +247,9 @@ bool Level::end()
 		if (Game::gPlayer->rect.y <= -Game::gPlayer->rect.h)
 			done = true;
 
-		if (1000 / Game::FPS > SDL_GetTicks() - curfps)
-			SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
+		if (!Window::isVSync())
+			if (1000 / Game::FPS > SDL_GetTicks() - curfps)
+				SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 	}
 
 	return quit;

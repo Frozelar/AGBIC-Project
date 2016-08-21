@@ -48,10 +48,11 @@ std::vector<Enemy*> Game::enemies;
 Player* Game::gPlayer = NULL;
 
 // identifiers for specified objects (used in graphic file loading)
-std::vector<std::string> Game::blockIDs = { "White", "Goal" };
+std::vector<std::string> Game::playerIDs = { "White", "Strawberry" };
+std::vector<std::string> Game::blockIDs = { "Goal", "White", "Black" };
 std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "HighJump", "DoubleJump", "Key" };
 std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye" };
-std::vector<std::string> Game::particleIDs = { "Snow" };
+std::vector<std::string> Game::particleIDs = { "White" };
 
 // constant values
 const int Game::FPS = 60;
@@ -69,7 +70,7 @@ const int Game::BOB_SPEED = 64;
 const int Game::WARMUP_DURATION = 32;
 
 // chances of an enemy spawning
-const int Game::DEFAULT_ENEMY_SPAWN_CHANCE = 128;
+const int Game::DEFAULT_ENEMY_SPAWN_CHANCE = 0; //128;
 int Game::enemySpawnChance = 128; //64;
 
 // map of game controls
@@ -104,7 +105,7 @@ bool Game::init()
 	Controls["Jump"] = SDLK_w;
 	Controls["JumpAlt"] = SDLK_SPACE;
 	Controls["Pause"] = SDLK_p;
-	Controls["Fullscreen"] = SDLK_f;
+	// Controls["Fullscreen"] = SDLK_f;
 	gPlayer = new Player({ 100, 0, UNIT_W, UNIT_H });
 
 	return true;

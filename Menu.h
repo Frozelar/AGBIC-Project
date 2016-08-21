@@ -1,6 +1,10 @@
 #pragma once
 #include "Include.h"
 
+enum PauseTypes {
+	MAIN, SETTINGS, CONTROLS, GRAPHICS, AUDIO
+};
+
 class Menu
 {
 public:
@@ -16,6 +20,8 @@ public:
 
 private:
 	static int type;
+	static int pauseType;
+	static int pausePos;
 	static std::vector<std::pair<Texture*, std::string>> options;
 	static std::vector<std::pair<Texture*, std::string>> notes;
 	static Texture* titleBG;

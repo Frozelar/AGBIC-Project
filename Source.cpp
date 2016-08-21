@@ -39,11 +39,15 @@ int main(int argc, char** argv)
 	// int curlevel = 0;
 	// int oldMode = 0;
 	// Uint32 curfps = 0, curtime = 0, gamestart = 0;
+	Uint32 initfps = 0, curfps = 0;
+	float avgfps = 0;
 
 	Game::Mode = TITLE;
 
 	while (!quit)
 	{
+		if(!Window::isVSync())
+			initfps = SDL_GetTicks();
 		if (Game::Mode != BOSS)
 			Graphics::manageCamera();
 		quit = Game::manageMode();
@@ -74,6 +78,13 @@ int main(int argc, char** argv)
 		// 	SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - curfps));
 		if (Game::Mode == GAME || Game::Mode == GAME_END)
 			Graphics::handleGameOverlay(Game::gTime, Game::gScore);
+
+		if (!Window::isVSync())
+		{
+			curfps = SDL_GetTicks();
+			if (curfps - initfps < 1000 / Game::FPS)
+				SDL_Delay((1000 / Game::FPS) - (curfps - initfps));
+		}
 	}
 	Level::closeLevel();
 	Game::close();

@@ -36,6 +36,9 @@ int Window::h = 0;
 // is fullscreen?
 bool Window::fullscreen = false;
 
+// using vsync?
+bool Window::vsync = true;
+
 // call init()
 Window::Window()
 {
@@ -104,12 +107,30 @@ void Window::toggleFullscreen()
 	SDL_SetWindowFullscreen(window, (fullscreen ? SDL_WINDOW_FULLSCREEN : NULL));
 }
 
+void Window::toggleVSync()
+{
+	vsync = !vsync;
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, (vsync ? "1" : "0"));
+}
+
 /*
 SDL_Renderer* Window::getRenderer()
 {
 	return renderer;
 }
 */
+
+// fullscreen?
+bool Window::isFullscreen()
+{
+	return fullscreen;
+}
+
+// vsync?
+bool Window::isVSync()
+{
+	return vsync;
+}
 
 // return window width
 int Window::getw()

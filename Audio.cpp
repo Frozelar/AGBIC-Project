@@ -39,8 +39,12 @@ std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
 
 // identifiers (in file names)
-std::vector<std::string> Audio::musicIDs = { "CrystallineCaverns", "GlaciersPeak" };
+std::vector<std::string> Audio::musicIDs = { "CrystallineCaverns", "GlaciersPeak", "WillsJourney", "RiverStyx" };
 std::vector<std::string> Audio::sfxIDs = { "Jump", "Collect", "Explode" };
+
+// volume
+int Audio::musVol = 100;
+int Audio::sfxVol = 100;
 
 // call init()
 Audio::Audio()
@@ -100,6 +104,31 @@ bool Audio::play(int which, char type)
 	else
 		return false;
 	return true;
+}
+
+// int = volume, char = 'm' for music or 's' for sound effects
+void Audio::setVolume(int val, char which)
+{
+	if (which == 'm')
+	{
+		musVol = val;
+		Mix_VolumeMusic(val);
+	}
+	else if (which == 's')
+	{
+		sfxVol = val;
+		for(int i = 0; i < sfx.size(); i++)
+			Mix_VolumeChunk(sfx[i], val);
+	}
+}
+
+// char = 'm' for music or 's' for sound effects
+int Audio::getVolume(char which)
+{
+	if (which == 'm')
+		return musVol;
+	else if (which == 's')
+		return sfxVol;
 }
 
 // free everything in music and sfx vectors

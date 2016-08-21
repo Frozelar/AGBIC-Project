@@ -86,10 +86,10 @@ bool Player::handleInput(SDL_Event* e)
 		{
 			Game::Mode = PAUSE;
 		}
-		else if (e->key.keysym.sym == Game::Controls["Fullscreen"])
-		{
-			Window::toggleFullscreen();
-		}
+		//else if (e->key.keysym.sym == Game::Controls["Fullscreen"])
+		//{
+		//	Window::toggleFullscreen();
+		//}
 		else
 			return false;
 	}
@@ -281,6 +281,9 @@ void Player::resetAbilities()
 	abilities["High Jump"] = false;
 	abilities["Double Jump"] = false;
 	abilities["Key"] = false;
+
+	for (int i = 0; i < Game::playerIDs.size(); i++)
+		abilities[Game::playerIDs[i]] = false;
 
 	Game::enemySpawnChance = Game::DEFAULT_ENEMY_SPAWN_CHANCE;
 	Graphics::particleDensity = Graphics::DEFAULT_PARTICLE_DENSITY;

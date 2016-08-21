@@ -37,14 +37,15 @@ std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
 std::vector<std::pair<Texture*, int>> Graphics::particles;
 
 // identifiers for backgrounds and background objects (used in graphic file loading)
-std::vector<std::string> Graphics::bgIDs = { "Sky" };
-std::vector<std::string> Graphics::bgObjectIDs = { "Mountain" };
+std::vector<std::string> Graphics::bgIDs = { "Sky", "Red" };
+std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain" };
 
 // background texture
 Texture* Graphics::bg;
 
 // player texture
-Texture* Graphics::playerGFX;
+// Texture* Graphics::playerGFX;
+std::vector<Texture*> Graphics::playerGFX;
 
 // render color for window
 SDL_Color Graphics::renderColor = { 0, 255, 255, 255 };
@@ -56,7 +57,7 @@ std::string Graphics::rExt = ".png";
 // prefixes for given entity file names
 std::string Graphics::blockPrefix = "blk";
 std::string Graphics::collectiblePrefix = "col";
-std::string Graphics::playerPrefix = "player";
+std::string Graphics::playerPrefix = "plr";
 std::string Graphics::enemyPrefix = "nme";
 std::string Graphics::bgPrefix = "bg";
 std::string Graphics::bgObjectPrefix = "bgo";
@@ -152,8 +153,15 @@ bool Graphics::init()
 	gSmallFont = TTF_OpenFont(fnt.c_str(), gSmallFontSize);
 	gLargeFont = TTF_OpenFont(fnt.c_str(), gLargeFontSize);
 
-	playerGFX = new Texture(0, 0, 0, 0);
-	playerGFX->txLoadF(rDir + playerPrefix + rExt);
+	// playerGFX = new Texture(0, 0, 0, 0);
+	// playerGFX->txLoadF(rDir + playerPrefix + rExt);
+
+	for (int i = 0; i < Game::playerIDs.size(); i++)
+	{
+		playerGFX.push_back(new Texture(0, 0, 0, 0));
+		playerGFX[i]->txLoadF(rDir + playerPrefix + Game::playerIDs[i] + rExt);
+	}
+
 	for (int i = 0; i < Game::blockIDs.size(); i++)
 	{
 		blockGFX.push_back(new Texture(0, 0, 0, 0));
@@ -193,10 +201,13 @@ bool Graphics::init()
 void Graphics::close()
 {
 	closeLevelGFX();
-	if (playerGFX != NULL)
+	for (int i = 0; i < playerGFX.size(); i++)
 	{
-		delete playerGFX;
-		playerGFX = NULL;
+		if (playerGFX[i] != NULL)
+		{
+			delete playerGFX[i];
+			playerGFX[i] = NULL;
+		}
 	}
 	for (int i = 0; i < blockGFX.size(); i++)
 	{
@@ -347,10 +358,17 @@ void Graphics::renderAll(bool manageRenderer)
 	// gPlayer.syncGFX();
 	// Game::gPlayer->syncGFX();
 	// playerGFX->rect = Game::gPlayer->rect;
-	playerGFX->txRect = { Game::gPlayer->rect.x - viewport.x, Game::gPlayer->rect.y - viewport.y, Game::gPlayer->rect.w, Game::gPlayer->rect.h };
-	playerGFX->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
+	Game::gPlayer->abilities["White"] = true;
+	for (int i = 0; i < Game::playerIDs.size(); i++)
+	{
+		if (Game::gPlayer->abilities[Game::playerIDs[i]])
+		{
+			playerGFX[i]->txRect = { Game::gPlayer->rect.x - viewport.x, Game::gPlayer->rect.y - viewport.y, Game::gPlayer->rect.w, Game::gPlayer->rect.h };
+			playerGFX[i]->txRender(NULL, NULL, plrot, SDL_FLIP_NONE);
+		}
+	}
 
-	manageParticles(SNOW /* Level::getID() */);
+	manageParticles(SNOW /* Level::getBGID() */ /* Level::getID() */);
 
 	for (int i = 0; i < messages.size(); i++)
 	{
@@ -491,15 +509,15 @@ void Graphics::loadBG(int which)
 {
 	closeBG();
 
-	switch (which)
-	{
-	case MOUNTAINS:
+	// switch (which)
+	// {
+	// case MOUNTAINS:
 		bg = new Texture(0, 0, 0, 0);
 		bg->txLoadF(rDir + bgPrefix + bgIDs[which] + rExt);
 		// manageBG();
 		createBGObjects();
-		break;
-	}
+	// 	break;
+	// }
 }
 
 // close current background

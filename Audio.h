@@ -31,12 +31,16 @@ public:
 
 	static bool init(void);
 	static bool play(int, char);
+	static void setVolume(int, char);
+	static int getVolume(char);
 	static void close(void);
 
 	static std::vector<std::string> musicIDs;
 	static std::vector<std::string> sfxIDs;
 
 private:
+	static int musVol;
+	static int sfxVol;
 	static std::string mDir;
 	static std::string sDir;
 	static std::string mPrefix;

@@ -55,6 +55,7 @@ public:
 	static std::vector<std::string> collectibleIDs;
 	static std::vector<std::string> enemyIDs;
 	static std::vector<std::string> particleIDs;
+	static std::vector<std::string> playerIDs;
 	static const int FPS;
 	static const int UNIT_W;
 	static const int UNIT_H;

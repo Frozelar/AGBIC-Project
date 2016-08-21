@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Include.h"
 
 enum Background {
-	MOUNTAINS
+	MOUNTAINS, DARK_MOUNTAINS
 };
 
 enum Particles {
@@ -84,7 +84,8 @@ private:
 	// static std::vector<std::string> collectiblePickupMsgs;
 	// static std::vector<Texture*> collectiblePickupTextures;
 	static Texture* bg;
-	static Texture* playerGFX;
+	// static Texture* playerGFX;
+	static std::vector<Texture*> playerGFX;
 	static std::pair<Texture*, std::string> winText;
 	static std::vector<std::string> creditsText;
 	static std::vector<Texture*> credits;

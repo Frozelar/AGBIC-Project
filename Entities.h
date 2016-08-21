@@ -30,7 +30,7 @@ enum EntityType {
 };
 
 enum BlockType {
-	WHITE, GOAL, TOTAL_BLOCK_TYPES
+	GOAL, WHITE, BLACK, TOTAL_BLOCK_TYPES
 };
 
 enum CollectibleType {
