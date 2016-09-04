@@ -30,7 +30,7 @@ enum EntityType {
 };
 
 enum BlockType {
-	GOAL, WHITE, BLACK, TOTAL_BLOCK_TYPES
+	GOAL, WHITE, BLACK, SAND, GRAY, BROWN, TOTAL_BLOCK_TYPES
 };
 
 enum CollectibleType {
@@ -38,7 +38,7 @@ enum CollectibleType {
 };
 
 enum EnemyType {
-	ICE, ICE_BOSS, EYE, TOTAL_ENEMY_TYPES
+	ICE, ICE_BOSS, EYE, TRIANGLE, TOTAL_ENEMY_TYPES
 };
 
 class Entity

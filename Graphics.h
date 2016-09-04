@@ -24,7 +24,7 @@ enum Background {
 };
 
 enum Particles {
-	SNOW
+	SNOW_PART, SAND_PART
 };
 
 class Graphics

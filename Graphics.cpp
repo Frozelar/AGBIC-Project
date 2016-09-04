@@ -37,8 +37,8 @@ std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
 std::vector<std::pair<Texture*, int>> Graphics::particles;
 
 // identifiers for backgrounds and background objects (used in graphic file loading)
-std::vector<std::string> Graphics::bgIDs = { "Sky", "Red" };
-std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain" };
+std::vector<std::string> Graphics::bgIDs = { "Sky", "Red", "Dusk" };
+std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain", "DarkMountain" };
 
 // background texture
 Texture* Graphics::bg;
@@ -368,7 +368,7 @@ void Graphics::renderAll(bool manageRenderer)
 		}
 	}
 
-	manageParticles(SNOW /* Level::getBGID() */ /* Level::getID() */);
+	manageParticles(SNOW_PART /* Level::getBGID() */ /* Level::getID() */);
 
 	for (int i = 0; i < messages.size(); i++)
 	{
@@ -630,11 +630,11 @@ void Graphics::createBGObjects()
 void Graphics::manageParticles(int which)
 {
 	SDL_Rect part = { 0, 0, 0, 0 };
+	float loops = particleDensity;
 	// static int counter = 0;
 	switch (which)
 	{
-	case SNOW:
-		float loops = particleDensity;
+	case SNOW_PART:
 		if (loops < 1 && loops > 0)
 			loops = (rand() % abs(static_cast<int>(loops * 100 - 100)) == 1 ? 1 : 0);
 		while (loops-- > 0)
@@ -666,25 +666,63 @@ void Graphics::manageParticles(int which)
 			}
 		}
 		break;
+	case SAND_PART:
+		if (loops < 1 && loops > 0)
+			loops = (rand() % abs(static_cast<int>(loops * 100 - 100)) == 1 ? 1 : 0);
+		while (loops-- > 0)
+		{
+			part.y = rand() % (Game::gPlayer->rect.y + viewport.h) + (Game::gPlayer->rect.y - viewport.h);
+			part.w /= (rand() % 9 + 1);
+			if (part.w <= 0)
+				part.w = 1;
+			part.h = part.w;
+			part.x = Game::gPlayer->rect.x + viewport.w + part.w;
+			spawnParticle(which, &part);
+		}
+		for (int i = 0; i < particles.size(); i++)
+		{
+			if (particles[i].first->txRect.x + particles[i].first->txRect.w < Game::gPlayer->rect.x - viewport.w)
+			{
+				delete particles[i].first;
+				particles[i].first = NULL;
+				particles.erase(particles.begin() + i);
+				i--;
+			}
+			else
+			{
+				if (rand() % 8 == 1)
+					particles[i].first->txRect.y += (particles[i].second / 2 * (rand() % 2 == 0 ? -1 : 1));
+				particles[i].first->txRect.x -= particles[i].second;
+
+				if (Game::checkCollision(viewport, particles[i].first->txRect))
+				{
+					part = particles[i].first->txRect;
+					particles[i].first->txRect = { particles[i].first->txRect.x - viewport.x, particles[i].first->txRect.y - viewport.y, particles[i].first->txRect.w, particles[i].first->txRect.h };
+					particles[i].first->txRender();
+					particles[i].first->txRect = part;
+				}
+			}
+		}
+		break;
 	}
 }
 
 void Graphics::spawnParticle(int which, SDL_Rect* prect)
 {
 	particles.push_back(std::pair<Texture*, int>(new Texture(0, 0, 0, 0), rand() % (Game::MOVE_SPEED * 2) + 1));
-	particles[particles.size() - 1].first->txLoadF(rDir + particlePrefix + Game::particleIDs[which] + rExt);
+	particles.back().first->txLoadF(rDir + particlePrefix + Game::particleIDs[which] + rExt);
 	if (prect == NULL)
 	{
 		// particles[particles.size() - 1].first->rect.x = rand() % (viewport.x + viewport.w) + viewport.x;
-		particles[particles.size() - 1].first->txRect.x = rand() % (Game::gPlayer->rect.x + viewport.w) + (Game::gPlayer->rect.x - viewport.w);
-		particles[particles.size() - 1].first->txRect.w /= (rand() % 9 + 1);
-		if (particles[particles.size() - 1].first->txRect.w <= 0)
-			particles[particles.size() - 1].first->txRect.w = 1;
-		particles[particles.size() - 1].first->txRect.h = particles[particles.size() - 1].first->txRect.w;
-		particles[particles.size() - 1].first->txRect.y -= particles[particles.size() - 1].first->txRect.h;
+		particles.back().first->txRect.x = rand() % (Game::gPlayer->rect.x + viewport.w) + (Game::gPlayer->rect.x - viewport.w);
+		particles.back().first->txRect.w /= (rand() % 9 + 1);
+		if (particles.back().first->txRect.w <= 0)
+			particles.back().first->txRect.w = 1;
+		particles.back().first->txRect.h = particles.back().first->txRect.w;
+		particles.back().first->txRect.y -= particles.back().first->txRect.h;
 	}
 	else
-		particles[particles.size() - 1].first->txRect = *prect;
+		particles.back().first->txRect = *prect;
 }
 
 void Graphics::newMessage(std::string pmsg, int psize, int ptime, SDL_Color pcolor, Direction pdir, Direction pside, bool pshow)
