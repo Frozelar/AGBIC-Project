@@ -40,6 +40,9 @@ std::vector<std::pair<Texture*, int>> Graphics::particles;
 std::vector<std::string> Graphics::bgIDs = { "Sky", "Red", "Dusk" };
 std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain", "DarkMountain" };
 
+// collectible gfx files cannot have spaces in their names, so there must be a separate container for gfx loading
+std::vector<std::stringstream> Graphics::colGFXIDs;
+
 // background texture
 Texture* Graphics::bg;
 
@@ -148,6 +151,7 @@ Graphics::~Graphics()
 bool Graphics::init()
 {
 	std::string fnt = rDir + fontName;
+
 	TTF_Init();
 	gFont = TTF_OpenFont(fnt.c_str(), gFontSize);
 	gSmallFont = TTF_OpenFont(fnt.c_str(), gSmallFontSize);
@@ -167,10 +171,19 @@ bool Graphics::init()
 		blockGFX.push_back(new Texture(0, 0, 0, 0));
 		blockGFX[i]->txLoadF(rDir + blockPrefix + Game::blockIDs[i] + rExt);
 	}
+	colGFXIDs.resize(Game::collectibleIDs.size());
 	for (int i = 0; i < Game::collectibleIDs.size(); i++)
 	{
+		for (int j = 0; j < Game::collectibleIDs[i].length(); j++)
+		{
+			if (Game::collectibleIDs[i].c_str()[j] == ' ')
+				continue;
+			else
+				colGFXIDs[i] << Game::collectibleIDs[i].c_str()[j];
+		}
+				
 		collectibleGFX.push_back(new Texture(0, 0, 0, 0));
-		collectibleGFX[i]->txLoadF(rDir + collectiblePrefix + Game::collectibleIDs[i] + rExt);
+		collectibleGFX[i]->txLoadF(rDir + collectiblePrefix + colGFXIDs[i].str() + rExt);
 	}
 	for (int i = 0; i < Game::enemyIDs.size(); i++)
 	{

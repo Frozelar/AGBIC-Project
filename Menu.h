@@ -7,6 +7,7 @@ enum PauseTypes {
 
 class Menu
 {
+	friend class Graphics;
 public:
 	Menu();
 	~Menu();
@@ -24,6 +25,8 @@ private:
 	static int pausePos;
 	static std::vector<std::pair<Texture*, std::string>> options;
 	static std::vector<std::pair<Texture*, std::string>> notes;
+	static std::vector<std::pair<Texture*, std::string>> inventory;
+	static std::vector<Texture*> invImages;
 	static Texture* titleBG;
 	static std::string titleBGPrefix;
 	static std::string titleMusicPrefix;

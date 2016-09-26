@@ -57,6 +57,7 @@ public:
 	static float particleDensity;
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;
+	static std::vector<std::stringstream> colGFXIDs;
 	static std::string rDir;
 	static std::string rExt;
 	static Texture* textBG;
@@ -71,6 +72,10 @@ public:
 	static int gSmallFontSize;
 	static int gLargeFontSize;
 	static std::vector<std::string> tipStrings;
+	static std::string playerPrefix;
+	static std::string blockPrefix;
+	static std::string collectiblePrefix;
+	static std::string enemyPrefix;
 
 private:
 	static SDL_Rect viewport;
@@ -90,10 +95,6 @@ private:
 	static std::vector<std::string> creditsText;
 	static std::vector<Texture*> credits;
 	static SDL_Color renderColor;
-	static std::string blockPrefix;
-	static std::string collectiblePrefix;
-	static std::string enemyPrefix;
-	static std::string playerPrefix;
 	static std::string bgPrefix;
 	static std::string bgObjectPrefix;
 	static std::string particlePrefix;

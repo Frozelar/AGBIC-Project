@@ -277,10 +277,15 @@ void Player::cycleAerials()
 // set all abilities to false
 void Player::resetAbilities()
 {
+	/*
 	abilities["Sprint"] = false;
 	abilities["High Jump"] = false;
 	abilities["Double Jump"] = false;
 	abilities["Key"] = false;
+	*/
+
+	for (int i = 0; i < Game::collectibleIDs.size(); i++)
+		abilities[Game::collectibleIDs[i]] = false;
 
 	for (int i = 0; i < Game::playerIDs.size(); i++)
 		abilities[Game::playerIDs[i]] = false;

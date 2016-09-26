@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Graphics.h"
 #include "Audio.h"
+#include "Player.h"
 
 // which menu
 int Menu::type = -1;
@@ -40,6 +41,10 @@ std::vector<SDL_Rect> origOptions;
 
 // displayed on main menu (note: not part of Menu class)
 std::vector<std::string> strings = { "Ice Age", "Copyright (C) 2016 Frozelar", "You may want to read TUTORIAL.txt before playing!" };
+
+// player inventory, displayed when menu is open
+std::vector<std::pair<Texture*, std::string>> Menu::inventory;
+std::vector<Texture*> Menu::invImages;
 
 // used for various settings (note: not part of Menu class)
 Texture enabled;
@@ -372,6 +377,17 @@ void Menu::render()
 					sfxVolume.txRender();
 				}
 			}
+			if (pauseType == MAIN)
+			{
+				for (int i = 0; i < inventory.size(); i++)
+				{
+					if (Game::gPlayer->abilities[inventory[i].second])
+					{
+						inventory[i].first->txRender();
+						invImages[i]->txRender();
+					}
+				}
+			}
 		}
 	}
 	SDL_RenderPresent(Window::renderer);
@@ -446,6 +462,29 @@ void Menu::init(void)
 			notes[i].first->txRect.y = options[title.size() - 1].first->txRect.y + options[title.size() - 1].first->txRect.h + Game::UNIT_H;
 		}
 	}
+	for (int i = 0; i < Game::gPlayer->abilities.size(); i++)
+	{
+		inventory.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), ""));
+		invImages.push_back(new Texture(0, 0, 0, 0));
+
+		if (i < Game::playerIDs.size())
+		{
+			inventory.back().first->txLoadT(Game::playerIDs[i], Graphics::gFont, Graphics::black);
+			inventory.back().second = Game::playerIDs[i];
+			invImages.back()->txLoadF(Graphics::rDir + Graphics::playerPrefix + Game::playerIDs[i] + Graphics::rExt);
+		}
+		else if (i - Game::playerIDs.size() < Game::collectibleIDs.size())
+		{
+			inventory.back().first->txLoadT(Game::collectibleIDs[i - Game::playerIDs.size()], Graphics::gFont, Graphics::black);
+			inventory.back().second = Game::collectibleIDs[i - Game::playerIDs.size()];
+			invImages.back()->txLoadF(Graphics::rDir + Graphics::collectiblePrefix + Graphics::colGFXIDs[i - Game::playerIDs.size()].str() + Graphics::rExt);
+		}
+
+		inventory.back().first->txRect.x = Window::getw() - Game::UNIT_W - inventory.back().first->txRect.w;
+		inventory.back().first->txRect.y = Game::UNIT_H + (i == 0 ? 0 : inventory[i - 1].first->txRect.y + inventory[i - 1].first->txRect.h);
+		invImages.back()->txRect.y = inventory.back().first->txRect.y;
+		invImages.back()->txRect.x = inventory.back().first->txRect.x - invImages.back()->txRect.w - Game::UNIT_W;
+	}
 	titleBG = new Texture(0, 0, 0, 0);
 	titleBG->txLoadF(Graphics::rDir + titleBGPrefix + Graphics::rExt);
 	enabled.txRect = { 0, 0, 0, 0 };
@@ -476,6 +515,21 @@ void Menu::clear()
 			delete notes[i].first;
 			notes[i].first = NULL;
 			notes.pop_back();
+		}
+	}
+	for (int i = inventory.size() - 1; i >= 0; i--)
+	{
+		if (inventory[i].first != NULL)
+		{
+			delete inventory[i].first;
+			inventory[i].first = NULL;
+			inventory.pop_back();
+		}
+		if (invImages[i] != NULL)
+		{
+			delete invImages[i];
+			invImages[i] = NULL;
+			invImages.pop_back();
 		}
 	}
 	if (titleBG != NULL)
