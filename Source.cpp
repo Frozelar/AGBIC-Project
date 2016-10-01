@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Level.h"
 #include "Audio.h"
 #include "Menu.h"
+#include "FileSystem.h"
 
 // create static classes
 Window gWindow;
@@ -43,6 +44,7 @@ int main(int argc, char** argv)
 	float avgfps = 0;
 
 	Game::Mode = TITLE;
+	FileSystem::loadSettings();
 
 	while (!quit)
 	{

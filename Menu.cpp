@@ -5,6 +5,7 @@
 #include "Graphics.h"
 #include "Audio.h"
 #include "Player.h"
+#include "FileSystem.h"
 
 // which menu
 int Menu::type = -1;
@@ -83,7 +84,7 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 	{
 		if(!Window::isVSync())
 			fps = SDL_GetTicks();
-		while (SDL_PollEvent(e) != NULL)
+		while (SDL_PollEvent(e) != NULL && !done)
 		{
 			switch (e->type)
 			{
@@ -106,6 +107,7 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 			if (1000 / Game::FPS > SDL_GetTicks() - fps)
 				SDL_Delay((1000 / Game::FPS) - (SDL_GetTicks() - fps));
 	}
+
 	return quit;
 }
 
@@ -127,6 +129,20 @@ int Menu::handleEvent(SDL_Event* e)
 	//	if (e->key.keysym.sym == Game::Controls["Fullscreen"])
 	//		Window::toggleFullscreen();
 	
+	if (type == PAUSE)
+	{
+		if (e->type == SDL_KEYUP)
+		{
+			if (e->key.keysym.sym == Game::Controls["Pause"])
+			{
+				pauseType = MAIN;
+				pausePos = title.size();
+				Game::Mode = GAME;
+				FileSystem::saveSettings();
+				return true;
+			}
+		}
+	}
 	if (e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEMOTION)
 	{
 		for (int i = 0; i < options.size(); i++)
@@ -193,6 +209,7 @@ int Menu::handleEvent(SDL_Event* e)
 							if (options[i].second == "Resume")
 							{
 								Game::Mode = GAME;
+								FileSystem::saveSettings();
 								return true;
 							}
 							else if (options[i].second == "Settings")
@@ -204,6 +221,7 @@ int Menu::handleEvent(SDL_Event* e)
 							else if (options[i].second == "Exit to Title")
 							{
 								Game::Mode = TITLE;
+								FileSystem::saveSettings();
 								return true;
 							}
 						}
@@ -264,7 +282,6 @@ int Menu::handleEvent(SDL_Event* e)
 						}
 						else if (pauseType == AUDIO)
 						{
-							std::cout << options[i].second << std::endl;
 							if (options[i].second == "Music: ")
 							{
 								if (Audio::getVolume('m') == 100)
