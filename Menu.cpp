@@ -325,7 +325,14 @@ void Menu::render()
 
 	SDL_RenderClear(Window::renderer);
 	if (type == PAUSE)
+	{
 		Graphics::renderAll(false);
+		// Graphics::textBG->txRect = { 0, 0, static_cast<int>(Window::getw() * 0.25), Window::geth() };
+		Graphics::textBG->txRect = { 0, 0, Window::getw(), Window::geth() };
+		Graphics::textBG->txRender();
+		// Graphics::textBG->txRect = { static_cast<int>(Window::getw() * 0.75), 0, static_cast<int>(Window::getw() * 0.25), Window::geth() };
+		// Graphics::textBG->txRender();
+	}
 	if (type == TITLE)
 	{
 		titleBG->txRender();

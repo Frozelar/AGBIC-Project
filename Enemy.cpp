@@ -14,11 +14,19 @@ Enemy::Enemy(SDL_Rect pbox, int psubtype) : PhysicsEntity(pbox, ENEMY, psubtype)
 		rect.h *= 3;
 	}
 
-	colorMod = new SDL_Color({ Uint8(rand() % 255), Uint8(rand() % 255), Uint8(rand() % 255) });
-	power += colorMod->r;
-	power -= colorMod->b;
+	colorMod = new SDL_Color({ Uint8(rand() % 255), 0 /*Uint8(rand() % 255)*/, Uint8(rand() % 255) });
+	if (Level::getID() < 3)
+	{
+		if (colorMod->r > colorMod->b)
+			colorMod->r /= rand() % 8 + 1;
+	}
+	power += colorMod->r / 2;
+	power -= colorMod->b / 2;
 	if (power < 0)
 		power = 1;
+	moveSpeed = power / 4;
+	if (moveSpeed > Game::MOVE_SPEED * 4)
+		moveSpeed = Game::MOVE_SPEED * 4;
 }
 
 Enemy::~Enemy()

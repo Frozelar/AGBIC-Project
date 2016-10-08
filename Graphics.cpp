@@ -192,6 +192,8 @@ bool Graphics::init()
 	}
 	textBG = new Texture(0, 0, 0, 0);
 	textBG->txLoadF(rDir + textBGPrefix + rExt);
+	textBG->txSetBlendMode(SDL_BLENDMODE_BLEND);
+	textBG->txSetAlpha(128);
 
 	winText.second = "YOU WIN";
 	winText.first = new Texture(0, 0, 0, 0);
