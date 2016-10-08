@@ -43,7 +43,8 @@ public:
 	void txFree(void);
 
 	// set color using red, green, blue
-	void txSetColor(Uint8 r, Uint8 g, Uint8 b);
+	void txSetColor(Uint8 r, Uint8 g, Uint8 b /*, Uint8 a = 255 */);
+	void txSetColor(SDL_Color c);
 
 	// set transparency (aka alpha)
 	void txSetAlpha(Uint8 a);

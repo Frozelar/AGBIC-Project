@@ -52,7 +52,7 @@ std::vector<std::string> Game::playerIDs = { "White", "Strawberry" };
 std::vector<std::string> Game::blockIDs = { "Goal", "White", "Black", "Sand", "Gray", "Brown" };
 std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "High Jump", "Double Jump", "Key" };
 std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye", "Triangle" };
-std::vector<std::string> Game::particleIDs = { "White", "White", "Sand" };
+std::vector<std::string> Game::particleIDs = { "White", "White", "Sand", "White" };
 
 // constant values
 const int Game::FPS = 60;

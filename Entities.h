@@ -38,7 +38,7 @@ enum CollectibleType {
 };
 
 enum EnemyType {
-	ICE, ICE_BOSS, EYE, TRIANGLE, TOTAL_ENEMY_TYPES
+	ICE, ICE_BOSS, EYE, TRIANGLE, CIRCLE, TOTAL_ENEMY_TYPES
 };
 
 class Entity
@@ -62,7 +62,9 @@ public:
 	int getSubtype(void);
 	virtual void onProcess(void);
 	virtual void onDestroy(void);
-	
+
+	int power;
+	SDL_Color* colorMod;
 	bool destroy;
 protected:
 	int entityType;

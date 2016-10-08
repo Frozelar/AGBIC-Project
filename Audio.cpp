@@ -39,7 +39,7 @@ std::vector<Mix_Music*> Audio::music;
 std::vector<Mix_Chunk*> Audio::sfx;
 
 // identifiers (in file names)
-std::vector<std::string> Audio::musicIDs = { "CrystallineCaverns", "GlaciersPeak", "WillsJourney", "RiverStyx" };
+std::vector<std::string> Audio::musicIDs = { "CrystallineCaverns", "GlaciersPeak", "WillsJourney", "RiverStyx", "PerpetualMotion" };
 std::vector<std::string> Audio::sfxIDs = { "Jump", "Collect", "Explode" };
 
 // volume

@@ -30,7 +30,7 @@ public:
 	void cycleAerials(void);
 	bool handleInput(SDL_Event*);
 	void resetAbilities(void);
-	void onHit(void);
+	void onHit(int = 0);
 
 	int jumps;
 	std::unordered_map<std::string, bool> abilities;

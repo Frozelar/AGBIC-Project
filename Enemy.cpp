@@ -13,6 +13,12 @@ Enemy::Enemy(SDL_Rect pbox, int psubtype) : PhysicsEntity(pbox, ENEMY, psubtype)
 		rect.w *= 3;
 		rect.h *= 3;
 	}
+
+	colorMod = new SDL_Color({ Uint8(rand() % 255), Uint8(rand() % 255), Uint8(rand() % 255) });
+	power += colorMod->r;
+	power -= colorMod->b;
+	if (power < 0)
+		power = 1;
 }
 
 Enemy::~Enemy()
@@ -198,6 +204,9 @@ void Enemy::handleMovements()
 		//for (int i = 0; i < Game::collisionEntities.size(); i++)
 		//	if (aerialSpeed == 0 && Game::checkCollision(check, Game::collisionEntities[i]->rect))
 		//		aerialSpeed = Game::JUMP_START;
+		break;
+	case CIRCLE:
+
 		break;
 	}
 }

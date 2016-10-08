@@ -32,9 +32,14 @@ Texture::~Texture()
 }
 
 // set colors to the texture
-void Texture::txSetColor(Uint8 r, Uint8 g, Uint8 b)
+void Texture::txSetColor(Uint8 r, Uint8 g, Uint8 b /*, Uint8 a */)
 {
 	SDL_SetTextureColorMod(txTexture, r, g, b);
+	// SDL_SetTextureAlphaMod(txTexture, a);
+}
+void Texture::txSetColor(SDL_Color c)
+{
+	SDL_SetTextureColorMod(txTexture, c.r, c.g, c.b);
 }
 
 // set the blend mode

@@ -101,6 +101,8 @@ void Player::handleMovements()
 {
 	// static bool gotEnd = false;
 	// static int plFrameCount = 0;
+	static int hitBuffer = 0;
+	static int hitStart = 64;
 
 	if (abilities["Sprint"] /* && plFrameCount >= Game::WARMUP_DURATION */ && abs(moveSpeed) == Game::MOVE_SPEED)
 		moveSpeed = (moveSpeed > 0 ? 1 : -1) * Game::MOVE_SPEED * 2;
@@ -127,7 +129,13 @@ void Player::handleMovements()
 			else if (collisions[LEFT]->getType() == ENEMY)
 			{
 				if (collisions[LEFT]->getSubtype() != EYE && Game::Mode != GAME_END)
-					onHit();
+				{
+					if (hitBuffer == 0)
+					{
+						onHit(collisions[LEFT]->power);
+						hitBuffer = hitStart;
+					}
+				}
 				else
 					collisions[LEFT]->destroy = true;
 			}
@@ -147,7 +155,13 @@ void Player::handleMovements()
 			else if (collisions[RIGHT]->getType() == ENEMY)
 			{
 				if (collisions[RIGHT]->getSubtype() != EYE && Game::Mode != GAME_END)
-					onHit();
+				{
+					if (hitBuffer == 0)
+					{
+						onHit(collisions[RIGHT]->power);
+						hitBuffer = hitStart;
+					}
+				}
 				else
 					collisions[RIGHT]->destroy = true;
 			}
@@ -186,7 +200,13 @@ void Player::handleMovements()
 			else if (collisions[UP]->getType() == ENEMY)
 			{
 				if (collisions[UP]->getSubtype() != EYE && Game::Mode != GAME_END)
-					onHit();
+				{
+					if (hitBuffer == 0)
+					{
+						onHit(collisions[UP]->power);
+						hitBuffer = hitStart;
+					}
+				}
 				else
 					collisions[UP]->destroy = true;
 			}
@@ -215,7 +235,13 @@ void Player::handleMovements()
 			else if (collisions[DOWN]->getType() == ENEMY)
 			{
 				if (collisions[DOWN]->getSubtype() != EYE && Game::Mode != GAME_END)
-					onHit();
+				{
+					if (hitBuffer == 0)
+					{
+						onHit(collisions[DOWN]->power);
+						hitBuffer = hitStart;
+					}
+				}
 				else
 					collisions[DOWN]->destroy = true;
 			}
@@ -245,6 +271,8 @@ void Player::handleMovements()
 			moveSpeed = 0;
 		}
 	}
+	if (hitBuffer > 0)
+		hitBuffer--;
 }
 
 // manage aerialSpeed
@@ -295,8 +323,11 @@ void Player::resetAbilities()
 }
 
 // called when the player gets hit
-void Player::onHit()
+void Player::onHit(int power)
 {
-	Game::Mode = TITLE;
+	// Game::Mode = TITLE;
 	Audio::play(EXPLODE, 's');
+	Game::gScore -= power;
+	if (Game::gScore < 0)
+		Game::gScore = 0;
 }

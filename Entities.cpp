@@ -35,6 +35,8 @@ Entity::~Entity()
 // initialize variables
 StaticEntity::StaticEntity(SDL_Rect pbox, int ptype, int psubtype) : Entity(pbox)
 {
+	power = -1;
+	colorMod = NULL;
 	entityType = ptype;
 	subtype = psubtype;
 	destroy = false;
@@ -45,6 +47,11 @@ StaticEntity::StaticEntity(SDL_Rect pbox, int ptype, int psubtype) : Entity(pbox
 StaticEntity::~StaticEntity()
 {
 	onDestroy();
+	if (colorMod != NULL)
+	{
+		delete colorMod;
+		colorMod = NULL;
+	}
 }
 
 /*

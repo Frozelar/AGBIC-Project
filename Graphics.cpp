@@ -37,8 +37,8 @@ std::vector<std::pair<Texture*, int>> Graphics::bgObjects;
 std::vector<std::pair<Texture*, int>> Graphics::particles;
 
 // identifiers for backgrounds and background objects (used in graphic file loading)
-std::vector<std::string> Graphics::bgIDs = { "Sky", "Red", "Dusk" };
-std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain", "DarkMountain" };
+std::vector<std::string> Graphics::bgIDs = { "Sky", "Red", "Dusk", "Night" };
+std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain", "DarkMountain", "Stars" };
 
 // collectible gfx files cannot have spaces in their names, so there must be a separate container for gfx loading
 std::vector<std::stringstream> Graphics::colGFXIDs;
@@ -359,7 +359,14 @@ void Graphics::renderAll(bool manageRenderer)
 				break;
 			case ENEMY:
 				enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRect = { Game::renderedEntities[i]->rect.x - viewport.x, Game::renderedEntities[i]->rect.y - viewport.y, Game::renderedEntities[i]->rect.w, Game::renderedEntities[i]->rect.h };
-				enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRender(NULL, NULL, enrot, SDL_FLIP_NONE);
+				if (Game::renderedEntities[i]->colorMod != NULL)
+				{
+					enemyGFX[Game::renderedEntities[i]->getSubtype()]->txSetColor(*Game::renderedEntities[i]->colorMod);
+					enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRender(NULL, NULL, enrot, SDL_FLIP_NONE);
+					enemyGFX[Game::renderedEntities[i]->getSubtype()]->txSetColor(0, 0, 0);
+				}
+				else
+					enemyGFX[Game::renderedEntities[i]->getSubtype()]->txRender(NULL, NULL, enrot, SDL_FLIP_NONE);
 				break;
 			}
 		}
