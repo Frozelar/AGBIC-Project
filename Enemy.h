@@ -11,5 +11,10 @@ public:
 	void onProcess(void);
 	void handleMovements(void);
 	void cycleAerials(void);
+
+private:
+	// SDL_Rect origin;
+	int targetMoveSpeed;
+	int targetAerialSpeed;
 };
 

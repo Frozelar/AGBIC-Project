@@ -27,6 +27,7 @@ Enemy::Enemy(SDL_Rect pbox, int psubtype) : PhysicsEntity(pbox, ENEMY, psubtype)
 	moveSpeed = power / 4;
 	if (moveSpeed > Game::MOVE_SPEED * 4)
 		moveSpeed = Game::MOVE_SPEED * 4;
+	// origin = pbox;
 }
 
 Enemy::~Enemy()
@@ -214,7 +215,50 @@ void Enemy::handleMovements()
 		//		aerialSpeed = Game::JUMP_START;
 		break;
 	case CIRCLE:
-
+		int MAX_MOVESPEED = 32;
+		int MAX_AERIALSPEED = 32;
+		static int skip = 0;
+		if (moveSpeed <= 1 && moveSpeed >= -1)
+		{
+			moveSpeed = Game::MOVE_SPEED * (moveSpeed == 0 ? 1 : -moveSpeed);
+			targetMoveSpeed = (moveSpeed < 0 ? -1 : 1) * MAX_MOVESPEED;
+		}
+		else if (abs(moveSpeed) < abs(targetMoveSpeed))
+		{
+			if(skip == 4)
+				moveSpeed *= 2;
+		}
+		else
+		{
+			if (skip == 4)
+			{
+				targetMoveSpeed = 0;
+				moveSpeed /= 2;
+			}
+		}
+		rect.x += moveSpeed;
+		if (aerialSpeed <= 1 && aerialSpeed >= -1)
+		{
+			aerialSpeed = Game::GRAVITY_START * 2 * (aerialSpeed == 0 ? 1 : -aerialSpeed);
+			targetAerialSpeed = (aerialSpeed < 0 ? -1 : 1) * MAX_MOVESPEED;
+		}
+		else if (abs(aerialSpeed) < abs(targetAerialSpeed))
+		{
+			if (skip == 4)
+				aerialSpeed *= 2;
+		}
+		else
+		{
+			if (skip == 4)
+			{
+				targetAerialSpeed = 0;
+				aerialSpeed /= 2;
+			}
+		}
+		rect.y += aerialSpeed;
+		if (skip == 4)
+			skip = -1;
+		skip++;
 		break;
 	}
 }
