@@ -1,8 +1,8 @@
 #pragma once
 #include "Include.h"
 
-enum PauseTypes {
-	MAIN, SETTINGS, CONTROLS, GRAPHICS, AUDIO
+enum PauseType {
+	PSTORE, MAIN, SETTINGS, CONTROLS, GRAPHICS, AUDIO
 };
 
 class Menu
@@ -18,6 +18,7 @@ public:
 	static int handleEvent(SDL_Event*);
 	static void render(void);
 	static void playMusic(void);
+	static void createStore(void);
 
 private:
 	static int type;
@@ -26,6 +27,7 @@ private:
 	static std::vector<std::pair<Texture*, std::string>> options;
 	static std::vector<std::pair<Texture*, std::string>> notes;
 	static std::vector<std::pair<Texture*, std::string>> inventory;
+	static std::vector<std::pair<Texture*, std::string>> store;
 	static std::vector<Texture*> invImages;
 	static Texture* titleBG;
 	static std::string titleBGPrefix;

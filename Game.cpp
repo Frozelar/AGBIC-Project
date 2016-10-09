@@ -488,6 +488,12 @@ bool Game::manageMode(void)
 		paused = SDL_GetTicks() - paused;
 		totalpaused += paused;
 		break;
+	case STORE:
+		paused = SDL_GetTicks();
+		quit = Menu::loop(STORE, Graphics::MENU_RECT, &inputEvent);
+		paused = SDL_GetTicks() - paused;
+		totalpaused += paused;
+		break;
 	}
 	if (Game::Mode != TITLE && Level::getID() == -1)
 		Level::generateLevel(0 /*Level::getID()*//*++*/);

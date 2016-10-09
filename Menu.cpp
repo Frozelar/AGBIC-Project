@@ -39,6 +39,7 @@ std::vector<std::string> controls = { "Return" };
 std::vector<std::string> graphics = { "Fullscreen: ", "VSync: ", "Return" };
 std::vector<std::string> audio = { "Music: ", "Sound Effects: ", "Return" };
 std::vector<SDL_Rect> origOptions;
+std::vector<SDL_Rect> origStore;
 
 // displayed on main menu (note: not part of Menu class)
 std::vector<std::string> strings = { "Ice Age", "Copyright (C) 2016 Frozelar", "You may want to read TUTORIAL.txt before playing!" };
@@ -46,6 +47,9 @@ std::vector<std::string> strings = { "Ice Age", "Copyright (C) 2016 Frozelar", "
 // player inventory, displayed when menu is open
 std::vector<std::pair<Texture*, std::string>> Menu::inventory;
 std::vector<Texture*> Menu::invImages;
+
+// vector for store items
+std::vector<std::pair<Texture*, std::string>> Menu::store;
 
 // used for various settings (note: not part of Menu class)
 Texture enabled;
@@ -73,8 +77,15 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 	bool quit = false;
 	int done = false;
 
-	if(type == TITLE)
+	if (type == TITLE)
+	{
 		playMusic();
+	}
+	else if (type == STORE)
+	{
+		pauseType = PSTORE;
+		createStore();
+	}
 	else
 	{
 		pauseType = MAIN;
@@ -129,12 +140,13 @@ int Menu::handleEvent(SDL_Event* e)
 	//	if (e->key.keysym.sym == Game::Controls["Fullscreen"])
 	//		Window::toggleFullscreen();
 	
-	if (type == PAUSE)
+	if (type == PAUSE || type == STORE)
 	{
 		if (e->type == SDL_KEYUP)
 		{
 			if (e->key.keysym.sym == Game::Controls["Pause"])
 			{
+				type = PAUSE;
 				pauseType = MAIN;
 				pausePos = title.size();
 				Game::Mode = GAME;
@@ -145,164 +157,200 @@ int Menu::handleEvent(SDL_Event* e)
 	}
 	if (e->type == SDL_MOUSEBUTTONUP || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEMOTION)
 	{
-		for (int i = 0; i < options.size(); i++)
+		if (type == STORE)
 		{
-			if (type == TITLE)
+			for (int i = 0; i < store.size(); i++)
 			{
-				if (Game::checkCollision(mrect, options[i].first->txRect))
+				if (Game::checkCollision(mrect, store[i].first->txRect))
 				{
 					if (e->type == SDL_MOUSEMOTION)
 					{
-						if (options[i].first->txRect.x == origOptions[i].x)
+						if (store[i].first->txRect.x == origStore[i].x)
 						{
-							options[i].first->txRect.x -= Game::UNIT_W / 4;
-							options[i].first->txRect.y -= Game::UNIT_H / 4;
-							options[i].first->txRect.w += Game::UNIT_W / 2;
-							options[i].first->txRect.h += Game::UNIT_H / 2;
+							store[i].first->txRect.x -= Game::UNIT_W / 4;
+							store[i].first->txRect.y -= Game::UNIT_H / 4;
+							store[i].first->txRect.w += Game::UNIT_W / 2;
+							store[i].first->txRect.h += Game::UNIT_H / 2;
 						}
 						break;
 					}
 					else if (e->type == SDL_MOUSEBUTTONDOWN)
 					{
-						options[i].first->txRect = origOptions[i];
+						store[i].first->txRect = origStore[i];
 					}
 					else if (e->type == SDL_MOUSEBUTTONUP)
 					{
-						if (options[i].second == "Play Game")
-						{
-							Game::Mode = LEVEL_BEGIN;
-							return true;
-						}
-						else if (options[i].second == "Exit")
-						{
-							return -1;
-						}
+						type = PAUSE;
+						pauseType = MAIN;
+						pausePos = title.size();
+						Game::Mode = GAME;
+						Game::gPlayer->abilities[store[i].second] = true;
+						return true;
 					}
 				}
 			}
-			else if (type == PAUSE)
+		}
+		else
+		{
+			for (int i = 0; i < options.size(); i++)
 			{
-				//if (i < title.size())
-				//	i = title.size();
-				if (i < pausePos)
-					i = pausePos;
-				if (Game::checkCollision(mrect, options[i].first->txRect))
+				if (type == TITLE)
 				{
-					if (e->type == SDL_MOUSEMOTION)
+					if (Game::checkCollision(mrect, options[i].first->txRect))
 					{
-						if (options[i].first->txRect.x == origOptions[i].x)
+						if (e->type == SDL_MOUSEMOTION)
 						{
-							options[i].first->txRect.x -= Game::UNIT_W / 4;
-							options[i].first->txRect.y -= Game::UNIT_H / 4;
-							options[i].first->txRect.w += Game::UNIT_W / 2;
-							options[i].first->txRect.h += Game::UNIT_H / 2;
-						}
-					}
-					else if (e->type == SDL_MOUSEBUTTONDOWN)
-					{
-						options[i].first->txRect = origOptions[i];
-					}
-					else if (e->type == SDL_MOUSEBUTTONUP)
-					{
-						if (pauseType == MAIN)
-						{
-							if (options[i].second == "Resume")
+							if (options[i].first->txRect.x == origOptions[i].x)
 							{
-								Game::Mode = GAME;
-								FileSystem::saveSettings();
+								options[i].first->txRect.x -= Game::UNIT_W / 4;
+								options[i].first->txRect.y -= Game::UNIT_H / 4;
+								options[i].first->txRect.w += Game::UNIT_W / 2;
+								options[i].first->txRect.h += Game::UNIT_H / 2;
+							}
+							break;
+						}
+						else if (e->type == SDL_MOUSEBUTTONDOWN)
+						{
+							options[i].first->txRect = origOptions[i];
+						}
+						else if (e->type == SDL_MOUSEBUTTONUP)
+						{
+							if (options[i].second == "Play Game")
+							{
+								Game::Mode = LEVEL_BEGIN;
 								return true;
 							}
-							else if (options[i].second == "Settings")
+							else if (options[i].second == "Exit")
 							{
-								pauseType = SETTINGS;
-								pausePos = title.size() + pause.size();
-								break;
-							}
-							else if (options[i].second == "Exit to Title")
-							{
-								Game::Mode = TITLE;
-								FileSystem::saveSettings();
-								return true;
+								return -1;
 							}
 						}
-						else if (pauseType == SETTINGS)
+					}
+				}
+				else if (type == PAUSE)
+				{
+					//if (i < title.size())
+					//	i = title.size();
+					if (i < pausePos)
+						i = pausePos;
+					if (Game::checkCollision(mrect, options[i].first->txRect))
+					{
+						if (e->type == SDL_MOUSEMOTION)
 						{
-							if (options[i].second == "Controls")
+							if (options[i].first->txRect.x == origOptions[i].x)
 							{
-								pauseType = CONTROLS;
-								pausePos = title.size() + pause.size() + settings.size();
-								break;
-							}
-							else if (options[i].second == "Graphics")
-							{
-								pauseType = GRAPHICS;
-								pausePos = title.size() + pause.size() + settings.size() + controls.size();
-								break;
-							}
-							else if (options[i].second == "Audio")
-							{
-								pauseType = AUDIO;
-								pausePos = title.size() + pause.size() + settings.size() + controls.size() + graphics.size();
-								break;
-							}
-							else if (options[i].second == "Return")
-							{
-								pauseType = MAIN;
-								pausePos = title.size();
-								break;
+								options[i].first->txRect.x -= Game::UNIT_W / 4;
+								options[i].first->txRect.y -= Game::UNIT_H / 4;
+								options[i].first->txRect.w += Game::UNIT_W / 2;
+								options[i].first->txRect.h += Game::UNIT_H / 2;
 							}
 						}
-						else if (pauseType == CONTROLS)
+						else if (e->type == SDL_MOUSEBUTTONDOWN)
 						{
-							if (options[i].second == "Return")
-							{
-								pauseType = SETTINGS;
-								pausePos = title.size() + pause.size();
-								break;
-							}
+							options[i].first->txRect = origOptions[i];
 						}
-						else if (pauseType == GRAPHICS)
+						else if (e->type == SDL_MOUSEBUTTONUP)
 						{
-							if (options[i].second == "Fullscreen: ")
+							if (pauseType == MAIN)
 							{
-								Window::toggleFullscreen();
-								break;
+								if (options[i].second == "Resume")
+								{
+									Game::Mode = GAME;
+									FileSystem::saveSettings();
+									return true;
+								}
+								else if (options[i].second == "Settings")
+								{
+									pauseType = SETTINGS;
+									pausePos = title.size() + pause.size();
+									break;
+								}
+								else if (options[i].second == "Exit to Title")
+								{
+									Game::Mode = TITLE;
+									FileSystem::saveSettings();
+									return true;
+								}
 							}
-							else if (options[i].second == "VSync: ")
+							else if (pauseType == SETTINGS)
 							{
-								Window::toggleVSync();
-								break;
+								if (options[i].second == "Controls")
+								{
+									pauseType = CONTROLS;
+									pausePos = title.size() + pause.size() + settings.size();
+									break;
+								}
+								else if (options[i].second == "Graphics")
+								{
+									pauseType = GRAPHICS;
+									pausePos = title.size() + pause.size() + settings.size() + controls.size();
+									break;
+								}
+								else if (options[i].second == "Audio")
+								{
+									pauseType = AUDIO;
+									pausePos = title.size() + pause.size() + settings.size() + controls.size() + graphics.size();
+									break;
+								}
+								else if (options[i].second == "Return")
+								{
+									pauseType = MAIN;
+									pausePos = title.size();
+									break;
+								}
 							}
-							else if (options[i].second == "Return")
+							else if (pauseType == CONTROLS)
 							{
-								pauseType = SETTINGS;
-								pausePos = title.size() + pause.size();
-								break;
+								if (options[i].second == "Return")
+								{
+									pauseType = SETTINGS;
+									pausePos = title.size() + pause.size();
+									break;
+								}
 							}
-						}
-						else if (pauseType == AUDIO)
-						{
-							if (options[i].second == "Music: ")
+							else if (pauseType == GRAPHICS)
 							{
-								if (Audio::getVolume('m') == 100)
-									Audio::setVolume(0, 'm');
-								else
-									Audio::setVolume(Audio::getVolume('m') + 10, 'm');
-								break;
+								if (options[i].second == "Fullscreen: ")
+								{
+									Window::toggleFullscreen();
+									break;
+								}
+								else if (options[i].second == "VSync: ")
+								{
+									Window::toggleVSync();
+									break;
+								}
+								else if (options[i].second == "Return")
+								{
+									pauseType = SETTINGS;
+									pausePos = title.size() + pause.size();
+									break;
+								}
 							}
-							else if (options[i].second == "Sound Effects: ")
+							else if (pauseType == AUDIO)
 							{
-								if (Audio::getVolume('s') == 100)
-									Audio::setVolume(0, 's');
-								else
-									Audio::setVolume(Audio::getVolume('s') + 10, 's');
-								break;
-							}
-							else if (options[i].second == "Return")
-							{
-								pauseType = SETTINGS;
-								pausePos = title.size() + pause.size();
-								break;
+								if (options[i].second == "Music: ")
+								{
+									if (Audio::getVolume('m') == 100)
+										Audio::setVolume(0, 'm');
+									else
+										Audio::setVolume(Audio::getVolume('m') + 10, 'm');
+									break;
+								}
+								else if (options[i].second == "Sound Effects: ")
+								{
+									if (Audio::getVolume('s') == 100)
+										Audio::setVolume(0, 's');
+									else
+										Audio::setVolume(Audio::getVolume('s') + 10, 's');
+									break;
+								}
+								else if (options[i].second == "Return")
+								{
+									pauseType = SETTINGS;
+									pausePos = title.size() + pause.size();
+									break;
+								}
 							}
 						}
 					}
@@ -310,9 +358,18 @@ int Menu::handleEvent(SDL_Event* e)
 			}
 		}
 	}
-	for (int i = 0; i < options.size(); i++)
-		if (!Game::checkCollision(mrect, options[i].first->txRect))
-			options[i].first->txRect = origOptions[i];
+	if (Game::Mode == STORE)
+	{
+		for (int i = 0; i < store.size(); i++)
+			if (!Game::checkCollision(mrect, store[i].first->txRect))
+				store[i].first->txRect = origStore[i];
+	}
+	else
+	{
+		for (int i = 0; i < options.size(); i++)
+			if (!Game::checkCollision(mrect, options[i].first->txRect))
+				options[i].first->txRect = origOptions[i];
+	}
 	return false;
 }
 
@@ -324,7 +381,7 @@ void Menu::render()
 		rot = 0;
 
 	SDL_RenderClear(Window::renderer);
-	if (type == PAUSE)
+	if (type == PAUSE || type == STORE)
 	{
 		Graphics::renderAll(false);
 		// Graphics::textBG->txRect = { 0, 0, static_cast<int>(Window::getw() * 0.25), Window::geth() };
@@ -344,77 +401,132 @@ void Menu::render()
 				notes[i].first->txRender();
 		}
 	}
-	for (int i = 0; i < options.size(); i++)
+	if (type == STORE)
 	{
-		if (type == TITLE && i < title.size())
-			options[i].first->txRender();
-		else if (type == PAUSE)
+		for (int i = 0; i < store.size(); i++)
+			store[i].first->txRender();
+	}
+	else
+	{
+		for (int i = 0; i < options.size(); i++)
 		{
-			if ((pauseType == MAIN && i < pause.size()) || (pauseType == SETTINGS && i < settings.size()) || (pauseType == CONTROLS && i < controls.size()) ||
-				(pauseType == GRAPHICS && i < graphics.size()) || (pauseType == AUDIO && i < audio.size()))
+			if (type == TITLE && i < title.size())
+				options[i].first->txRender();
+			else if (type == PAUSE)
 			{
-				options[i /* + title.size() */ + pausePos].first->txRender();
-				if (options[i + pausePos].second == "Fullscreen: ")
+				if ((pauseType == MAIN && i < pause.size()) || (pauseType == SETTINGS && i < settings.size()) || (pauseType == CONTROLS && i < controls.size()) ||
+					(pauseType == GRAPHICS && i < graphics.size()) || (pauseType == AUDIO && i < audio.size()))
 				{
-					if (Window::isFullscreen())
+					options[i /* + title.size() */ + pausePos].first->txRender();
+					if (options[i + pausePos].second == "Fullscreen: ")
 					{
-						enabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-						enabled.txRect.y = options[i + pausePos].first->txRect.y;
-						enabled.txRender();
+						if (Window::isFullscreen())
+						{
+							enabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+							enabled.txRect.y = options[i + pausePos].first->txRect.y;
+							enabled.txRender();
+						}
+						else
+						{
+							disabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+							disabled.txRect.y = options[i + pausePos].first->txRect.y;
+							disabled.txRender();
+						}
 					}
-					else
+					else if (options[i + pausePos].second == "VSync: ")
 					{
-						disabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-						disabled.txRect.y = options[i + pausePos].first->txRect.y;
-						disabled.txRender();
+						if (Window::isVSync())
+						{
+							enabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+							enabled.txRect.y = options[i + pausePos].first->txRect.y;
+							enabled.txRender();
+						}
+						else
+						{
+							disabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+							disabled.txRect.y = options[i + pausePos].first->txRect.y;
+							disabled.txRender();
+						}
+					}
+					else if (options[i + pausePos].second == "Music: ")
+					{
+						musVolume.txRect.w = musVolume.txRect.h = 0;
+						musVolume.txLoadT(std::to_string(Audio::getVolume('m')), Graphics::gFont, Graphics::black);
+						musVolume.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+						musVolume.txRect.y = options[i + pausePos].first->txRect.y;
+						musVolume.txRender();
+					}
+					else if (options[i + pausePos].second == "Sound Effects: ")
+					{
+						sfxVolume.txRect.w = sfxVolume.txRect.h = 0;
+						sfxVolume.txLoadT(std::to_string(Audio::getVolume('s')), Graphics::gFont, Graphics::black);
+						sfxVolume.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
+						sfxVolume.txRect.y = options[i + pausePos].first->txRect.y;
+						sfxVolume.txRender();
 					}
 				}
-				else if (options[i + pausePos].second == "VSync: ")
+				if (pauseType == MAIN)
 				{
-					if (Window::isVSync())
+					for (int i = 0; i < inventory.size(); i++)
 					{
-						enabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-						enabled.txRect.y = options[i + pausePos].first->txRect.y;
-						enabled.txRender();
-					}
-					else
-					{
-						disabled.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-						disabled.txRect.y = options[i + pausePos].first->txRect.y;
-						disabled.txRender();
-					}
-				}
-				else if (options[i + pausePos].second == "Music: ")
-				{
-					musVolume.txRect.w = musVolume.txRect.h = 0;
-					musVolume.txLoadT(std::to_string(Audio::getVolume('m')), Graphics::gFont, Graphics::black);
-					musVolume.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-					musVolume.txRect.y = options[i + pausePos].first->txRect.y;
-					musVolume.txRender();
-				}
-				else if (options[i + pausePos].second == "Sound Effects: ")
-				{
-					sfxVolume.txRect.w = sfxVolume.txRect.h = 0;
-					sfxVolume.txLoadT(std::to_string(Audio::getVolume('s')), Graphics::gFont, Graphics::black);
-					sfxVolume.txRect.x = options[i + pausePos].first->txRect.x + options[i + pausePos].first->txRect.w + Game::UNIT_W;
-					sfxVolume.txRect.y = options[i + pausePos].first->txRect.y;
-					sfxVolume.txRender();
-				}
-			}
-			if (pauseType == MAIN)
-			{
-				for (int i = 0; i < inventory.size(); i++)
-				{
-					if (Game::gPlayer->abilities[inventory[i].second])
-					{
-						inventory[i].first->txRender();
-						invImages[i]->txRender();
+						if (Game::gPlayer->abilities[inventory[i].second])
+						{
+							inventory[i].first->txRender();
+							invImages[i]->txRender();
+						}
 					}
 				}
 			}
 		}
 	}
 	SDL_RenderPresent(Window::renderer);
+}
+
+void Menu::createStore(void)
+{
+	static int numOptions = 4;
+	int randi = 0;
+	std::vector<bool> choices;
+	for (int i = 0; i < inventory.size(); i++)
+		choices.push_back(false);
+
+	for (int i = 0; i < store.size(); i++)
+	{
+		if (store[i].first != NULL)
+		{
+			delete store[i].first;
+			store[i].first = NULL;
+		}
+		store.pop_back();
+		origStore.pop_back();
+	}
+	if (store.size() > 0)
+	{
+		store.resize(0);
+		origStore.resize(0);
+	}
+	for (int i = 0; i < numOptions; i++)
+	{
+		do {
+			randi = rand() % inventory.size();
+		} while (choices[randi] == true);
+		choices[randi] = true;
+
+		store.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), inventory[randi].second));
+		store[i].first->txLoadT(store[i].second, Graphics::gFont, Graphics::black);
+
+		if (i == 0)
+		{
+			store[i].first->txRect.x = Game::UNIT_W;
+			store[i].first->txRect.y = Game::UNIT_H;
+		}
+		else
+		{
+			store[i].first->txRect.x = store[i - 1].first->txRect.x;
+			store[i].first->txRect.y = store[i - 1].first->txRect.y + store[i - 1].first->txRect.h + Game::UNIT_H;
+		}
+		origStore.push_back(store[i].first->txRect);
+	}
 }
 
 void Menu::init(void)
@@ -523,6 +635,15 @@ void Menu::init(void)
 
 void Menu::clear()
 {
+	for (int i = 0; i < store.size(); i++)
+	{
+		if (store[i].first != NULL)
+		{
+			delete store[i].first;
+			store[i].first = NULL;
+		}
+		store.pop_back();
+	}
 	for (int i = options.size() - 1; i >= 0; i--)
 	{
 		if (options[i].first != NULL)

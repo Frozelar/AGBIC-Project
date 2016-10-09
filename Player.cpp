@@ -79,13 +79,15 @@ bool Player::handleInput(SDL_Event* e)
 			moveSpeed = 0;
 		else if (e->key.keysym.sym == Game::Controls["Jump"] || e->key.keysym.sym == Game::Controls["JumpAlt"])
 		{
-			if(aerialSpeed < 0)
+			if (aerialSpeed < 0)
 				aerialSpeed *= Game::JUMP_MULT / 4;
 		}
 		else if (e->key.keysym.sym == Game::Controls["Pause"])
 		{
 			Game::Mode = PAUSE;
 		}
+		else if (e->key.keysym.sym == SDLK_q)
+			Game::Mode = STORE;
 		//else if (e->key.keysym.sym == Game::Controls["Fullscreen"])
 		//{
 		//	Window::toggleFullscreen();
