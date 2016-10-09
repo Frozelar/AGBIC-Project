@@ -28,6 +28,7 @@ private:
 	static std::vector<std::pair<Texture*, std::string>> notes;
 	static std::vector<std::pair<Texture*, std::string>> inventory;
 	static std::vector<std::pair<Texture*, std::string>> store;
+	static std::unordered_map<std::string, int> allPrices;
 	static std::vector<Texture*> invImages;
 	static Texture* titleBG;
 	static std::string titleBGPrefix;

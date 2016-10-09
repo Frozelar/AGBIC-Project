@@ -51,6 +51,10 @@ std::vector<Texture*> Menu::invImages;
 // vector for store items
 std::vector<std::pair<Texture*, std::string>> Menu::store;
 
+// store stuff
+std::unordered_map<std::string, int> Menu::allPrices;
+static bool resetStore = true;  // <--- not part of menu class
+
 // used for various settings (note: not part of Menu class)
 Texture enabled;
 Texture disabled;
@@ -84,7 +88,11 @@ bool Menu::loop(int ptype, SDL_Rect prect, SDL_Event* e)
 	else if (type == STORE)
 	{
 		pauseType = PSTORE;
-		createStore();
+		if (resetStore)
+		{
+			createStore();
+			resetStore = false;
+		}
 	}
 	else
 	{
@@ -180,12 +188,17 @@ int Menu::handleEvent(SDL_Event* e)
 					}
 					else if (e->type == SDL_MOUSEBUTTONUP)
 					{
-						type = PAUSE;
-						pauseType = MAIN;
-						pausePos = title.size();
-						Game::Mode = GAME;
-						Game::gPlayer->abilities[store[i].second] = true;
-						return true;
+						if (Game::gScore >= allPrices[store[i].second])
+						{
+							resetStore = true;
+							Game::gPlayer->abilities[store[i].second] = true;
+							Game::gScore -= allPrices[store[i].second];
+							type = PAUSE;
+							pauseType = MAIN;
+							pausePos = title.size();
+							Game::Mode = GAME;
+							return true;
+						}
 					}
 				}
 			}
@@ -404,7 +417,10 @@ void Menu::render()
 	if (type == STORE)
 	{
 		for (int i = 0; i < store.size(); i++)
+		{
 			store[i].first->txRender();
+
+		}
 	}
 	else
 	{
@@ -486,6 +502,7 @@ void Menu::createStore(void)
 {
 	static int numOptions = 4;
 	int randi = 0;
+	std::stringstream opt;
 	std::vector<bool> choices;
 	for (int i = 0; i < inventory.size(); i++)
 		choices.push_back(false);
@@ -513,7 +530,9 @@ void Menu::createStore(void)
 		choices[randi] = true;
 
 		store.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), inventory[randi].second));
-		store[i].first->txLoadT(store[i].second, Graphics::gFont, Graphics::black);
+		opt << store[i].second << " - " << allPrices[store[i].second] << " pts";
+		store[i].first->txLoadT(opt.str(), Graphics::gFont, Graphics::black);
+		opt.str("");
 
 		if (i == 0)
 		{
@@ -532,6 +551,8 @@ void Menu::createStore(void)
 void Menu::init(void)
 {
 	int offset = 0;
+	int MAXPRICE = 10, MINPRICE = 1;
+
 	for (int i = 0; i < title.size() + pause.size() + settings.size() + controls.size() + graphics.size() + audio.size(); i++)
 	{
 		if (i < title.size())
@@ -620,6 +641,13 @@ void Menu::init(void)
 		inventory.back().first->txRect.y = Game::UNIT_H + (i == 0 ? 0 : inventory[i - 1].first->txRect.y + inventory[i - 1].first->txRect.h);
 		invImages.back()->txRect.y = inventory.back().first->txRect.y;
 		invImages.back()->txRect.x = inventory.back().first->txRect.x - invImages.back()->txRect.w - Game::UNIT_W;
+	}
+	for (int i = 0; i < Game::collectibleIDs.size() + Game::playerIDs.size(); i++)
+	{
+		if (i < Game::collectibleIDs.size())
+			allPrices[Game::collectibleIDs[i]] = rand() % MAXPRICE + MINPRICE;
+		else if (i - Game::collectibleIDs.size() < Game::playerIDs.size())
+			allPrices[Game::playerIDs[i - Game::collectibleIDs.size()]] = rand() % MAXPRICE + MINPRICE;
 	}
 	titleBG = new Texture(0, 0, 0, 0);
 	titleBG->txLoadF(Graphics::rDir + titleBGPrefix + Graphics::rExt);
