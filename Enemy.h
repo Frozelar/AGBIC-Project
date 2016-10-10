@@ -13,7 +13,7 @@ public:
 	void cycleAerials(void);
 
 private:
-	// SDL_Rect origin;
+	SDL_Rect bounds;
 	int targetMoveSpeed;
 	int targetAerialSpeed;
 };

@@ -24,10 +24,10 @@ Enemy::Enemy(SDL_Rect pbox, int psubtype) : PhysicsEntity(pbox, ENEMY, psubtype)
 	power -= colorMod->b / 2;
 	if (power < 0)
 		power = 1;
-	moveSpeed = power / 4;
+	moveSpeed = power / 2;
 	if (moveSpeed > Game::MOVE_SPEED * 4)
 		moveSpeed = Game::MOVE_SPEED * 4;
-	// origin = pbox;
+	bounds = { pbox.x - (Game::UNIT_W * 4), pbox.y - (Game::UNIT_H * 4), pbox.w + (Game::UNIT_W * 4), pbox.h + (Game::UNIT_H * 4) };
 }
 
 Enemy::~Enemy()
@@ -215,22 +215,34 @@ void Enemy::handleMovements()
 		//		aerialSpeed = Game::JUMP_START;
 		break;
 	case CIRCLE:
-		int MAX_MOVESPEED = 32;
-		int MAX_AERIALSPEED = 32;
+		std::cout << power << std::endl;
+		int MAX_MOVESPEED = (2 * power > 8 ? 8 : 2 * power);
+		int MAX_AERIALSPEED = (2 * power > 8 ? 8 : 2 * power);
 		static int skip = 0;
+		int targetSkip = (2 * power > 4 ? 4 : 2 * power);
+		if (moveSpeed == 0)
+			moveSpeed++;
+		if (aerialSpeed == 0)
+			aerialSpeed++;
 		if (moveSpeed <= 1 && moveSpeed >= -1)
 		{
-			moveSpeed = Game::MOVE_SPEED * (moveSpeed == 0 ? 1 : -moveSpeed);
+			// moveSpeed = Game::MOVE_SPEED * (moveSpeed == 0 ? 1 : -moveSpeed);
+			moveSpeed = -moveSpeed * (rand() % 8);
 			targetMoveSpeed = (moveSpeed < 0 ? -1 : 1) * MAX_MOVESPEED;
 		}
 		else if (abs(moveSpeed) < abs(targetMoveSpeed))
 		{
-			if(skip == 4)
+			if(skip == targetSkip)
 				moveSpeed *= 2;
+			if ((rect.x < bounds.x && moveSpeed < 0) || (rect.x + rect.w > bounds.x + bounds.w && moveSpeed > 0))
+			{
+				moveSpeed = (moveSpeed < 0 ? 2 : -2);
+				targetMoveSpeed = -targetMoveSpeed * 4;
+			}
 		}
 		else
 		{
-			if (skip == 4)
+			if (skip == targetSkip)
 			{
 				targetMoveSpeed = 0;
 				moveSpeed /= 2;
@@ -239,24 +251,30 @@ void Enemy::handleMovements()
 		rect.x += moveSpeed;
 		if (aerialSpeed <= 1 && aerialSpeed >= -1)
 		{
-			aerialSpeed = Game::GRAVITY_START * 2 * (aerialSpeed == 0 ? 1 : -aerialSpeed);
+			// aerialSpeed = Game::GRAVITY_START * 2 * (aerialSpeed == 0 ? 1 : -aerialSpeed);
+			aerialSpeed = -aerialSpeed * (rand() % 8);
 			targetAerialSpeed = (aerialSpeed < 0 ? -1 : 1) * MAX_MOVESPEED;
 		}
 		else if (abs(aerialSpeed) < abs(targetAerialSpeed))
 		{
-			if (skip == 4)
+			if (skip == targetSkip)
 				aerialSpeed *= 2;
+			if ((rect.y < bounds.y && aerialSpeed < 0) || (rect.y + rect.h > bounds.y + bounds.h && aerialSpeed > 0))
+			{
+				aerialSpeed = (aerialSpeed < 0 ? 2 : -2);
+				targetAerialSpeed = -targetAerialSpeed * 4;
+			}
 		}
 		else
 		{
-			if (skip == 4)
+			if (skip == targetSkip)
 			{
 				targetAerialSpeed = 0;
 				aerialSpeed /= 2;
 			}
 		}
 		rect.y += aerialSpeed;
-		if (skip == 4)
+		if (skip == targetSkip)
 			skip = -1;
 		skip++;
 		break;
