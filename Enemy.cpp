@@ -27,6 +27,8 @@ Enemy::Enemy(SDL_Rect pbox, int psubtype) : PhysicsEntity(pbox, ENEMY, psubtype)
 	moveSpeed = power / 2;
 	if (moveSpeed > Game::MOVE_SPEED * 4)
 		moveSpeed = Game::MOVE_SPEED * 4;
+	if (moveSpeed == 0)
+		moveSpeed++;
 	bounds = { pbox.x - (Game::UNIT_W * 4), pbox.y - (Game::UNIT_H * 4), pbox.w + (Game::UNIT_W * 4), pbox.h + (Game::UNIT_H * 4) };
 }
 
@@ -133,7 +135,11 @@ void Enemy::onProcess()
 
 void Enemy::handleMovements()
 {
-	switch(subtype)
+	int MAX_MOVESPEED = (2 * power > 8 ? 8 : 2 * power);
+	int MAX_AERIALSPEED = (2 * power > 8 ? 8 : 2 * power);
+	static int skip = 0;
+	int targetSkip = (2 * power > 4 ? 4 : 2 * power);
+	switch (subtype)
 	{
 	case ICE:
 		if (collisions[DOWN] == NULL && aerialSpeed == 0)
@@ -150,64 +156,23 @@ void Enemy::handleMovements()
 			moveSpeed = Game::MOVE_SPEED / 2;
 		if (moveSpeed != 0)
 			rect.x += moveSpeed;
+
+		rect.y--;
 		if (Game::checkCollision(this))
 		{
-			if (collisions[LEFT] != NULL)
-			{
-				if (collisions[LEFT]->getType() == BLOCK)
-					while (Game::checkCollision(rect, collisions[LEFT]->rect))
-						rect.x++;
-				collisions[LEFT] = NULL;
-				if(aerialSpeed == 0)
-					aerialSpeed = Game::JUMP_START;
-			}
-			if (collisions[RIGHT] != NULL)
-			{
-				if (collisions[RIGHT]->getType() == BLOCK)
-					while (Game::checkCollision(rect, collisions[RIGHT]->rect))
-						rect.x--;
-				collisions[RIGHT] = NULL;
-				if(aerialSpeed == 0)
-					aerialSpeed = Game::JUMP_START;
-			}
+			if (collisions[DOWN] != NULL && ((collisions[LEFT] != NULL && moveSpeed < 0) || (collisions[RIGHT] != NULL && moveSpeed > 0)))
+				aerialSpeed = Game::JUMP_START;
+			manageCollisionsX();
+			//emptyCollidersX();
 		}
-		if (collisions[DOWN] != NULL)
-		{
-			rect.y++;
-			if (!Game::checkCollision(rect, collisions[DOWN]->rect))
-				collisions[DOWN] = NULL;
-			//else
-			//	aerialSpeed = 0;
-			rect.y--;
-		}
-		else if (collisions[DOWN] == NULL && aerialSpeed == 0)
-			aerialSpeed = Game::GRAVITY_START;
+		rect.y++;
 		if (aerialSpeed != 0)
 			rect.y += aerialSpeed;
 		cycleAerials();
 		if (Game::checkCollision(this))
 		{
-			if (collisions[UP] != NULL)
-			{
-				if (collisions[UP]->getType() == BLOCK)
-				{
-					// aerialSpeed = 0;
-					aerialSpeed = Game::GRAVITY_START;
-					while (Game::checkCollision(rect, collisions[UP]->rect))
-						rect.y++;
-				}
-				collisions[UP] = NULL;
-			}
-			if (collisions[DOWN] != NULL)
-			{
-				if (collisions[DOWN]->getType() == BLOCK)
-				{
-					aerialSpeed = 0;
-					while (Game::checkCollision(rect, collisions[DOWN]->rect))
-						rect.y--;
-				}
-				// collisions[DOWN] = NULL;
-			}
+			manageCollisionsY();
+			//emptyCollidersY();
 		}
 		//check = { rect.x + (moveSpeed > 0 ? rect.w + Game::UNIT_W : (moveSpeed < 0 ? -Game::UNIT_W : 0)), rect.y, rect.w, rect.h };
 		//for (int i = 0; i < Game::collisionEntities.size(); i++)
@@ -215,11 +180,6 @@ void Enemy::handleMovements()
 		//		aerialSpeed = Game::JUMP_START;
 		break;
 	case CIRCLE:
-		std::cout << power << std::endl;
-		int MAX_MOVESPEED = (2 * power > 8 ? 8 : 2 * power);
-		int MAX_AERIALSPEED = (2 * power > 8 ? 8 : 2 * power);
-		static int skip = 0;
-		int targetSkip = (2 * power > 4 ? 4 : 2 * power);
 		if (moveSpeed == 0)
 			moveSpeed++;
 		if (aerialSpeed == 0)
@@ -278,6 +238,26 @@ void Enemy::handleMovements()
 			skip = -1;
 		skip++;
 		break;
+	case SQUARE:
+		rect.x += moveSpeed;
+		rect.y--;
+		if (Game::checkCollision(this))
+		{
+			if (collisions[DOWN] != NULL && ((collisions[LEFT] != NULL && moveSpeed < 0) || (collisions[RIGHT] != NULL && moveSpeed > 0)))
+				moveSpeed = -moveSpeed;
+			manageCollisionsX();
+			//emptyCollidersX();
+		}
+		rect.y++;
+		if (aerialSpeed != 0)
+			rect.y += aerialSpeed;
+		cycleAerials();
+		if (Game::checkCollision(this))
+		{
+			manageCollisionsY();
+			//emptyCollidersY();
+		}
+		break;
 	}
 }
 
@@ -298,3 +278,87 @@ void Enemy::cycleAerials()
 			aerialSpeed = Game::GRAVITY_MAX;
 	}
 }
+
+void Enemy::manageCollisionsX()
+{
+	// if (Game::checkCollision(this))
+	// {
+		if (collisions[LEFT] != NULL)
+		{
+			rect.y--;
+			if(Game::checkCollision(rect, collisions[LEFT]->rect))
+				if (collisions[LEFT]->getType() == BLOCK)
+					while (Game::checkCollision(rect, collisions[LEFT]->rect))
+						rect.x++;
+			rect.y++;
+			collisions[LEFT] = NULL;
+			//if (aerialSpeed == 0)
+			//	aerialSpeed = Game::JUMP_START;
+		}
+		if (collisions[RIGHT] != NULL)
+		{
+			rect.y--;
+			if(Game::checkCollision(rect, collisions[RIGHT]->rect))
+				if (collisions[RIGHT]->getType() == BLOCK)
+					while (Game::checkCollision(rect, collisions[RIGHT]->rect))
+						rect.x--;
+			rect.y++;
+			collisions[RIGHT] = NULL;
+			//if (aerialSpeed == 0)
+			//	aerialSpeed = Game::JUMP_START;
+		}
+	// }
+		
+	if (collisions[DOWN] != NULL)
+	{
+		rect.y++;
+		if (!Game::checkCollision(rect, collisions[DOWN]->rect))
+			collisions[DOWN] = NULL;
+		//else
+		//	aerialSpeed = 0;
+		rect.y--;
+	}
+	else if (collisions[DOWN] == NULL && aerialSpeed == 0)
+		aerialSpeed = Game::GRAVITY_START;
+}
+
+void Enemy::manageCollisionsY()
+{
+	// if (Game::checkCollision(this))
+	// {
+		if (collisions[UP] != NULL)
+		{
+			if (collisions[UP]->getType() == BLOCK)
+			{
+				// aerialSpeed = 0;
+				aerialSpeed = Game::GRAVITY_START;
+				while (Game::checkCollision(rect, collisions[UP]->rect))
+					rect.y++;
+			}
+			collisions[UP] = NULL;
+		}
+		if (collisions[DOWN] != NULL)
+		{
+			if (collisions[DOWN]->getType() == BLOCK)
+			{
+				aerialSpeed = 0;
+				while (Game::checkCollision(rect, collisions[DOWN]->rect))
+					rect.y--;
+			}
+			// collisions[DOWN] = NULL;
+		}
+	// }
+}
+/*
+void Enemy::emptyCollidersX()
+{
+	collisions[LEFT] = NULL;
+	collisions[RIGHT] = NULL;
+}
+
+void Enemy::emptyCollidersY()
+{
+	collisions[UP] = NULL;
+	// collisions[DOWN] = NULL;
+}
+*/

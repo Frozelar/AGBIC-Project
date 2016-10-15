@@ -38,7 +38,7 @@ enum CollectibleType {
 };
 
 enum EnemyType {
-	ICE, ICE_BOSS, EYE, TRIANGLE, CIRCLE, TOTAL_ENEMY_TYPES
+	ICE, ICE_BOSS, EYE, TRIANGLE, CIRCLE, SQUARE, TOTAL_ENEMY_TYPES
 };
 
 class Entity

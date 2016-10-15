@@ -11,6 +11,10 @@ public:
 	void onProcess(void);
 	void handleMovements(void);
 	void cycleAerials(void);
+	void manageCollisionsX(void);
+	void manageCollisionsY(void);
+	void emptyCollidersX(void);
+	void emptyCollidersY(void);
 
 private:
 	SDL_Rect bounds;
