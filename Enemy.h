@@ -13,8 +13,9 @@ public:
 	void cycleAerials(void);
 	void manageCollisionsX(void);
 	void manageCollisionsY(void);
-	void emptyCollidersX(void);
-	void emptyCollidersY(void);
+	// void emptyCollidersX(void);
+	// void emptyCollidersY(void);
+	// static void doDefaultActions(void);
 
 private:
 	SDL_Rect bounds;

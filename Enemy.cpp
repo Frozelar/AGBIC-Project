@@ -139,6 +139,7 @@ void Enemy::handleMovements()
 	int MAX_AERIALSPEED = (2 * power > 8 ? 8 : 2 * power);
 	static int skip = 0;
 	int targetSkip = (2 * power > 4 ? 4 : 2 * power);
+	bool checked = false;
 	switch (subtype)
 	{
 	case ICE:
@@ -157,7 +158,11 @@ void Enemy::handleMovements()
 		if (moveSpeed != 0)
 			rect.x += moveSpeed;
 
-		rect.y--;
+		if (aerialSpeed == 0)
+		{
+			rect.h--;
+			checked = true;
+		}
 		if (Game::checkCollision(this))
 		{
 			if (collisions[DOWN] != NULL && ((collisions[LEFT] != NULL && moveSpeed < 0) || (collisions[RIGHT] != NULL && moveSpeed > 0)))
@@ -165,7 +170,8 @@ void Enemy::handleMovements()
 			manageCollisionsX();
 			//emptyCollidersX();
 		}
-		rect.y++;
+		if(checked)
+			rect.h++;
 		if (aerialSpeed != 0)
 			rect.y += aerialSpeed;
 		cycleAerials();
@@ -240,15 +246,24 @@ void Enemy::handleMovements()
 		break;
 	case SQUARE:
 		rect.x += moveSpeed;
-		rect.y--;
+
+		if (aerialSpeed == 0)
+		{
+			rect.h--;
+			checked = true;
+		}
 		if (Game::checkCollision(this))
 		{
 			if (collisions[DOWN] != NULL && ((collisions[LEFT] != NULL && moveSpeed < 0) || (collisions[RIGHT] != NULL && moveSpeed > 0)))
+			{
 				moveSpeed = -moveSpeed;
+				rect.x += 2 * (moveSpeed > 0 ? 1 : -1);
+			}
 			manageCollisionsX();
 			//emptyCollidersX();
 		}
-		rect.y++;
+		if(checked)
+			rect.h++;
 		if (aerialSpeed != 0)
 			rect.y += aerialSpeed;
 		cycleAerials();
@@ -360,5 +375,12 @@ void Enemy::emptyCollidersY()
 {
 	collisions[UP] = NULL;
 	// collisions[DOWN] = NULL;
+}
+*/
+
+/*
+void Enemy::doDefaultActions()
+{
+
 }
 */
