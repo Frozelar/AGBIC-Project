@@ -50,7 +50,7 @@ Player* Game::gPlayer = NULL;
 // identifiers for specified objects (used in graphic file loading)
 std::vector<std::string> Game::playerIDs = { "White", "Strawberry" };
 std::vector<std::string> Game::blockIDs = { "Goal", "White", "Black", "Sand", "Gray", "Brown" };
-std::vector<std::string> Game::collectibleIDs = { "Coin", "Sprint", "High Jump", "Double Jump", "Key" };
+std::vector<std::string> Game::collectibleIDs = { "+1", "+5", "+10", "+50", "+100", "Sprint", "High Jump", "Double Jump", "Key" };
 std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye", "Triangle", "Circle", "Square" };
 std::vector<std::string> Game::particleIDs = { "White", "White", "Sand", "White" };
 

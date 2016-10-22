@@ -23,10 +23,22 @@ void Collectible::onDestroy()
 	Audio::play(COLLECT, 's');
 	switch (subtype)
 	{
-	case COIN:
+	case C1:
+		Game::gScore += 1;
+		// Graphics::particleDensity += 0.1;
+		// Game::enemySpawnChance -= 4;
+		break;
+	case C5:
+		Game::gScore += 5;
+		break;
+	case C10:
 		Game::gScore += 10;
-		Graphics::particleDensity += 0.1;
-		Game::enemySpawnChance -= 4;
+		break;
+	case C50:
+		Game::gScore += 50;
+		break;
+	case C100:
+		Game::gScore += 100;
 		break;
 	case SPRINT:
 		Game::gScore += 1;
