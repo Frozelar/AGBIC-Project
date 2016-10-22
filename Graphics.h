@@ -58,6 +58,7 @@ public:
 	static std::vector<std::string> bgIDs;
 	static std::vector<std::string> bgObjectIDs;
 	static std::vector<std::stringstream> colGFXIDs;
+	static std::vector<std::stringstream> plrGFXIDs;
 	static std::string rDir;
 	static std::string rExt;
 	static Texture* textBG;

@@ -624,11 +624,14 @@ void Menu::init(void)
 		inventory.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), ""));
 		invImages.push_back(new Texture(0, 0, 0, 0));
 
+		/*
 		if (i < Game::playerIDs.size())
 		{
-			inventory.back().first->txLoadT(Game::playerIDs[i], Graphics::gFont, Graphics::black);
-			inventory.back().second = Game::playerIDs[i];
-			invImages.back()->txLoadF(Graphics::rDir + Graphics::playerPrefix + Game::playerIDs[i] + Graphics::rExt);
+		*/
+		inventory.back().first->txLoadT(Game::playerIDs[i], Graphics::gFont, Graphics::black);
+		inventory.back().second = Game::playerIDs[i];
+		invImages.back()->txLoadF(Graphics::rDir + Graphics::playerPrefix + Graphics::plrGFXIDs[i].str() + Graphics::rExt);
+		/*
 		}
 		else if (i - Game::playerIDs.size() < Game::collectibleIDs.size())
 		{
@@ -636,18 +639,21 @@ void Menu::init(void)
 			inventory.back().second = Game::collectibleIDs[i - Game::playerIDs.size()];
 			invImages.back()->txLoadF(Graphics::rDir + Graphics::collectiblePrefix + Graphics::colGFXIDs[i - Game::playerIDs.size()].str() + Graphics::rExt);
 		}
+		*/
 
 		inventory.back().first->txRect.x = Window::getw() - Game::UNIT_W - inventory.back().first->txRect.w;
 		inventory.back().first->txRect.y = Game::UNIT_H + (i == 0 ? 0 : inventory[i - 1].first->txRect.y + inventory[i - 1].first->txRect.h);
 		invImages.back()->txRect.y = inventory.back().first->txRect.y;
 		invImages.back()->txRect.x = inventory.back().first->txRect.x - invImages.back()->txRect.w - Game::UNIT_W;
 	}
-	for (int i = 0; i < Game::collectibleIDs.size() + Game::playerIDs.size(); i++)
+	for (int i = 0; i </* Game::collectibleIDs.size() + */Game::playerIDs.size(); i++)
 	{
+		/*
 		if (i < Game::collectibleIDs.size())
 			allPrices[Game::collectibleIDs[i]] = rand() % MAXPRICE + MINPRICE;
 		else if (i - Game::collectibleIDs.size() < Game::playerIDs.size())
-			allPrices[Game::playerIDs[i - Game::collectibleIDs.size()]] = rand() % MAXPRICE + MINPRICE;
+		*/
+			allPrices[Game::playerIDs[i/* - Game::collectibleIDs.size()*/]] = rand() % MAXPRICE + MINPRICE;
 	}
 	titleBG = new Texture(0, 0, 0, 0);
 	titleBG->txLoadF(Graphics::rDir + titleBGPrefix + Graphics::rExt);

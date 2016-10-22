@@ -314,8 +314,8 @@ void Player::resetAbilities()
 	abilities["Key"] = false;
 	*/
 
-	for (int i = 0; i < Game::collectibleIDs.size(); i++)
-		abilities[Game::collectibleIDs[i]] = false;
+	//for (int i = 0; i < Game::collectibleIDs.size(); i++)
+	//	abilities[Game::collectibleIDs[i]] = false;
 
 	for (int i = 0; i < Game::playerIDs.size(); i++)
 		abilities[Game::playerIDs[i]] = false;

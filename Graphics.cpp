@@ -40,8 +40,9 @@ std::vector<std::pair<Texture*, int>> Graphics::particles;
 std::vector<std::string> Graphics::bgIDs = { "Sky", "Red", "Dusk", "Night" };
 std::vector<std::string> Graphics::bgObjectIDs = { "Mountain", "DarkMountain", "DarkMountain", "Stars" };
 
-// collectible gfx files cannot have spaces in their names, so there must be a separate container for gfx loading
+// collectible and player gfx files cannot have spaces in their names, so there must be a separate container for gfx loading
 std::vector<std::stringstream> Graphics::colGFXIDs;
+std::vector<std::stringstream> Graphics::plrGFXIDs;
 
 // background texture
 Texture* Graphics::bg;
@@ -164,12 +165,20 @@ bool Graphics::init()
 	// playerGFX = new Texture(0, 0, 0, 0);
 	// playerGFX->txLoadF(rDir + playerPrefix + rExt);
 
+	plrGFXIDs.resize(Game::playerIDs.size());
 	for (int i = 0; i < Game::playerIDs.size(); i++)
 	{
-		playerGFX.push_back(new Texture(0, 0, 0, 0));
-		playerGFX[i]->txLoadF(rDir + playerPrefix + Game::playerIDs[i] + rExt);
-	}
+		for (int j = 0; j < Game::playerIDs[i].length(); j++)
+		{
+			if (Game::playerIDs[i].c_str()[j] == ' ')
+				continue;
+			else
+				plrGFXIDs[i] << Game::playerIDs[i].c_str()[j];
+		}
 
+		playerGFX.push_back(new Texture(0, 0, 0, 0));
+		playerGFX[i]->txLoadF(rDir + playerPrefix + plrGFXIDs[i].str() + rExt);
+	}
 	for (int i = 0; i < Game::blockIDs.size(); i++)
 	{
 		blockGFX.push_back(new Texture(0, 0, 0, 0));
@@ -385,7 +394,7 @@ void Graphics::renderAll(bool manageRenderer)
 	// Game::gPlayer->syncGFX();
 	// playerGFX->rect = Game::gPlayer->rect;
 	Game::gPlayer->abilities["White"] = true;
-	for (int i = 0; i < Game::playerIDs.size(); i++)
+	for (int i = 0; i < Game::playerIDs.size() - (KEY - TOTAL_COLLECTIBLE_TYPES); i++)
 	{
 		if (Game::gPlayer->abilities[Game::playerIDs[i]])
 		{
