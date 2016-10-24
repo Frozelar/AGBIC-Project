@@ -40,6 +40,7 @@ void Collectible::onDestroy()
 	case C100:
 		Game::gScore += 100;
 		break;
+		/*
 	case SPRINT:
 		Game::gScore += 1;
 		Graphics::particleDensity += 0.3;
@@ -64,6 +65,7 @@ void Collectible::onDestroy()
 		Game::enemySpawnChance -= 12;
 		Game::gPlayer->abilities["Key"] = true;
 		break;
+		*/
 	}
 }
 

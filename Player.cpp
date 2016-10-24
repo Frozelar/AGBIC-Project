@@ -62,7 +62,7 @@ bool Player::handleInput(SDL_Event* e)
 		}
 		else if (e->key.keysym.sym == Game::Controls["Jump"] || e->key.keysym.sym == Game::Controls["JumpAlt"])
 		{
-			if (aerialSpeed == 0 || (abilities["Double Jump"] && jumps == 1))
+			if (aerialSpeed == 0 || (abilities[/*"Double Jump"*/"Strawberry"] && jumps == 1))
 			{
 				aerialSpeed = Game::JUMP_START;
 				Audio::play(JUMP, 's');
@@ -106,7 +106,7 @@ void Player::handleMovements()
 	static int hitBuffer = 0;
 	static int hitStart = 64;
 
-	if (abilities["Sprint"] /* && plFrameCount >= Game::WARMUP_DURATION */ && abs(moveSpeed) == Game::MOVE_SPEED)
+	if (abilities[/*"Sprint"*/"Lemon"] /* && plFrameCount >= Game::WARMUP_DURATION */ && abs(moveSpeed) == Game::MOVE_SPEED)
 		moveSpeed = (moveSpeed > 0 ? 1 : -1) * Game::MOVE_SPEED * 2;
 	// else if (abilities["Sprint"] && moveSpeed == 0 && plFrameCount != 0)
 	// 	plFrameCount = 0;
@@ -218,7 +218,7 @@ void Player::handleMovements()
 		{
 			if (collisions[DOWN]->getType() == BLOCK)
 			{
-				if (collisions[DOWN]->getSubtype() == GOAL && abilities["Key"])
+				if (collisions[DOWN]->getSubtype() == GOAL && abilities[/*"Key"*/"Raspberry"])
 				{
 					//if(!gotEnd)
 						Game::gScore += 100;
@@ -287,8 +287,8 @@ void Player::cycleAerials()
 	}
 	if (aerialSpeed < 0)
 	{
-		aerialSpeed *= (Game::JUMP_MULT) + (!abilities["High Jump"] ? 0 : 0.02);
-		if (aerialSpeed >= (Game::JUMP_MAX + (abilities["High Jump"] ? 0.1 : 0)))
+		aerialSpeed *= (Game::JUMP_MULT) + (!abilities[/*"High Jump"*/"Blueberry"] ? 0 : 0.02);
+		if (aerialSpeed >= (Game::JUMP_MAX + (abilities[/*"High Jump"*/"Blueberry"] ? 0.1 : 0)))
 			aerialSpeed = Game::GRAVITY_START;
 	}
 	else if (aerialSpeed > 0)

@@ -504,6 +504,7 @@ void Menu::createStore(void)
 	int randi = 0;
 	std::stringstream opt;
 	std::vector<bool> choices;
+	int needtobreak = 0;
 	for (int i = 0; i < inventory.size(); i++)
 		choices.push_back(false);
 
@@ -526,7 +527,9 @@ void Menu::createStore(void)
 	{
 		do {
 			randi = rand() % inventory.size();
-		} while (choices[randi] == true);
+			if (needtobreak++ > Game::gPlayer->abilities.size() * 2)
+				return;
+		} while (choices[randi] == true || Game::gPlayer->abilities[Game::playerIDs[randi]]);
 		choices[randi] = true;
 
 		store.push_back(std::pair<Texture*, std::string>(new Texture(0, 0, 0, 0), inventory[randi].second));

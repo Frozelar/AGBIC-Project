@@ -394,7 +394,8 @@ void Graphics::renderAll(bool manageRenderer)
 	// Game::gPlayer->syncGFX();
 	// playerGFX->rect = Game::gPlayer->rect;
 	Game::gPlayer->abilities["White"] = true;
-	for (int i = 0; i < Game::playerIDs.size() - (KEY - TOTAL_COLLECTIBLE_TYPES); i++)
+
+	for (int i = 0; i < Game::playerIDs.size(); i++)
 	{
 		if (Game::gPlayer->abilities[Game::playerIDs[i]])
 		{
