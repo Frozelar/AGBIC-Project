@@ -51,7 +51,7 @@ Player* Game::gPlayer = NULL;
 std::vector<std::string> Game::playerIDs = { "White", "Lemon", "Strawberry", "Blueberry", "Raspberry" /*"Sprint", "High Jump", "Double Jump", "Key" */};
 std::vector<std::string> Game::blockIDs = { "Goal", "White", "Black", "Sand", "Gray", "Brown" };
 std::vector<std::string> Game::collectibleIDs = { "+1", "+5", "+10", "+50", "+100" };
-std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye", "Triangle", "Circle", "Square" };
+std::vector<std::string> Game::enemyIDs = { "Ice", "IceBoss", "Eye", "Triangle", "Circle", "Square", "HalfC" };
 std::vector<std::string> Game::particleIDs = { "White", "White", "Sand", "White" };
 
 // constant values

@@ -273,6 +273,42 @@ void Enemy::handleMovements()
 			//emptyCollidersY();
 		}
 		break;
+	case HALFC:
+		if (rect.h != Game::UNIT_H / 2)
+			rect.h = Game::UNIT_H / 2;
+		rect.x += moveSpeed;
+
+		if (aerialSpeed == 0)
+		{
+			rect.h--;
+			checked = true;
+		}
+		if (Game::checkCollision(this))
+		{
+			if (skip++ > 70 && collisions[DOWN] != NULL)
+			{
+				aerialSpeed = Game::JUMP_MAX * 2;
+				skip = 0;
+			}
+			if (collisions[DOWN] != NULL && ((collisions[LEFT] != NULL && moveSpeed < 0) || (collisions[RIGHT] != NULL && moveSpeed > 0)))
+			{
+				moveSpeed = -moveSpeed;
+				rect.x += 2 * (moveSpeed > 0 ? 1 : -1);
+			}
+			manageCollisionsX();
+			//emptyCollidersX();
+		}
+		if (checked)
+			rect.h++;
+		if (aerialSpeed != 0)
+			rect.y += aerialSpeed;
+		cycleAerials();
+		if (Game::checkCollision(this))
+		{
+			manageCollisionsY();
+			//emptyCollidersY();
+		}
+		break;
 	}
 }
 
